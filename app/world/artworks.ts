@@ -15,6 +15,8 @@ export interface PlacedExhibit extends Streamable {
   target: THREE.Mesh;
   /** World-space centre of the piece. */
   center: THREE.Vector3;
+  /** Everything drawn for this exhibit (hidden with its room). */
+  group: THREE.Object3D;
 }
 
 interface FrameSpec {
@@ -145,6 +147,7 @@ export function placeArtworks(
       info: artwork,
       target: canvas,
       center,
+      group,
       room: roomId,
       load: () => {
         image.load();

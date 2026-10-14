@@ -19,7 +19,7 @@ URL flags: `?debug` opens the performance overlay on load, and `?webgl` forces t
 | Click | Enter (locks the pointer) |
 | W A S D / arrows | Walk |
 | Shift | Run |
-| Ctrl (or C) | Crouch while held. Careful: Ctrl+W is the browser's close-tab shortcut, which pages can't block |
+| C | Crouch while held |
 | Click a bench | Sit (lower view, no walking). Click again to stand |
 | Mouse | Look |
 | Click a painting | Show its wall label (labels also appear when you stand in front of a piece) |
@@ -73,9 +73,13 @@ Each light adds shading cost to every pixel and slows shader compilation at load
 - A painting alone on its wall gets its own spot. Several paintings on one wall share **one** spot whose projected cookie texture paints a soft pool on each piece (`app/world/lighting.ts`).
 - A skylight room with `artworkSpots: false` costs one light in total. Corridors use `ceiling: "none"` and borrow light from the rooms.
 
-### Streaming
+### Streaming and visibility
 
-Paintings, labels and 3D models load for rooms within two doorways of the visitor, and are released (GPU memory freed) beyond that (`app/world/streaming.ts`). Walking from the Armor Court to the north hall drops texture memory from ~265 MB to ~90 MB. Drawing cost is handled separately: three.js already skips anything outside the camera's view.
+At load, `computeVisibility` (`app/world/layout.ts`) tests plan-view sight lines between points in every pair of rooms against the real walls and doorway openings. It takes about 75 ms. Each room then knows exactly which rooms can be seen from anywhere inside it (`app/world/streaming.ts`):
+
+- **Drawn:** only the rooms visible from where you are. Frustum culling already skips what's off-screen; this also skips rooms hidden behind walls.
+- **Loaded:** the drawn rooms, plus what the next room over can see (within two doorways), so art is ready before you step through. Everything else releases its textures and models. In the Armor Court only the court and its two halls are drawn or loaded (about 287 MB of textures, versus about 520 MB at the hub).
+- Lights are never hidden. Toggling one would change every shader and cause a recompile hitch.
 
 ## Current floor plan
 
@@ -85,15 +89,17 @@ Paintings, labels and 3D models load for rooms within two doorways of the visito
                  └───────┐    ┌───────┘
                          │    │ north-hall
            ┌─────────────┘    └──────────┐                ┌────────────┐
-           │      entrance-gallery       ├────────────────┤ dark-room  │  Goya, Caravaggio,
-           │  Caillebotte · Monet · Gogh     east-hall      │            │  Artemisia Gentileschi
+           │      entrance-gallery       ├────────────────┤ dark-room  │  Goya wall (5 Black Paintings),
+           │  Caillebotte · Monet · Gogh     east-hall      │            │  Caravaggio, Artemisia Gentileschi
            └─────────────┐    ┌──────────┘                └────────────┘
-                         │    │ south-hall
-         ┌───────────────┘    └───────────────┐
-         │          armor-court               │  Cleveland's Dido and Aeneas tapestries (8),
-         │   cases · horse armor platform     │  armor in cases (photo stand-ins until 3D)
-         └────────────────────────────────────┘
+                         │    │ armor-hall
+                         │    └───────────────┬───────────────────────────────┐
+                         │   armor-hall-east                 armor-court      │  Dido and Aeneas tapestries (8),
+                         └────────────────────┤                               │  CMA armor scans (5)
+                                              └───────────────────────────────┘
 ```
+
+The armor wing bends on purpose: from the court you can't see the rest of the museum, so it isn't drawn or kept in memory there.
 
 Debug flag: `?at=x,z&look=x,z` starts the camera anywhere (e.g. `?at=12,0&look=27,0` looks down the east hall at Saturn).
 

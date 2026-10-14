@@ -2,7 +2,7 @@ import './style.css';
 import * as THREE from 'three/webgpu';
 import { createEngine } from './engine/renderer';
 import { loadMuseum } from './world/scene-format';
-import { findDoorways, Walkable } from './world/layout';
+import { computeVisibility, findDoorways, Walkable } from './world/layout';
 import { loadRoom, type LoadedRoom } from './world/rooms';
 import { placeArtworks } from './world/artworks';
 import { placeSculptures } from './world/sculptures';
@@ -41,10 +41,13 @@ async function main() {
     debugTeleport(camera);
     const plaque = new Plaque(camera, exhibits);
     const hint = new Hint();
-    // Textures and models load only for rooms near the visitor.
-    const streamer = new RoomStreamer(museum, exhibits);
+    // Rooms you can't see aren't drawn, and their textures and models are released.
+    // Lights stay on: hiding one would change every shader's light set and force a recompile.
+    const roomObjects = new Map([...rooms].map(([id, r]) => [id, r.object.children.filter((o) => !(o as THREE.Light).isLight)]));
+    for (const e of exhibits) roomObjects.get(e.room)!.push(e.group);
+    const streamer = new RoomStreamer(museum, exhibits, computeVisibility(museum, doorways), roomObjects);
     streamer.update(controls.room.room.id);
-    const debug = new DebugOverlay(renderer, backend, () => streamer.loadedRooms(), () => {
+    const debug = new DebugOverlay(renderer, backend, () => streamer.drawnRooms(), () => streamer.loadedRooms(), () => {
       const p = camera.position;
       return `${controls.room.room.id} @ ${p.x.toFixed(1)}, ${p.y.toFixed(2)}, ${p.z.toFixed(1)}`;
     });

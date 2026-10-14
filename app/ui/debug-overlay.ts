@@ -15,6 +15,7 @@ export class DebugOverlay {
   constructor(
     private readonly renderer: THREE.WebGPURenderer,
     private readonly backend: string,
+    private readonly drawnRooms: () => string[],
     private readonly loadedRooms: () => string[],
     private readonly currentRoom: () => string,
   ) {
@@ -44,6 +45,7 @@ export class DebugOverlay {
         `triangles  ${render.triangles.toLocaleString()}`,
         `textures   ${memory.textures}  (${(memory.texturesSize / MB).toFixed(1)} MB)`,
         `geometries ${memory.geometries}`,
+        `drawn      ${this.drawnRooms().join(', ')}`,
         `loaded     ${this.loadedRooms().join(', ')}`,
         `in         ${this.currentRoom()}`,
       ].join('\n');

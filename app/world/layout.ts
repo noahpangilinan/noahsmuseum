@@ -132,3 +132,86 @@ function footprint(position: number[], width: number, depth: number, rotationY: 
   const [x, , z] = position;
   return { x0: x - hx, x1: x + hx, z0: z - hz, z1: z + hz };
 }
+
+type Segment = [ax: number, az: number, bx: number, bz: number];
+
+/**
+ * Which rooms can be seen from anywhere inside each room (each room includes itself).
+ * Sight lines between grid points in two rooms are tested against every wall piece
+ * (room walls minus their doorway openings), in plan view. Conservative by design:
+ * grazing a door jamb counts as visible, so a room is never hidden while you can see it.
+ */
+export function computeVisibility(museum: Museum, doorways: Doorway[]): Map<string, Set<string>> {
+  const walls = wallSegments(museum, doorways);
+  const samples = new Map(museum.rooms.map((r) => [r.id, samplePoints(r)]));
+  const visible = new Map(museum.rooms.map((r) => [r.id, new Set([r.id])]));
+
+  const rooms = museum.rooms;
+  for (let i = 0; i < rooms.length; i++) {
+    for (let j = i + 1; j < rooms.length; j++) {
+      const a = samples.get(rooms[i].id)!;
+      const b = samples.get(rooms[j].id)!;
+      const sees = a.some(([px, pz]) =>
+        b.some(([qx, qz]) => !walls.some((w) => segmentsCross(px, pz, qx, qz, w))),
+      );
+      if (sees) {
+        visible.get(rooms[i].id)!.add(rooms[j].id);
+        visible.get(rooms[j].id)!.add(rooms[i].id);
+      }
+    }
+  }
+  return visible;
+}
+
+/** Every solid stretch of wall in plan view: each room's four walls with doorway gaps cut out. */
+function wallSegments(museum: Museum, doorways: Doorway[]): Segment[] {
+  const out: Segment[] = [];
+  for (const r of museum.rooms) {
+    const [x0, , z0] = r.bounds.min;
+    const [x1, , z1] = r.bounds.max;
+    const sides: [axis: 'x' | 'z', plane: number, lo: number, hi: number][] = [
+      ['z', z0, x0, x1],
+      ['z', z1, x0, x1],
+      ['x', x0, z0, z1],
+      ['x', x1, z0, z1],
+    ];
+    for (const [axis, plane, lo, hi] of sides) {
+      const gaps = doorways
+        .filter((d) => d.rooms.includes(r.id) && d.axis === axis && Math.abs(d.plane - plane) < EPS)
+        .sort((a, b) => a.from - b.from);
+      let cursor = lo;
+      const push = (from: number, to: number) => {
+        if (to - from < EPS) return;
+        out.push(axis === 'z' ? [from, plane, to, plane] : [plane, from, plane, to]);
+      };
+      for (const g of gaps) {
+        push(cursor, g.from);
+        cursor = g.to;
+      }
+      push(cursor, hi);
+    }
+  }
+  return out;
+}
+
+/** A grid of standing positions across the room, about every 1.25 m. */
+function samplePoints(r: Room): [number, number][] {
+  const inset = 0.3;
+  const axis = (lo: number, hi: number) => {
+    const n = Math.max(2, Math.ceil((hi - lo - 2 * inset) / 1.25) + 1);
+    return Array.from({ length: n }, (_, i) => lo + inset + ((hi - lo - 2 * inset) * i) / (n - 1));
+  };
+  const xs = axis(r.bounds.min[0], r.bounds.max[0]);
+  const zs = axis(r.bounds.min[2], r.bounds.max[2]);
+  return xs.flatMap((x) => zs.map((z): [number, number] => [x, z]));
+}
+
+/** True when segment p→q properly crosses wall w (touching an endpoint doesn't count). */
+function segmentsCross(px: number, pz: number, qx: number, qz: number, [ax, az, bx, bz]: Segment): boolean {
+  const orient = (x1: number, z1: number, x2: number, z2: number, x3: number, z3: number) =>
+    Math.sign((x2 - x1) * (z3 - z1) - (z2 - z1) * (x3 - x1));
+  return (
+    orient(px, pz, qx, qz, ax, az) * orient(px, pz, qx, qz, bx, bz) < 0 &&
+    orient(ax, az, bx, bz, px, pz) * orient(ax, az, bx, bz, qx, qz) < 0
+  );
+}

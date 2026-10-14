@@ -10,26 +10,33 @@ export interface Streamable {
 }
 
 /**
- * Rooms within `radius` doorways of the visitor are loaded; the rest release their
- * textures and models. Two doorways is enough to cover what you can see down a corridor.
+ * Decides what exists on the GPU and what gets drawn, room by room, from the precomputed
+ * line-of-sight table (`computeVisibility`):
  *
- * This frees GPU memory, which is different from rendering cost: three.js already skips
- * drawing anything outside the camera's view (frustum culling).
+ * - **Drawn:** rooms visible from the visitor's room. Everything else is hidden, which saves
+ *   draw calls that frustum culling can't (a room behind a wall is still "in view").
+ * - **Loaded:** the drawn set, plus what the neighbouring rooms can see as long as it's within
+ *   two doorways, so stepping through a doorway rarely reveals art that's still downloading.
+ *   (Anything further is so far away that its brief grey placeholder is a few pixels.) The
+ *   rest release their textures and models.
  */
 export class RoomStreamer {
-  private readonly graph = new Map<string, string[]>();
+  private readonly neighbours = new Map<string, string[]>();
   private current: string | null = null;
   private loaded = new Set<string>();
+  private drawn = new Set<string>();
 
   constructor(
     museum: Museum,
     private readonly items: Streamable[],
-    private readonly radius = 2,
+    private readonly visibility: Map<string, Set<string>>,
+    /** Scene objects belonging to each room (its shell, furniture and exhibits). */
+    private readonly roomObjects: Map<string, THREE.Object3D[]>,
   ) {
-    for (const r of museum.rooms) this.graph.set(r.id, [...r.connections]);
+    for (const r of museum.rooms) this.neighbours.set(r.id, [...r.connections]);
     // Connections may be listed on one side only; make the graph symmetric.
     for (const r of museum.rooms) for (const c of r.connections) {
-      const back = this.graph.get(c)!;
+      const back = this.neighbours.get(c)!;
       if (!back.includes(r.id)) back.push(r.id);
     }
   }
@@ -38,25 +45,29 @@ export class RoomStreamer {
   update(roomId: string) {
     if (roomId === this.current) return;
     this.current = roomId;
-    this.loaded = this.roomsWithin(roomId, this.radius);
+    this.drawn = new Set(this.visibility.get(roomId));
+    this.loaded = new Set(this.drawn);
+    const near = this.roomsWithin(roomId, 2);
+    for (const n of this.neighbours.get(roomId) ?? []) {
+      for (const r of this.visibility.get(n) ?? []) if (near.has(r)) this.loaded.add(r);
+    }
+    for (const [room, objects] of this.roomObjects) {
+      for (const o of objects) o.visible = this.drawn.has(room);
+    }
     for (const item of this.items) {
       if (this.loaded.has(item.room)) item.load();
       else item.unload();
     }
   }
 
-  loadedRooms(): string[] {
-    return [...this.loaded];
-  }
-
-  private roomsWithin(start: string, radius: number): Set<string> {
+  private roomsWithin(start: string, hops: number): Set<string> {
     const dist = new Map([[start, 0]]);
     const queue = [start];
     while (queue.length) {
       const r = queue.shift()!;
       const d = dist.get(r)!;
-      if (d === radius) continue;
-      for (const n of this.graph.get(r) ?? []) {
+      if (d === hops) continue;
+      for (const n of this.neighbours.get(r) ?? []) {
         if (!dist.has(n)) {
           dist.set(n, d + 1);
           queue.push(n);
@@ -64,6 +75,14 @@ export class RoomStreamer {
       }
     }
     return new Set(dist.keys());
+  }
+
+  drawnRooms(): string[] {
+    return [...this.drawn];
+  }
+
+  loadedRooms(): string[] {
+    return [...this.loaded];
   }
 }
 

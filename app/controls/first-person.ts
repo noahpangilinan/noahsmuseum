@@ -22,9 +22,8 @@ const KEYS = {
   left: ['KeyA', 'ArrowLeft'],
   right: ['KeyD', 'ArrowRight'],
   run: ['ShiftLeft', 'ShiftRight'],
-  // Ctrl, with C as a fallback: browsers won't let a page block Ctrl+W (close tab),
-  // so crouch-walking forward with Ctrl+W can't be fully protected.
-  crouch: ['ControlLeft', 'ControlRight', 'KeyC'],
+  // Not Ctrl: browsers won't let a page block Ctrl+W, so crouch-walking would close the tab.
+  crouch: ['KeyC'],
 };
 
 /**
@@ -53,11 +52,7 @@ export class FirstPersonControls {
     this.currentRoom = rooms[0];
     this.raycaster.far = SIT_REACH;
 
-    window.addEventListener('keydown', (e) => {
-      this.pressed.add(e.code);
-      // While walking, stop the Ctrl shortcuts a page is allowed to cancel (save, bookmark, select all…).
-      if (this.pointer.isLocked && e.ctrlKey && e.code !== 'ControlLeft' && e.code !== 'ControlRight') e.preventDefault();
-    });
+    window.addEventListener('keydown', (e) => this.pressed.add(e.code));
     window.addEventListener('keyup', (e) => this.pressed.delete(e.code));
     window.addEventListener('blur', () => this.pressed.clear());
     this.pointer.addEventListener('unlock', () => this.pressed.clear());

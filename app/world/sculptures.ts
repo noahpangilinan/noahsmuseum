@@ -103,6 +103,7 @@ export function placeSculptures(
       info: sc,
       target,
       center,
+      group,
       room: sc.room,
       load: () => {
         wanted = true;

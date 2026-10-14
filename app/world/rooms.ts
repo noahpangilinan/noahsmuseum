@@ -215,7 +215,7 @@ function buildPlaceholderRoom(room: Room, doorways: Doorway[]): THREE.Object3D {
       }
     }
   } else if (ceiling === 'skylight') {
-    group.add(createSkylight(cx, y1, cz, w * 0.6, d * 0.6));
+    group.add(...createSkylight(cx, y1, cz, w * 0.6, d * 0.6));
   }
 
   return group;
@@ -223,25 +223,25 @@ function buildPlaceholderRoom(room: Room, doorways: Doorway[]): THREE.Object3D {
 
 let ltcReady = false;
 
-/** A diffuse ceiling light panel: one area light plus the glowing diffuser you see. */
-function createSkylight(x: number, ceilingY: number, z: number, width: number, depth: number): THREE.Group {
+/**
+ * A diffuse ceiling light panel: one area light plus the glowing diffuser you see. Returned as
+ * siblings, not a group, so a hidden room can hide the panel without switching the light off.
+ */
+function createSkylight(x: number, ceilingY: number, z: number, width: number, depth: number): THREE.Object3D[] {
   if (!ltcReady) {
     THREE.RectAreaLightNode.setLTC(RectAreaLightTexturesLib.init());
     ltcReady = true;
   }
-  const group = new THREE.Group();
   const light = new THREE.RectAreaLight(0xfff8ee, 2.2, width, depth);
   light.position.set(x, ceilingY - 0.03, z);
   light.lookAt(x, 0, z);
-  group.add(light);
 
   const panel = new THREE.Mesh(
     new THREE.PlaneGeometry(width, depth).rotateX(Math.PI / 2),
     new THREE.MeshBasicMaterial({ color: new THREE.Color(0xfff8ee).multiplyScalar(1.6) }),
   );
   panel.position.set(x, ceilingY - 0.02, z);
-  group.add(panel);
-  return group;
+  return [light, panel];
 }
 
 /** Rewrites 0–1 UVs to metres so tiling textures keep a constant real-world scale. */

@@ -13,7 +13,7 @@
       "connections": [
         "north-hall",
         "east-hall",
-        "south-hall"
+        "armor-hall"
       ],
       "finish": {
         "walls": "#eeebe4",
@@ -262,13 +262,30 @@
       ]
     },
     {
-      "id": "south-hall",
+      "id": "armor-hall",
       "bounds": {
         "min": [-1.5, 0, 5],
-        "max": [1.5, 3.6, 11]
+        "max": [1.5, 3.6, 13]
       },
       "connections": [
         "entrance-gallery",
+        "armor-hall-east"
+      ],
+      "finish": {
+        "walls": "#8a8073",
+        "floor": "stone",
+        "ceiling": "none"
+      },
+      "slots": []
+    },
+    {
+      "id": "armor-hall-east",
+      "bounds": {
+        "min": [1.5, 0, 10],
+        "max": [9.5, 3.6, 13]
+      },
+      "connections": [
+        "armor-hall",
         "armor-court"
       ],
       "finish": {
@@ -281,11 +298,11 @@
     {
       "id": "armor-court",
       "bounds": {
-        "min": [-11, 0, 11],
-        "max": [11, 8, 27]
+        "min": [9.5, 0, 10],
+        "max": [31.5, 8, 26]
       },
       "connections": [
-        "south-hall"
+        "armor-hall-east"
       ],
       "finish": {
         "walls": "#7a7166",
@@ -296,56 +313,61 @@
       "furniture": [
         {
           "type": "bench",
-          "position": [0, 0, 13.4],
+          "position": [20.5, 0, 13.2],
+          "rotationY": 0
+        },
+        {
+          "type": "bench",
+          "position": [20.5, 0, 22.8],
           "rotationY": 0
         }
       ],
       "slots": [
         {
           "id": "north-1",
-          "position": [6.5, 2.61, 11.02],
+          "position": [14.5, 2.61, 10.02],
           "normal": [0, 0, 1],
           "maxSize": [7, 4.6]
         },
         {
-          "id": "east-2",
-          "position": [10.98, 2.64, 15.5],
-          "normal": [-1, 0, 0],
+          "id": "north-2",
+          "position": [23, 2.64, 10.02],
+          "normal": [0, 0, 1],
           "maxSize": [7, 4.6]
         },
         {
           "id": "east-3",
-          "position": [10.98, 2.61, 22.8],
+          "position": [31.48, 2.61, 14.5],
           "normal": [-1, 0, 0],
           "maxSize": [7, 4.6]
         },
         {
-          "id": "south-4",
-          "position": [6.9, 2.63, 26.98],
-          "normal": [0, 0, -1],
+          "id": "east-4",
+          "position": [31.48, 2.63, 21.7],
+          "normal": [-1, 0, 0],
           "maxSize": [7, 4.6]
         },
         {
           "id": "south-5",
-          "position": [0, 2.63, 26.98],
+          "position": [27, 2.63, 25.98],
           "normal": [0, 0, -1],
           "maxSize": [7, 4.6]
         },
         {
           "id": "south-6",
-          "position": [-6.5, 2.61, 26.98],
+          "position": [20.5, 2.61, 25.98],
           "normal": [0, 0, -1],
           "maxSize": [7, 4.6]
         },
         {
-          "id": "west-7",
-          "position": [-10.98, 2.57, 22.5],
-          "normal": [1, 0, 0],
+          "id": "south-7",
+          "position": [14, 2.57, 25.98],
+          "normal": [0, 0, -1],
           "maxSize": [7, 4.6]
         },
         {
           "id": "west-8",
-          "position": [-10.98, 2.62, 16],
+          "position": [9.52, 2.62, 19.5],
           "normal": [1, 0, 0],
           "maxSize": [7, 4.6]
         }
@@ -637,7 +659,7 @@
     },
     {
       "id": "dido-and-aeneas-2",
-      "slot": "armor-court/east-2",
+      "slot": "armor-court/north-2",
       "title": "Cupid disguised as Aeneas's son, presents gifts to Dido",
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
@@ -661,7 +683,7 @@
     },
     {
       "id": "dido-and-aeneas-4",
-      "slot": "armor-court/south-4",
+      "slot": "armor-court/east-4",
       "title": "Dido shows Aeneas the plans for the fortifications of Carthage",
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
@@ -697,7 +719,7 @@
     },
     {
       "id": "dido-and-aeneas-7",
-      "slot": "armor-court/west-7",
+      "slot": "armor-court/south-7",
       "title": "Aeneas says Farewell to Dido",
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
@@ -737,8 +759,8 @@
     {
       "id": "armor-for-man-and-horse",
       "room": "armor-court",
-      "position": [0, 0, 19],
-      "rotationY": 180,
+      "position": [20.5, 0, 18],
+      "rotationY": -90,
       "title": "Armor for Man and Horse with Völs-Colonna Arms",
       "artist": "North Italy",
       "year": 1575,
@@ -753,7 +775,7 @@
     {
       "id": "crossbow-of-augustus-i",
       "room": "armor-court",
-      "position": [-6, 0, 15],
+      "position": [14.5, 0, 14],
       "rotationY": 90,
       "title": "Crossbow and Cranequin of Elector Augustus I of Saxony",
       "artist": "Germany, Saxony",
@@ -769,7 +791,7 @@
     {
       "id": "black-and-white-burgonet",
       "room": "armor-court",
-      "position": [-6, 0, 23],
+      "position": [14.5, 0, 22],
       "rotationY": 90,
       "title": "Black and White Burgonet (of the Civic Guard of Bologna)",
       "artist": "Italy",
@@ -785,7 +807,7 @@
     {
       "id": "hussar-breastplate",
       "room": "armor-court",
-      "position": [6, 0, 15],
+      "position": [26.5, 0, 14],
       "rotationY": -90,
       "title": "Breastplate from Hussar's Cuirass",
       "artist": "Germany (Augsburg) or Hungary",
@@ -801,7 +823,7 @@
     {
       "id": "corinthian-helmet",
       "room": "armor-court",
-      "position": [6, 0, 23],
+      "position": [26.5, 0, 22],
       "rotationY": -90,
       "title": "Corinthian Helmet",
       "artist": "Greece",
