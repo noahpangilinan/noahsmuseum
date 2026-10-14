@@ -1,0 +1,54 @@
+{
+  "rooms": [
+    {
+      "id": "entrance-gallery",
+      "bounds": { "min": [-7, 0, -5], "max": [7, 5, 5] },
+      "spawn": { "position": [0, 0, 3.5], "lookAt": [0, 1.5, -5] },
+      "connections": [],
+      "slots": [
+        { "id": "north-1", "position": [0, 1.5, -4.98], "normal": [0, 0, 1], "maxSize": [4.0, 3.0] },
+        { "id": "west-1", "position": [-6.98, 1.5, 0], "normal": [1, 0, 0], "maxSize": [3.0, 2.2] },
+        { "id": "east-1", "position": [6.98, 1.5, 0], "normal": [-1, 0, 0], "maxSize": [3.0, 2.2] },
+        { "id": "south-1", "position": [-3.5, 1.5, 4.98], "normal": [0, 0, -1], "maxSize": [2.5, 2.0] }
+      ]
+    }
+  ],
+  "artworks": [
+    {
+      "id": "paris-street-rainy-day",
+      "slot": "entrance-gallery/north-1",
+      "title": "Paris Street; Rainy Day",
+      "artist": "Gustave Caillebotte",
+      "year": 1877,
+      "dimensionsCm": [212.2, 276.2],
+      "image": "art/paris-street-rainy-day/preview.jpg",
+      "frame": "gilded-ornate",
+      "source": "https://www.artic.edu/artworks/20684",
+      "license": "CC0"
+    },
+    {
+      "id": "water-lilies",
+      "slot": "entrance-gallery/west-1",
+      "title": "Water Lilies",
+      "artist": "Claude Monet",
+      "year": 1906,
+      "dimensionsCm": [89.9, 94.1],
+      "image": "art/water-lilies/preview.jpg",
+      "frame": "gilded-ornate",
+      "source": "https://www.artic.edu/artworks/16568",
+      "license": "CC0"
+    },
+    {
+      "id": "the-bedroom",
+      "slot": "entrance-gallery/east-1",
+      "title": "The Bedroom",
+      "artist": "Vincent van Gogh",
+      "year": 1889,
+      "dimensionsCm": [73.6, 92.3],
+      "image": "art/the-bedroom/preview.jpg",
+      "frame": "modern-black",
+      "source": "https://www.artic.edu/artworks/28560",
+      "license": "CC0"
+    }
+  ]
+}

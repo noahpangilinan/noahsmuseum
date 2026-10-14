@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.netlify/
+*.blend1
+*.blend2
+.DS_Store
