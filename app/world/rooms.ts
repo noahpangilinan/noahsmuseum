@@ -25,6 +25,11 @@ export function getKTX2Loader(renderer: THREE.WebGPURenderer): KTX2Loader {
   return ktx2;
 }
 
+/** glTF loader with the Meshopt + KTX2 decoders the asset pipeline produces. */
+export function createGLTFLoader(renderer: THREE.WebGPURenderer): GLTFLoader {
+  return new GLTFLoader().setKTX2Loader(getKTX2Loader(renderer)).setMeshoptDecoder(MeshoptDecoder);
+}
+
 export async function loadRoom(room: Room, doorways: Doorway[], renderer: THREE.WebGPURenderer): Promise<LoadedRoom> {
   const object = room.model ? await loadModelRoom(room, renderer) : buildPlaceholderRoom(room, doorways);
   object.name = `room:${room.id}`;
@@ -39,8 +44,7 @@ export async function loadRoom(room: Room, doorways: Doorway[], renderer: THREE.
 }
 
 async function loadModelRoom(room: Room, renderer: THREE.WebGPURenderer): Promise<THREE.Object3D> {
-  const loader = new GLTFLoader().setKTX2Loader(getKTX2Loader(renderer)).setMeshoptDecoder(MeshoptDecoder);
-  const gltf = await loader.loadAsync(contentUrl(room.model!));
+  const gltf = await createGLTFLoader(renderer).loadAsync(contentUrl(room.model!));
 
   if (room.lightmap) {
     const lightMap = room.lightmap.endsWith('.ktx2')

@@ -50,10 +50,21 @@ docs/         plan, Blender conventions, artwork shortlist
 - `slots[].maxSize` is **[width, height]** in metres.
 - A room without `model` gets a procedural placeholder box built from its `bounds`. All current rooms are placeholders until the first Blender room lands.
 - **Doorways are automatic.** List two rooms in each other's `connections` and make their `bounds` touch along a wall (corridors are just narrow rooms). The shared stretch of wall becomes an opening, up to 3.6 m high, and you can walk through it.
-- `finish` (optional, placeholder rooms only): `walls` colour, `floor` (`oak`, `dark-wood`, `concrete`), `ceiling` lighting (`downlights`, `skylight`, `none`), and `artworkSpots` (default `true`).
+- `finish` (optional, placeholder rooms only): `walls` colour, `floor` (`oak`, `dark-wood`, `concrete`, `stone`), `ceiling` lighting (`downlights`, `skylight`, `none`), and `artworkSpots` (default `true`).
 - `furniture` (optional): benches at `position`, rotated by `rotationY` degrees. You can't walk through them.
 - `spawn` (optional) sets where the visitor starts.
-- Artworks can carry an optional display `date` (e.g. `"c. 1599"`) alongside the numeric `year`.
+- Artworks can carry an optional display `date` (e.g. `"c. 1599"`) alongside the numeric `year`. `frame: "tapestry"` hangs a textile from a rod with soft folds.
+- `sculptures` (optional, top level): free-standing 3D pieces placed by `room` + floor `position` + `rotationY`, with `dimensionsCm` as **[height, width, depth]** and `display` set to `case` (glass vitrine), `plinth` or `platform`. Give a `model` (glTF) and/or an `image`. The image appears as a photo card in the display until the model exists.
+
+### Adding a 3D model
+
+Download the glTF/GLB, then compress it before committing:
+
+```sh
+npx @gltf-transform/cli optimize in.glb content/models/<id>.glb --compress meshopt --texture-compress webp --texture-size 2048 --simplify-ratio 0.5
+```
+
+Set `"model": "models/<id>.glb"` on the sculpture. The app scales it to the catalogue height and stands it on the display, so the model should face +z. Aim for ≤ 150k triangles and 2K textures per piece. Sculptures add no lights, so they cost draw calls and memory but almost no shading time.
 
 Each light adds shading cost to every pixel and slows shader compilation at load, so watch the count. A skylight room with no artwork spots costs one light in total.
 
@@ -64,11 +75,15 @@ Each light adds shading cost to every pixel and slows shader compilation at load
                  │     swan-room      │  Hilma af Klint, The Swan (12 works), skylight
                  └───────┐    ┌───────┘
                          │    │ north-hall
-           ┌─────────────┘    └──────────┐
-           │      entrance-gallery       ├──────────────┬────────────┐
-           │  Caillebotte · Monet · Gogh    east-hall      dark-room  │  Goya, Caravaggio
-           └─────────────────────────────┘──────────────┤            │
-                                                        └────────────┘
+           ┌─────────────┘    └──────────┐                ┌────────────┐
+           │      entrance-gallery       ├────────────────┤ dark-room  │  Goya, Caravaggio,
+           │  Caillebotte · Monet · Gogh     east-hall      │            │  Artemisia Gentileschi
+           └─────────────┐    ┌──────────┘                └────────────┘
+                         │    │ south-hall
+         ┌───────────────┘    └───────────────┐
+         │          armor-court               │  Cleveland's Dido and Aeneas tapestries (8),
+         │   cases · horse armor platform     │  armor in cases (photo stand-ins until 3D)
+         └────────────────────────────────────┘
 ```
 
 Debug flag: `?at=x,z&look=x,z` starts the camera anywhere (e.g. `?at=12,0&look=27,0` looks down the east hall at Saturn).

@@ -40,7 +40,22 @@ Sizes for Nos. 1, 12, 13 and 17 come from exhibition listings (AGNSW, Guggenheim
 | Saturn Devouring His Son | Francisco de Goya | 1819–1823 | 143.5 × 81.4 | [Commons](https://commons.wikimedia.org/wiki/File:Francisco_de_Goya,_Saturno_devorando_a_su_hijo_(1819-1823).jpg) | Public domain |
 | Judith Beheading Holofernes | Caravaggio | c. 1599 | 145 × 195 | [Commons](https://commons.wikimedia.org/wiki/File:Caravaggio_-_Giuditta_e_Oloferne_(ca._1599).jpg) | Public domain |
 
-Dimensions for these two come from Wikidata (Q1150997, Q2470123). Artemisia Gentileschi painted two versions of the same subject (*Judith Slaying Holofernes*), which would pair well on the empty `dark-room/south-1` slot.
+| Judith Slaying Holofernes | Artemisia Gentileschi | c. 1620 | 199 × 162.5 | [Commons](https://commons.wikimedia.org/wiki/File:Artemisia_Gentileschi_-_Giuditta_decapita_Oloferne_-_Google_Art_Project.jpg) | Public domain |
+
+Dimensions come from Wikidata (Q1150997, Q2470123, Q3769169). Artemisia's is the Uffizi version (c. 1620). The earlier Naples version is 158.8 × 125.4 cm.
+
+## Armor Court (Cleveland Museum of Art, all CC0)
+
+Data and images come from the [CMA Open Access API](https://openaccess-api.clevelandart.org/).
+
+- **Tapestries:** *The Story of Dido and Aeneas*, 1915.79.1–8. Designed by Giovanni Francesco Romanelli, woven by Michael Wauters, 1679. Sizes come from the API.
+- **Armor** (`sculptures` in museum.json): 1964.88 *Armor for Man and Horse with Völs-Colonna Arms*, 1916.1723 crossbow of Augustus I, 1916.891 burgonet, 1916.1521 hussar breastplate, 1926.54 Corinthian helmet. All five have CC0 3D scans on Sketchfab (`sketchfab_id` in the API). Downloading needs a Sketchfab login, so photo cards stand in for now.
+  - Approximate sizes: the horse armor is set to 270 × 90 × 280 cm because the API lists no dimensions. The helmet and breastplate depths are estimates.
+- Other suits in the court, such as the Cuirassier's armor and the Field Armor in Maximilian Style, have no 3D scans, so they're left out.
+
+## Excluded
+
+- Eldzier Cortor, *L'Abattoir (The Slaughterhouse)*, MoMA. Cortor died in 2015, so the work is under copyright. The public build is public-domain only.
 
 ## Not usable publicly
 

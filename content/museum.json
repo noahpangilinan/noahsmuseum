@@ -12,7 +12,8 @@
       },
       "connections": [
         "north-hall",
-        "east-hall"
+        "east-hall",
+        "south-hall"
       ],
       "finish": {
         "walls": "#eeebe4",
@@ -228,9 +229,98 @@
         },
         {
           "id": "south-1",
-          "position": [22, 1.5, 5.98],
+          "position": [22, 1.55, 5.98],
           "normal": [0, 0, -1],
           "maxSize": [3, 2.2]
+        }
+      ]
+    },
+    {
+      "id": "south-hall",
+      "bounds": {
+        "min": [-1.5, 0, 5],
+        "max": [1.5, 3.6, 11]
+      },
+      "connections": [
+        "entrance-gallery",
+        "armor-court"
+      ],
+      "finish": {
+        "walls": "#8a8073",
+        "floor": "stone"
+      },
+      "slots": []
+    },
+    {
+      "id": "armor-court",
+      "bounds": {
+        "min": [-11, 0, 11],
+        "max": [11, 8, 27]
+      },
+      "connections": [
+        "south-hall"
+      ],
+      "finish": {
+        "walls": "#7a7166",
+        "floor": "stone",
+        "ceiling": "skylight",
+        "artworkSpots": false
+      },
+      "furniture": [
+        {
+          "type": "bench",
+          "position": [0, 0, 13.4],
+          "rotationY": 0
+        }
+      ],
+      "slots": [
+        {
+          "id": "north-1",
+          "position": [6.5, 2.61, 11.02],
+          "normal": [0, 0, 1],
+          "maxSize": [7, 4.6]
+        },
+        {
+          "id": "east-2",
+          "position": [10.98, 2.64, 15.5],
+          "normal": [-1, 0, 0],
+          "maxSize": [7, 4.6]
+        },
+        {
+          "id": "east-3",
+          "position": [10.98, 2.61, 22.8],
+          "normal": [-1, 0, 0],
+          "maxSize": [7, 4.6]
+        },
+        {
+          "id": "south-4",
+          "position": [6.9, 2.63, 26.98],
+          "normal": [0, 0, -1],
+          "maxSize": [7, 4.6]
+        },
+        {
+          "id": "south-5",
+          "position": [0, 2.63, 26.98],
+          "normal": [0, 0, -1],
+          "maxSize": [7, 4.6]
+        },
+        {
+          "id": "south-6",
+          "position": [-6.5, 2.61, 26.98],
+          "normal": [0, 0, -1],
+          "maxSize": [7, 4.6]
+        },
+        {
+          "id": "west-7",
+          "position": [-10.98, 2.57, 22.5],
+          "normal": [1, 0, 0],
+          "maxSize": [7, 4.6]
+        },
+        {
+          "id": "west-8",
+          "position": [-10.98, 2.62, 16],
+          "normal": [1, 0, 0],
+          "maxSize": [7, 4.6]
         }
       ]
     }
@@ -442,6 +532,115 @@
       "license": "Public domain"
     },
     {
+      "id": "judith-slaying-holofernes",
+      "slot": "dark-room/south-1",
+      "title": "Judith Slaying Holofernes",
+      "artist": "Artemisia Gentileschi",
+      "year": 1620,
+      "date": "c. 1620",
+      "dimensionsCm": [199, 162.5],
+      "image": "art/judith-slaying-holofernes/preview.jpg",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Artemisia_Gentileschi_-_Giuditta_decapita_Oloferne_-_Google_Art_Project.jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "dido-and-aeneas-1",
+      "slot": "armor-court/north-1",
+      "title": "Venus tells Aeneas and his friend Achates to go to Carthage",
+      "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
+      "year": 1679,
+      "dimensionsCm": [411.3, 294.5],
+      "image": "art/dido-and-aeneas-1/preview.jpg",
+      "frame": "tapestry",
+      "source": "https://clevelandart.org/art/1915.79.1",
+      "license": "CC0"
+    },
+    {
+      "id": "dido-and-aeneas-2",
+      "slot": "armor-court/east-2",
+      "title": "Cupid disguised as Aeneas's son, presents gifts to Dido",
+      "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
+      "year": 1679,
+      "dimensionsCm": [418.8, 634.6],
+      "image": "art/dido-and-aeneas-2/preview.jpg",
+      "frame": "tapestry",
+      "source": "https://clevelandart.org/art/1915.79.2",
+      "license": "CC0"
+    },
+    {
+      "id": "dido-and-aeneas-3",
+      "slot": "armor-court/east-3",
+      "title": "Dido Sacrifices to Juno, the Goddess of Marriage",
+      "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
+      "year": 1679,
+      "dimensionsCm": [411, 464.5],
+      "image": "art/dido-and-aeneas-3/preview.jpg",
+      "frame": "tapestry",
+      "source": "https://clevelandart.org/art/1915.79.3",
+      "license": "CC0"
+    },
+    {
+      "id": "dido-and-aeneas-4",
+      "slot": "armor-court/south-4",
+      "title": "Dido shows Aeneas the plans for the fortifications of Carthage",
+      "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
+      "year": 1679,
+      "dimensionsCm": [416.4, 563.6],
+      "image": "art/dido-and-aeneas-4/preview.jpg",
+      "frame": "tapestry",
+      "source": "https://clevelandart.org/art/1915.79.4",
+      "license": "CC0"
+    },
+    {
+      "id": "dido-and-aeneas-5",
+      "slot": "armor-court/south-5",
+      "title": "Dido and Aeneas seek shelter from a storm",
+      "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
+      "year": 1679,
+      "dimensionsCm": [416.4, 418.8],
+      "image": "art/dido-and-aeneas-5/preview.jpg",
+      "frame": "tapestry",
+      "source": "https://clevelandart.org/art/1915.79.5",
+      "license": "CC0"
+    },
+    {
+      "id": "dido-and-aeneas-6",
+      "slot": "armor-court/south-6",
+      "title": "Mercury tells Aeneas to Leave Carthage",
+      "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
+      "year": 1679,
+      "dimensionsCm": [411, 337],
+      "image": "art/dido-and-aeneas-6/preview.jpg",
+      "frame": "tapestry",
+      "source": "https://clevelandart.org/art/1915.79.6",
+      "license": "CC0"
+    },
+    {
+      "id": "dido-and-aeneas-7",
+      "slot": "armor-court/west-7",
+      "title": "Aeneas says Farewell to Dido",
+      "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
+      "year": 1679,
+      "dimensionsCm": [403, 394],
+      "image": "art/dido-and-aeneas-7/preview.jpg",
+      "frame": "tapestry",
+      "source": "https://clevelandart.org/art/1915.79.7",
+      "license": "CC0"
+    },
+    {
+      "id": "dido-and-aeneas-8",
+      "slot": "armor-court/west-8",
+      "title": "The Death of Dido",
+      "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
+      "year": 1679,
+      "dimensionsCm": [414, 466.5],
+      "image": "art/dido-and-aeneas-8/preview.jpg",
+      "frame": "tapestry",
+      "source": "https://clevelandart.org/art/1915.79.8",
+      "license": "CC0"
+    },
+    {
       "id": "judith-beheading-holofernes",
       "slot": "dark-room/north-1",
       "title": "Judith Beheading Holofernes",
@@ -453,6 +652,83 @@
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:Caravaggio_-_Giuditta_e_Oloferne_(ca._1599).jpg",
       "license": "Public domain"
+    }
+  ],
+  "sculptures": [
+    {
+      "id": "armor-for-man-and-horse",
+      "room": "armor-court",
+      "position": [0, 0, 19],
+      "rotationY": 180,
+      "title": "Armor for Man and Horse with Völs-Colonna Arms",
+      "artist": "North Italy",
+      "year": 1575,
+      "date": "c. 1575",
+      "dimensionsCm": [270, 90, 280],
+      "display": "platform",
+      "image": "art/armor-for-man-and-horse/preview.jpg",
+      "source": "https://clevelandart.org/art/1964.88",
+      "license": "CC0"
+    },
+    {
+      "id": "crossbow-of-augustus-i",
+      "room": "armor-court",
+      "position": [-6, 0, 15],
+      "rotationY": 90,
+      "title": "Crossbow and Cranequin of Elector Augustus I of Saxony",
+      "artist": "Germany, Saxony",
+      "year": 1573,
+      "date": "c. 1553–73",
+      "dimensionsCm": [20, 63.5, 58.5],
+      "display": "case",
+      "image": "art/crossbow-of-augustus-i/preview.jpg",
+      "source": "https://clevelandart.org/art/1916.1723",
+      "license": "CC0"
+    },
+    {
+      "id": "black-and-white-burgonet",
+      "room": "armor-court",
+      "position": [-6, 0, 23],
+      "rotationY": 90,
+      "title": "Black and White Burgonet (of the Civic Guard of Bologna)",
+      "artist": "Italy",
+      "year": 1600,
+      "date": "c. 1580–1600",
+      "dimensionsCm": [31.8, 35.6, 19],
+      "display": "case",
+      "image": "art/black-and-white-burgonet/preview.jpg",
+      "source": "https://clevelandart.org/art/1916.891",
+      "license": "CC0"
+    },
+    {
+      "id": "hussar-breastplate",
+      "room": "armor-court",
+      "position": [6, 0, 15],
+      "rotationY": -90,
+      "title": "Breastplate from Hussar's Cuirass",
+      "artist": "Germany (Augsburg) or Hungary",
+      "year": 1580,
+      "date": "c. 1580",
+      "dimensionsCm": [42.3, 35, 20],
+      "display": "case",
+      "image": "art/hussar-breastplate/preview.jpg",
+      "source": "https://clevelandart.org/art/1916.1521",
+      "license": "CC0"
+    },
+    {
+      "id": "corinthian-helmet",
+      "room": "armor-court",
+      "position": [6, 0, 23],
+      "rotationY": -90,
+      "title": "Corinthian Helmet",
+      "artist": "Greece",
+      "year": -475,
+      "date": "500–475 BCE (or modern, before 1926)",
+      "dimensionsCm": [21.5, 18, 25],
+      "display": "case",
+      "image": "art/corinthian-helmet/preview.jpg",
+      "source": "https://clevelandart.org/art/1926.54",
+      "license": "CC0"
     }
   ]
 }

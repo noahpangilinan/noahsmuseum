@@ -23,6 +23,12 @@ export function floorMaterial(style: FloorStyle): THREE.MeshStandardMaterial {
       roughnessMap: tileTexture(noiseCanvas(rand, 0.86, 0.12), false),
       roughness: 1,
     });
+  } else if (style === 'stone') {
+    mat = new THREE.MeshStandardMaterial({
+      map: tileTexture(stoneCanvas(rand, '#9d968a'), true),
+      roughnessMap: tileTexture(noiseCanvas(rand, 0.88, 0.1), false),
+      roughness: 1,
+    });
   } else {
     const palette = style === 'oak' ? (['#9a7a58', 0.035] as const) : (['#5a4030', 0.012] as const);
     mat = new THREE.MeshStandardMaterial({
@@ -109,6 +115,40 @@ function concreteCanvas(rand: () => number, base: string): HTMLCanvasElement {
   for (let i = 0; i < 9000; i++) {
     ctx.fillStyle = rand() < 0.5 ? 'rgba(40,38,35,0.25)' : 'rgba(255,255,255,0.2)';
     ctx.fillRect(rand() * TILE_PX, rand() * TILE_PX, 1.2, 1.2);
+  }
+  return c;
+}
+
+/** Limestone slabs, 60 × 120 cm in a running bond, each with its own tone and fine speckle. */
+function stoneCanvas(rand: () => number, base: string): HTMLCanvasElement {
+  const [c, ctx] = canvas2d();
+  const px = TILE_PX / TILE_M;
+  const slabW = 1.2 * px;
+  const slabH = 0.6 * px;
+  const rows = Math.round(TILE_PX / slabH);
+  const hsl = { h: 0, s: 0, l: 0 };
+  new THREE.Color(base).getHSL(hsl);
+  for (let r = 0; r < rows; r++) {
+    const offset = r % 2 ? slabW / 2 : 0;
+    for (let x = -offset; x < TILE_PX; x += slabW) {
+      const tone = new THREE.Color().setHSL(hsl.h, hsl.s, hsl.l + (rand() - 0.5) * 0.05);
+      ctx.fillStyle = `#${tone.getHexString()}`;
+      ctx.fillRect(x, r * slabH, slabW, slabH);
+      if (x + slabW > TILE_PX) ctx.fillRect(x - TILE_PX, r * slabH, slabW, slabH); // wrap
+    }
+  }
+  for (let i = 0; i < 12000; i++) {
+    ctx.fillStyle = rand() < 0.5 ? 'rgba(60,55,48,0.18)' : 'rgba(255,252,245,0.15)';
+    ctx.fillRect(rand() * TILE_PX, rand() * TILE_PX, 1.3, 1.3);
+  }
+  // Grout joints.
+  ctx.fillStyle = 'rgba(70,64,56,0.55)';
+  for (let r = 0; r < rows; r++) {
+    ctx.fillRect(0, r * slabH, TILE_PX, 2);
+    const offset = r % 2 ? slabW / 2 : 0;
+    for (let x = -offset; x < TILE_PX; x += slabW) {
+      for (const xx of [x, x + TILE_PX]) ctx.fillRect(xx, r * slabH, 2, slabH);
+    }
   }
   return c;
 }

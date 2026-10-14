@@ -5,8 +5,8 @@ import type { Walkable } from '../world/layout';
 
 const EYE_HEIGHT = 1.6;
 export const BODY_RADIUS = 0.3;
-const WALK_SPEED = 1.4; // m/s, a gallery stroll
-const RUN_SPEED = 3.0;
+const WALK_SPEED = 3.0; // m/s: brisker than real life, which feels right on screen
+const RUN_SPEED = 6.0;
 const ACCEL = 8; // higher = snappier easing toward target speed
 
 const KEYS = {

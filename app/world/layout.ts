@@ -1,4 +1,4 @@
-import type { Furniture, Museum, Room } from './scene-format';
+import type { Museum, Room, Sculpture } from './scene-format';
 
 const EPS = 1e-3;
 /** Doorways are never taller than this, even between two tall rooms. */
@@ -70,6 +70,15 @@ export function findDoorways(museum: Museum): Doorway[] {
 /** Bench footprint in metres (long side × depth). Shared with the bench model. */
 export const BENCH_SIZE = { length: 1.6, depth: 0.5, height: 0.46 };
 
+/** Size of a sculpture's plinth/platform in metres, before rotation (width along x, depth along z). */
+export function displaySize(sc: Sculpture): { width: number; depth: number; height: number } {
+  const [h, w, d] = sc.dimensionsCm.map((cm) => cm / 100);
+  if (sc.display === 'platform') return { width: w + 0.8, depth: d + 0.8, height: 0.35 };
+  // Tall pieces stand on a low base; small ones are raised to eye level.
+  const height = h > 1.2 ? 0.3 : sc.display === 'case' ? 0.95 : 0.9;
+  return { width: Math.max(0.6, w + 0.3), depth: Math.max(0.6, d + 0.3), height };
+}
+
 interface Rect {
   x0: number;
   x1: number;
@@ -90,7 +99,13 @@ export class Walkable {
       const [x0, , z0] = r.bounds.min;
       const [x1, , z1] = r.bounds.max;
       this.open.push({ x0: x0 + radius, x1: x1 - radius, z0: z0 + radius, z1: z1 - radius });
-      for (const f of r.furniture ?? []) this.blocked.push(furnitureRect(f, radius));
+      for (const f of r.furniture ?? []) {
+        this.blocked.push(footprint(f.position, BENCH_SIZE.length, BENCH_SIZE.depth, f.rotationY, radius));
+      }
+    }
+    for (const sc of museum.sculptures ?? []) {
+      const size = displaySize(sc);
+      this.blocked.push(footprint(sc.position, size.width, size.depth, sc.rotationY, radius));
     }
     for (const d of doorways) {
       const lateral = { lo: d.from + radius, hi: d.to - radius };
@@ -109,10 +124,11 @@ export class Walkable {
   }
 }
 
-function furnitureRect(f: Furniture, radius: number): Rect {
-  const quarterTurns = Math.round((f.rotationY ?? 0) / 90) % 2 !== 0;
-  const hx = (quarterTurns ? BENCH_SIZE.depth : BENCH_SIZE.length) / 2 + radius;
-  const hz = (quarterTurns ? BENCH_SIZE.length : BENCH_SIZE.depth) / 2 + radius;
-  const [x, , z] = f.position;
+/** Axis-aligned footprint of a box rotated by a multiple of 90°, grown by the body radius. */
+function footprint(position: number[], width: number, depth: number, rotationY: number | undefined, radius: number): Rect {
+  const quarterTurns = Math.round((rotationY ?? 0) / 90) % 2 !== 0;
+  const hx = (quarterTurns ? depth : width) / 2 + radius;
+  const hz = (quarterTurns ? width : depth) / 2 + radius;
+  const [x, , z] = position;
   return { x0: x - hx, x1: x + hx, z0: z - hz, z1: z + hz };
 }

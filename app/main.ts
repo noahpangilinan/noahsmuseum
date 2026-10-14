@@ -5,6 +5,7 @@ import { loadMuseum } from './world/scene-format';
 import { findDoorways, Walkable } from './world/layout';
 import { loadRoom, type LoadedRoom } from './world/rooms';
 import { placeArtworks } from './world/artworks';
+import { placeSculptures } from './world/sculptures';
 import { BODY_RADIUS, FirstPersonControls } from './controls/first-person';
 import { Plaque } from './ui/plaque';
 import { DebugOverlay } from './ui/debug-overlay';
@@ -28,12 +29,15 @@ async function main() {
       scene.add(loaded.object);
     }
 
-    const artworks = placeArtworks(museum, rooms, scene, renderer);
+    const exhibits = [
+      ...placeArtworks(museum, rooms, scene, renderer),
+      ...placeSculptures(museum, rooms, scene, renderer),
+    ];
     const walkable = new Walkable(museum, doorways, BODY_RADIUS);
     const controls = new FirstPersonControls(camera, renderer.domElement, [...rooms.values()], walkable);
     controls.spawn(rooms.values().next().value!);
     debugTeleport(camera);
-    const plaque = new Plaque(camera, artworks);
+    const plaque = new Plaque(camera, exhibits);
     const debug = new DebugOverlay(renderer, backend, () => [...rooms.keys()], () => controls.room.room.id);
 
     start.setStatus('Preparing shaders…');

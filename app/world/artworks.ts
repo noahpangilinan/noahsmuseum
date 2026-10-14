@@ -1,20 +1,18 @@
 import * as THREE from 'three/webgpu';
-import type { Artwork, FrameStyle, Museum } from './scene-format';
+import type { ExhibitInfo, FrameStyle, Museum } from './scene-format';
 import { contentUrl } from './scene-format';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { getKTX2Loader, type LoadedRoom } from './rooms';
 import { shadowDecal } from './surfaces';
 import { createWallLabel, LABEL_GAP, LABEL_HEIGHT, LABEL_SIZE } from './wall-label';
 
-export interface PlacedArtwork {
-  artwork: Artwork;
-  group: THREE.Group;
-  /** The painted surface; raycast target for plaques. */
-  canvas: THREE.Mesh;
-  /** World-space centre of the canvas. */
+/** Anything with a label: a hung artwork or a free-standing piece. */
+export interface PlacedExhibit {
+  info: ExhibitInfo;
+  /** Raycast target for click-to-read plaques. */
+  target: THREE.Mesh;
+  /** World-space centre of the piece. */
   center: THREE.Vector3;
-  /** World-space direction the artwork faces. */
-  normal: THREE.Vector3;
 }
 
 interface FrameSpec {
@@ -41,10 +39,12 @@ const FRAMES: Record<FrameStyle, FrameSpec> = {
     material: new THREE.MeshStandardMaterial({ color: 0xf1efea, roughness: 0.7 }),
   },
   none: { width: 0, depth: 0.03 },
+  tapestry: { width: 0, depth: 0.05 },
 };
 
 const _forward = new THREE.Vector3(0, 0, 1);
 const stretcherMat = new THREE.MeshStandardMaterial({ color: 0xd8d0c0, roughness: 0.9 });
+const rodMat = new THREE.MeshStandardMaterial({ color: 0x3b2a1e, roughness: 0.6 });
 
 /**
  * Places every artwork at its real physical size, centred in its slot, framed and spot-lit.
@@ -55,8 +55,8 @@ export function placeArtworks(
   rooms: Map<string, LoadedRoom>,
   scene: THREE.Scene,
   renderer: THREE.WebGPURenderer,
-): PlacedArtwork[] {
-  const placed: PlacedArtwork[] = [];
+): PlacedExhibit[] {
+  const placed: PlacedExhibit[] = [];
   const anisotropy = renderer.getMaxAnisotropy();
 
   for (const artwork of museum.artworks) {
@@ -81,17 +81,28 @@ export function placeArtworks(
     group.quaternion.setFromUnitVectors(_forward, normal);
 
     const frame = FRAMES[artwork.frame];
-    const canvasMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.8 });
-    const canvas = new THREE.Mesh(new THREE.PlaneGeometry(width, height), canvasMat);
+    const isTapestry = artwork.frame === 'tapestry';
+    const canvasMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: isTapestry ? 0.97 : 0.8 });
+    const canvas = new THREE.Mesh(
+      isTapestry ? clothGeometry(width, height) : new THREE.PlaneGeometry(width, height),
+      canvasMat,
+    );
     canvas.position.z = frame.depth - 0.012; // slightly recessed behind the frame face
-    canvas.userData.artworkId = artwork.id;
+    canvas.userData.exhibitId = artwork.id;
     group.add(canvas);
 
-    // Stretcher bars: gives the canvas edges real thickness when seen from the side.
-    const backDepth = canvas.position.z - 0.002; // stop short of the canvas plane to avoid z-fighting
-    const back = new THREE.Mesh(new THREE.BoxGeometry(width, height, backDepth), stretcherMat);
-    back.position.z = backDepth / 2;
-    group.add(back);
+    if (isTapestry) {
+      // Hanging rod along the top edge.
+      const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, width + 0.16, 12).rotateZ(Math.PI / 2), rodMat);
+      rod.position.set(0, height / 2 + 0.01, frame.depth);
+      group.add(rod);
+    } else {
+      // Stretcher bars: gives the canvas edges real thickness when seen from the side.
+      const backDepth = canvas.position.z - 0.002; // stop short of the canvas plane to avoid z-fighting
+      const back = new THREE.Mesh(new THREE.BoxGeometry(width, height, backDepth), stretcherMat);
+      back.position.z = backDepth / 2;
+      group.add(back);
+    }
 
     if (frame.material) group.add(createFrame(width, height, frame));
 
@@ -125,7 +136,7 @@ export function placeArtworks(
       (err) => console.error(`[museum] failed to load image for ${artwork.id}`, err),
     );
 
-    placed.push({ artwork, group, canvas, center, normal });
+    placed.push({ info: artwork, target: canvas, center });
   }
   return placed;
 }
@@ -170,7 +181,26 @@ function addSpotlight(
   scene.add(spot, spot.target);
 }
 
-function loadTexture(path: string, renderer: THREE.WebGPURenderer): Promise<THREE.Texture> {
+/**
+ * A textile hanging from a rod: soft vertical folds that deepen towards the free bottom edge.
+ * Enough segments for smooth shading, still only a few thousand triangles.
+ */
+function clothGeometry(width: number, height: number): THREE.BufferGeometry {
+  const segX = Math.max(8, Math.ceil(width * 12));
+  const segY = 8;
+  const geo = new THREE.PlaneGeometry(width, height, segX, segY);
+  const pos = geo.getAttribute('position') as THREE.BufferAttribute;
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i);
+    const drop = 0.5 - pos.getY(i) / height; // 0 at the rod, 1 at the hem
+    const fold = Math.sin((x / 0.55) * Math.PI * 2) * 0.6 + Math.sin((x / 0.23) * Math.PI * 2 + 1.3) * 0.4;
+    pos.setZ(i, fold * (0.006 + 0.016 * drop));
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+
+export function loadTexture(path: string, renderer: THREE.WebGPURenderer): Promise<THREE.Texture> {
   const url = contentUrl(path);
   if (path.endsWith('.ktx2')) return getKTX2Loader(renderer).loadAsync(url);
   return new THREE.TextureLoader().loadAsync(url);

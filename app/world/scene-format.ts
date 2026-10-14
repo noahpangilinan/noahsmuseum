@@ -11,6 +11,8 @@ export type Vec2 = [number, number];
 export interface Museum {
   rooms: Room[];
   artworks: Artwork[];
+  /** Free-standing 3D pieces: sculpture, armour, objects in cases. */
+  sculptures?: Sculpture[];
 }
 
 export interface Room {
@@ -34,7 +36,7 @@ export interface Room {
   furniture?: Furniture[];
 }
 
-export type FloorStyle = 'oak' | 'dark-wood' | 'concrete';
+export type FloorStyle = 'oak' | 'dark-wood' | 'concrete' | 'stone';
 
 export interface RoomFinish {
   /** CSS colour. */
@@ -69,18 +71,28 @@ export interface Slot {
   maxSize: Vec2;
 }
 
-export type FrameStyle = 'gilded-ornate' | 'modern-black' | 'gallery-white' | 'none';
+/** `tapestry`: unframed textile hung from a rod, with soft folds. */
+export type FrameStyle = 'gilded-ornate' | 'modern-black' | 'gallery-white' | 'none' | 'tapestry';
 
-export interface Artwork {
+/** What every exhibit's label needs, wall-hung or free-standing. */
+export interface ExhibitInfo {
   id: string;
-  /** `<roomId>/<slotId>` */
-  slot: string;
   title: string;
+  /** Artist, or maker/culture when unknown (e.g. "North Italy"). */
   artist: string;
   /** For sorting/filtering. Use `date` for how it should read on the label. */
   year: number;
   /** Display date when a single year isn't accurate, e.g. "1819–1823" or "c. 1599". */
   date?: string;
+  /** Real size in centimetres: [height, width] for flat works, [height, width, depth] for 3D. */
+  dimensionsCm: number[];
+  source: string;
+  license: string;
+}
+
+export interface Artwork extends ExhibitInfo {
+  /** `<roomId>/<slotId>` */
+  slot: string;
   /** Real physical size of the image area: [height, width] in centimetres. */
   dimensionsCm: Vec2;
   /** Preview texture, relative to content root (.ktx2, .jpg, .png, .webp). */
@@ -88,12 +100,32 @@ export interface Artwork {
   /** Deep Zoom tile pyramid directory (M3). */
   deepZoom?: string;
   frame: FrameStyle;
-  source: string;
-  license: string;
 }
 
-const FRAME_STYLES: FrameStyle[] = ['gilded-ornate', 'modern-black', 'gallery-white', 'none'];
-const FLOOR_STYLES: FloorStyle[] = ['oak', 'dark-wood', 'concrete'];
+/**
+ * `case`: plinth with a glass vitrine. `plinth`: open pedestal. `platform`: low stage
+ * for large pieces (e.g. a mounted armour).
+ */
+export type DisplayStyle = 'case' | 'plinth' | 'platform';
+
+export interface Sculpture extends ExhibitInfo {
+  room: string;
+  /** Floor point under the centre of the display, in metres. */
+  position: Vec3;
+  /** Degrees about the vertical axis. 0 = the piece's front faces +z. */
+  rotationY?: number;
+  /** Real size: [height, width, depth] in centimetres. The model is scaled to this height. */
+  dimensionsCm: Vec3;
+  display: DisplayStyle;
+  /** glTF model (Meshopt + KTX2 welcome), relative to content root. Until it exists, `image` stands in. */
+  model?: string;
+  /** Photo of the object, shown on a card in the display until `model` is available. */
+  image?: string;
+}
+
+const FRAME_STYLES: FrameStyle[] = ['gilded-ornate', 'modern-black', 'gallery-white', 'none', 'tapestry'];
+const FLOOR_STYLES: FloorStyle[] = ['oak', 'dark-wood', 'concrete', 'stone'];
+const DISPLAY_STYLES: DisplayStyle[] = ['case', 'plinth', 'platform'];
 const CEILING_LIGHTS: CeilingLight[] = ['downlights', 'skylight', 'none'];
 
 export class SceneFormatError extends Error {
@@ -181,6 +213,23 @@ export function validateMuseum(data: unknown): Museum {
     }
     if (!FRAME_STYLES.includes(a.frame)) {
       problems.push(`${where}: "frame" must be one of ${FRAME_STYLES.join(', ')}`);
+    }
+  }
+
+  for (const [i, sc] of (m.sculptures ?? []).entries()) {
+    const where = `sculptures[${i}]${sc?.id ? ` (${sc.id})` : ''}`;
+    if (!isStr(sc.id)) problems.push(`${where}: missing "id"`);
+    else if (artIds.has(sc.id)) problems.push(`${where}: id is already used by another exhibit`);
+    artIds.add(sc.id);
+    if (!roomIds.has(sc.room)) problems.push(`${where}: room "${sc.room}" does not exist`);
+    if (!isVec(sc.position, 3)) problems.push(`${where}: "position" must be [x, y, z]`);
+    if (!isVec(sc.dimensionsCm, 3) || sc.dimensionsCm.some((d) => d <= 0)) {
+      problems.push(`${where}: "dimensionsCm" must be [height, width, depth] in cm`);
+    }
+    if (!DISPLAY_STYLES.includes(sc.display)) problems.push(`${where}: "display" must be one of ${DISPLAY_STYLES.join(', ')}`);
+    if (!sc.model && !sc.image) problems.push(`${where}: needs a "model" or a placeholder "image"`);
+    for (const f of ['title', 'artist', 'source', 'license'] as const) {
+      if (!isStr(sc[f])) problems.push(`${where}: missing "${f}"`);
     }
   }
 

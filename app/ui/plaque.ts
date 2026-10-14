@@ -1,6 +1,6 @@
 import * as THREE from 'three/webgpu';
-import type { PlacedArtwork } from '../world/artworks';
-import { artworkDate } from '../world/wall-label';
+import type { PlacedExhibit } from '../world/artworks';
+import { artworkDate, formatDimensions } from '../world/wall-label';
 
 const NEAR_DISTANCE = 2.2; // m — plaque appears when standing this close (further for big pieces)…
 const FACING_DOT = 0.6; // …and roughly looking at the piece
@@ -13,16 +13,16 @@ const CLICK_RANGE = 12; // m — click works from across the room
 export class Plaque {
   private readonly el: HTMLElement;
   private readonly raycaster = new THREE.Raycaster();
-  private readonly byId: Map<string, PlacedArtwork>;
-  private shown: PlacedArtwork | null = null;
+  private readonly byId: Map<string, PlacedExhibit>;
+  private shown: PlacedExhibit | null = null;
   /** Artwork chosen by click; stays until the visitor walks/looks away. */
-  private pinned: PlacedArtwork | null = null;
+  private pinned: PlacedExhibit | null = null;
 
   constructor(
     private readonly camera: THREE.Camera,
-    private readonly artworks: PlacedArtwork[],
+    private readonly exhibits: PlacedExhibit[],
   ) {
-    this.byId = new Map(artworks.map((a) => [a.artwork.id, a]));
+    this.byId = new Map(exhibits.map((a) => [a.info.id, a]));
     this.raycaster.far = CLICK_RANGE;
     this.el = document.createElement('aside');
     this.el.className = 'plaque';
@@ -33,8 +33,8 @@ export class Plaque {
   /** Call on click while pointer-locked. */
   pick() {
     this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera);
-    const hit = this.raycaster.intersectObjects(this.artworks.map((a) => a.canvas), false)[0];
-    this.pinned = hit ? (this.byId.get(hit.object.userData.artworkId) ?? null) : null;
+    const hit = this.raycaster.intersectObjects(this.exhibits.map((a) => a.target), false)[0];
+    this.pinned = hit ? (this.byId.get(hit.object.userData.exhibitId) ?? null) : null;
   }
 
   update() {
@@ -42,11 +42,11 @@ export class Plaque {
     const camDir = this.camera.getWorldDirection(new THREE.Vector3());
     const toArt = new THREE.Vector3();
 
-    const isFacing = (a: PlacedArtwork) => toArt.subVectors(a.center, camPos).normalize().dot(camDir) > FACING_DOT;
+    const isFacing = (a: PlacedExhibit) => toArt.subVectors(a.center, camPos).normalize().dot(camDir) > FACING_DOT;
 
-    let nearest: PlacedArtwork | null = null;
+    let nearest: PlacedExhibit | null = null;
     let best = Infinity;
-    for (const a of this.artworks) {
+    for (const a of this.exhibits) {
       const d = a.center.distanceTo(camPos);
       if (d < nearDistance(a) && d < best && isFacing(a)) {
         best = d;
@@ -58,15 +58,14 @@ export class Plaque {
     this.show(nearest ?? this.pinned);
   }
 
-  private show(a: PlacedArtwork | null) {
+  private show(a: PlacedExhibit | null) {
     if (a === this.shown) return;
     this.shown = a;
     if (!a) {
       this.el.classList.remove('visible');
       return;
     }
-    const { title, artist, dimensionsCm, source, license } = a.artwork;
-    const [h, w] = dimensionsCm;
+    const { title, artist, dimensionsCm, source, license } = a.info;
     this.el.innerHTML = '';
     const add = (tag: string, cls: string, text: string) => {
       const n = document.createElement(tag);
@@ -76,8 +75,8 @@ export class Plaque {
       return n;
     };
     add('div', 'plaque-artist', artist);
-    add('div', 'plaque-title', `${title}, ${artworkDate(a.artwork)}`);
-    add('div', 'plaque-meta', `${h} × ${w} cm`);
+    add('div', 'plaque-title', `${title}, ${artworkDate(a.info)}`);
+    add('div', 'plaque-meta', formatDimensions(dimensionsCm));
     const link = add('a', 'plaque-source', `Source · ${license}`) as HTMLAnchorElement;
     link.href = source;
     link.target = '_blank';
@@ -87,6 +86,6 @@ export class Plaque {
 }
 
 /** Big paintings are viewed from further back, so the plaque triggers further away too. */
-function nearDistance(a: PlacedArtwork): number {
-  return Math.max(NEAR_DISTANCE, 1.2 * Math.max(...a.artwork.dimensionsCm) / 100);
+function nearDistance(a: PlacedExhibit): number {
+  return Math.max(NEAR_DISTANCE, 1.2 * Math.max(...a.info.dimensionsCm) / 100);
 }
