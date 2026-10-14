@@ -48,8 +48,30 @@ docs/         plan, Blender conventions, artwork shortlist
 
 - `dimensionsCm` is **[height, width]**. Artworks always render at real physical size, centred on their slot.
 - `slots[].maxSize` is **[width, height]** in metres.
-- A room without `model` gets a procedural placeholder box built from its `bounds`. That's what the entrance gallery is until the first Blender room lands.
+- A room without `model` gets a procedural placeholder box built from its `bounds`. All current rooms are placeholders until the first Blender room lands.
+- **Doorways are automatic.** List two rooms in each other's `connections` and make their `bounds` touch along a wall (corridors are just narrow rooms). The shared stretch of wall becomes an opening, up to 3.6 m high, and you can walk through it.
+- `finish` (optional, placeholder rooms only): `walls` colour, `floor` (`oak`, `dark-wood`, `concrete`), `ceiling` lighting (`downlights`, `skylight`, `none`), and `artworkSpots` (default `true`).
+- `furniture` (optional): benches at `position`, rotated by `rotationY` degrees. You can't walk through them.
 - `spawn` (optional) sets where the visitor starts.
+- Artworks can carry an optional display `date` (e.g. `"c. 1599"`) alongside the numeric `year`.
+
+Each light adds shading cost to every pixel and slows shader compilation at load, so watch the count. A skylight room with no artwork spots costs one light in total.
+
+## Current floor plan
+
+```
+                 ┌────────────────────┐
+                 │     swan-room      │  Hilma af Klint, The Swan (12 works), skylight
+                 └───────┐    ┌───────┘
+                         │    │ north-hall
+           ┌─────────────┘    └──────────┐
+           │      entrance-gallery       ├──────────────┬────────────┐
+           │  Caillebotte · Monet · Gogh    east-hall      dark-room  │  Goya, Caravaggio
+           └─────────────────────────────┘──────────────┤            │
+                                                        └────────────┘
+```
+
+Debug flag: `?at=x,z&look=x,z` starts the camera anywhere (e.g. `?at=12,0&look=27,0` looks down the east hall at Saturn).
 
 To add an artwork by hand, see [docs/artworks.md](docs/artworks.md#adding-one-by-hand-until-the-m2-cli-exists).
 

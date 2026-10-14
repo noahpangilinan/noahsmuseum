@@ -2,8 +2,13 @@ import * as THREE from 'three/webgpu';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { RectAreaLightTexturesLib } from 'three/addons/lights/RectAreaLightTexturesLib.js';
 import type { Room } from './scene-format';
 import { contentUrl } from './scene-format';
+import type { Doorway } from './layout';
+import { floorMaterial } from './surfaces';
+import { createBench } from './furniture';
 
 export interface LoadedRoom {
   room: Room;
@@ -20,9 +25,15 @@ export function getKTX2Loader(renderer: THREE.WebGPURenderer): KTX2Loader {
   return ktx2;
 }
 
-export async function loadRoom(room: Room, renderer: THREE.WebGPURenderer): Promise<LoadedRoom> {
-  const object = room.model ? await loadModelRoom(room, renderer) : buildPlaceholderRoom(room);
+export async function loadRoom(room: Room, doorways: Doorway[], renderer: THREE.WebGPURenderer): Promise<LoadedRoom> {
+  const object = room.model ? await loadModelRoom(room, renderer) : buildPlaceholderRoom(room, doorways);
   object.name = `room:${room.id}`;
+  for (const f of room.furniture ?? []) {
+    const bench = createBench();
+    bench.position.set(...f.position);
+    bench.rotation.y = THREE.MathUtils.degToRad(f.rotationY ?? 0);
+    object.add(bench);
+  }
   const box = new THREE.Box3(new THREE.Vector3(...room.bounds.min), new THREE.Vector3(...room.bounds.max));
   return { room, object, box };
 }
@@ -55,93 +66,179 @@ async function loadModelRoom(room: Room, renderer: THREE.WebGPURenderer): Promis
   return gltf.scene;
 }
 
-/** A plain gallery box built from the room bounds, used until the Blender room exists. */
-function buildPlaceholderRoom(room: Room): THREE.Object3D {
+const BASE_H = 0.12;
+const BASE_D = 0.015;
+const CASING_W = 0.09;
+const CASING_D = 0.025;
+
+/** One wall of a box room: which plane it lies on, which way it faces, and its extent. */
+interface WallSpec {
+  axis: 'x' | 'z';
+  plane: number;
+  /** Unit normal pointing into the room. */
+  normal: THREE.Vector3;
+  lo: number;
+  hi: number;
+}
+
+/**
+ * A gallery box built from the room bounds, used until the Blender room exists.
+ * Walls get openings wherever a doorway touches them. Static geometry is merged per
+ * material so a room costs a handful of draw calls.
+ */
+function buildPlaceholderRoom(room: Room, doorways: Doorway[]): THREE.Object3D {
   const group = new THREE.Group();
   const [x0, y0, z0] = room.bounds.min;
   const [x1, y1, z1] = room.bounds.max;
   const w = x1 - x0;
-  const h = y1 - y0;
   const d = z1 - z0;
+  const h = y1 - y0;
   const cx = (x0 + x1) / 2;
   const cz = (z0 + z1) / 2;
+  const finish = room.finish ?? {};
 
-  const floorMat = new THREE.MeshStandardMaterial({
-    color: 0x6b5a48,
-    roughness: 0.38,
-    roughnessMap: noiseTexture(256, 0.55, 0.25),
-  });
-  floorMat.roughnessMap!.repeat.set(w / 2, d / 2);
-  const wallMat = new THREE.MeshStandardMaterial({ color: 0xeeebe4, roughness: 0.92 });
-  const ceilingMat = new THREE.MeshStandardMaterial({ color: 0xf4f3f0, roughness: 0.95 });
-  const baseMat = new THREE.MeshStandardMaterial({ color: 0xe2ded6, roughness: 0.6 });
+  const wallColor = new THREE.Color(finish.walls ?? '#eeebe4');
+  const wallMat = new THREE.MeshStandardMaterial({ color: wallColor, roughness: 0.95 });
+  const ceilingMat = new THREE.MeshStandardMaterial({ color: wallColor.clone().offsetHSL(0, 0, 0.03), roughness: 0.97 });
+  const trimMat = new THREE.MeshStandardMaterial({ color: wallColor.clone().offsetHSL(0, 0, -0.05), roughness: 0.7 });
 
-  const plane = (width: number, height: number, mat: THREE.Material) => {
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(width, height), mat);
-    m.receiveShadow = true;
-    group.add(m);
-    return m;
-  };
+  const parts = { wall: [] as THREE.BufferGeometry[], ceiling: [] as THREE.BufferGeometry[], trim: [] as THREE.BufferGeometry[] };
+  const m4 = new THREE.Matrix4();
 
-  const floor = plane(w, d, floorMat);
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.set(cx, y0, cz);
+  // Floor: UVs in metres so every room shares the same tiling texture scale.
+  const floorGeo = new THREE.PlaneGeometry(w, d).rotateX(-Math.PI / 2).translate(cx, y0, cz);
+  scaleUVs(floorGeo, w, d);
+  const floor = new THREE.Mesh(floorGeo, floorMaterial(finish.floor ?? 'oak'));
+  floor.receiveShadow = true;
+  group.add(floor);
 
-  const ceiling = plane(w, d, ceilingMat);
-  ceiling.rotation.x = Math.PI / 2;
-  ceiling.position.set(cx, y1, cz);
+  parts.ceiling.push(new THREE.PlaneGeometry(w, d).rotateX(Math.PI / 2).translate(cx, y1, cz));
 
-  // Walls face inward.
-  const walls: [width: number, x: number, z: number, rotationY: number][] = [
-    [w, cx, z0, 0],
-    [w, cx, z1, Math.PI],
-    [d, x0, cz, Math.PI / 2],
-    [d, x1, cz, -Math.PI / 2],
+  const walls: WallSpec[] = [
+    { axis: 'z', plane: z0, normal: new THREE.Vector3(0, 0, 1), lo: x0, hi: x1 },
+    { axis: 'z', plane: z1, normal: new THREE.Vector3(0, 0, -1), lo: x0, hi: x1 },
+    { axis: 'x', plane: x0, normal: new THREE.Vector3(1, 0, 0), lo: z0, hi: z1 },
+    { axis: 'x', plane: x1, normal: new THREE.Vector3(-1, 0, 0), lo: z0, hi: z1 },
   ];
-  const baseH = 0.12;
-  const baseD = 0.015;
-  for (const [width, x, z, ry] of walls) {
-    const wall = plane(width, h, wallMat);
-    wall.position.set(x, y0 + h / 2, z);
-    wall.rotation.y = ry;
 
-    const base = new THREE.Mesh(new THREE.BoxGeometry(width, baseH, baseD), baseMat);
-    base.position.set(x, y0 + baseH / 2, z);
-    base.rotation.y = ry;
-    base.translateZ(baseD / 2);
-    base.receiveShadow = true;
-    group.add(base);
+  for (const wall of walls) {
+    const openings = doorways
+      .filter((o) => o.rooms.includes(room.id) && o.axis === wall.axis && Math.abs(o.plane - wall.plane) < 1e-3)
+      .sort((a, b) => a.from - b.from);
+
+    const rotY = Math.atan2(wall.normal.x, wall.normal.z);
+    /** Matrix placing a unit-facing (+z) piece centred at lateral `l`, height `y`, `out` metres off the wall. */
+    const place = (l: number, y: number, out = 0) => {
+      const pos =
+        wall.axis === 'z' ? new THREE.Vector3(l, y, wall.plane) : new THREE.Vector3(wall.plane, y, l);
+      pos.addScaledVector(wall.normal, out);
+      return m4.compose(pos, new THREE.Quaternion().setFromAxisAngle(THREE.Object3D.DEFAULT_UP, rotY), new THREE.Vector3(1, 1, 1));
+    };
+    const solid = (from: number, to: number) => {
+      if (to - from < 1e-3) return;
+      const mid = (from + to) / 2;
+      parts.wall.push(new THREE.PlaneGeometry(to - from, h).applyMatrix4(place(mid, y0 + h / 2)));
+      parts.trim.push(new THREE.BoxGeometry(to - from, BASE_H, BASE_D).applyMatrix4(place(mid, y0 + BASE_H / 2, BASE_D / 2)));
+    };
+
+    let cursor = wall.lo;
+    for (const o of openings) {
+      solid(cursor, o.from);
+      const width = o.to - o.from;
+      const mid = (o.from + o.to) / 2;
+      const hasLintel = y1 - o.top > 1e-3;
+      if (hasLintel) {
+        parts.wall.push(new THREE.PlaneGeometry(width, y1 - o.top).applyMatrix4(place(mid, (o.top + y1) / 2)));
+      }
+      // Door casing on this side, only where there's wall to fix it to.
+      const casingH = o.top - o.bottom;
+      if (o.from - wall.lo > 1e-3) {
+        parts.trim.push(
+          new THREE.BoxGeometry(CASING_W, casingH, CASING_D).applyMatrix4(
+            place(o.from - CASING_W / 2, o.bottom + casingH / 2, CASING_D / 2),
+          ),
+        );
+      }
+      if (wall.hi - o.to > 1e-3) {
+        parts.trim.push(
+          new THREE.BoxGeometry(CASING_W, casingH, CASING_D).applyMatrix4(
+            place(o.to + CASING_W / 2, o.bottom + casingH / 2, CASING_D / 2),
+          ),
+        );
+      }
+      if (hasLintel) {
+        parts.trim.push(
+          new THREE.BoxGeometry(width + 2 * CASING_W, CASING_W, CASING_D).applyMatrix4(
+            place(mid, o.top + CASING_W / 2, CASING_D / 2),
+          ),
+        );
+      }
+      cursor = o.to;
+    }
+    solid(cursor, wall.hi);
   }
 
-  // Stand-in lighting until lightmaps are baked: soft fill plus a few ceiling washes.
-  group.add(new THREE.HemisphereLight(0xfff6ea, 0x3a3128, 0.3));
-  const cols = Math.max(1, Math.round(w / 5));
-  const rows = Math.max(1, Math.round(d / 5));
-  for (let i = 0; i < cols; i++) {
-    for (let j = 0; j < rows; j++) {
-      // Recessed downlights: wide, soft, and they don't light the ceiling itself.
-      const s = new THREE.SpotLight(0xfff1e0, 12, 0, Math.PI / 3, 1, 2);
-      s.position.set(x0 + ((i + 0.5) * w) / cols, y1 - 0.02, z0 + ((j + 0.5) * d) / rows);
-      s.target.position.set(s.position.x, y0, s.position.z);
-      group.add(s, s.target);
+  for (const [key, mat] of [
+    ['wall', wallMat],
+    ['ceiling', ceilingMat],
+    ['trim', trimMat],
+  ] as const) {
+    const list = parts[key];
+    if (!list.length) continue;
+    const mesh = new THREE.Mesh(mergeGeometries(list.map((g) => g.toNonIndexed())), mat);
+    mesh.receiveShadow = true;
+    group.add(mesh);
+    list.forEach((g) => g.dispose());
+  }
+
+  // Stand-in lighting until lightmaps are baked. Every light costs shading time on every
+  // pixel in the museum, so keep the count low.
+  const ceiling = finish.ceiling ?? 'downlights';
+  if (ceiling === 'downlights') {
+    const cols = Math.max(1, Math.round(w / 7));
+    const rows = Math.max(1, Math.round(d / 7));
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        // Recessed, so the ceiling itself stays unlit.
+        const s = new THREE.SpotLight(0xfff1e0, 0.7 * h * h, 0, Math.PI / 2.6, 1, 2);
+        s.position.set(x0 + ((i + 0.5) * w) / cols, y1 - 0.02, z0 + ((j + 0.5) * d) / rows);
+        s.target.position.set(s.position.x, y0, s.position.z);
+        group.add(s, s.target);
+      }
     }
+  } else if (ceiling === 'skylight') {
+    group.add(createSkylight(cx, y1, cz, w * 0.6, d * 0.6));
   }
 
   return group;
 }
 
-/** Small tileable grey-noise texture for subtle roughness variation. */
-function noiseTexture(size: number, base: number, spread: number): THREE.Texture {
-  const data = new Uint8Array(size * size * 4);
-  for (let i = 0; i < size * size; i++) {
-    const v = Math.round(255 * Math.min(1, Math.max(0, base + (Math.random() - 0.5) * spread)));
-    data.set([v, v, v, 255], i * 4);
+let ltcReady = false;
+
+/** A diffuse ceiling light panel: one area light plus the glowing diffuser you see. */
+function createSkylight(x: number, ceilingY: number, z: number, width: number, depth: number): THREE.Group {
+  if (!ltcReady) {
+    THREE.RectAreaLightNode.setLTC(RectAreaLightTexturesLib.init());
+    ltcReady = true;
   }
-  const tex = new THREE.DataTexture(data, size, size);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.magFilter = THREE.LinearFilter;
-  tex.minFilter = THREE.LinearMipmapLinearFilter;
-  tex.generateMipmaps = true;
-  tex.needsUpdate = true;
-  return tex;
+  const group = new THREE.Group();
+  const light = new THREE.RectAreaLight(0xfff8ee, 2.2, width, depth);
+  light.position.set(x, ceilingY - 0.03, z);
+  light.lookAt(x, 0, z);
+  group.add(light);
+
+  const panel = new THREE.Mesh(
+    new THREE.PlaneGeometry(width, depth).rotateX(Math.PI / 2),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(0xfff8ee).multiplyScalar(1.6) }),
+  );
+  panel.position.set(x, ceilingY - 0.02, z);
+  group.add(panel);
+  return group;
+}
+
+/** Rewrites 0–1 UVs to metres so tiling textures keep a constant real-world scale. */
+function scaleUVs(geo: THREE.BufferGeometry, sx: number, sy: number) {
+  const uv = geo.getAttribute('uv') as THREE.BufferAttribute;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * sx, uv.getY(i) * sy);
+  uv.needsUpdate = true;
 }

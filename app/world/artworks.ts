@@ -1,7 +1,10 @@
 import * as THREE from 'three/webgpu';
 import type { Artwork, FrameStyle, Museum } from './scene-format';
 import { contentUrl } from './scene-format';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { getKTX2Loader, type LoadedRoom } from './rooms';
+import { shadowDecal } from './surfaces';
+import { createWallLabel, LABEL_GAP, LABEL_HEIGHT, LABEL_SIZE } from './wall-label';
 
 export interface PlacedArtwork {
   artwork: Artwork;
@@ -24,7 +27,8 @@ const FRAMES: Record<FrameStyle, FrameSpec> = {
   'gilded-ornate': {
     width: 0.09,
     depth: 0.07,
-    material: new THREE.MeshStandardMaterial({ color: 0xb48c45, metalness: 1, roughness: 0.38 }),
+    // Satin rather than mirror gold: there's no environment map for metal to reflect.
+    material: new THREE.MeshStandardMaterial({ color: 0xa8823e, metalness: 0.35, roughness: 0.42 }),
   },
   'modern-black': {
     width: 0.03,
@@ -40,6 +44,7 @@ const FRAMES: Record<FrameStyle, FrameSpec> = {
 };
 
 const _forward = new THREE.Vector3(0, 0, 1);
+const stretcherMat = new THREE.MeshStandardMaterial({ color: 0xd8d0c0, roughness: 0.9 });
 
 /**
  * Places every artwork at its real physical size, centred in its slot, framed and spot-lit.
@@ -79,27 +84,35 @@ export function placeArtworks(
     const canvasMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.8 });
     const canvas = new THREE.Mesh(new THREE.PlaneGeometry(width, height), canvasMat);
     canvas.position.z = frame.depth - 0.012; // slightly recessed behind the frame face
-    canvas.receiveShadow = true;
     canvas.userData.artworkId = artwork.id;
     group.add(canvas);
 
     // Stretcher bars: gives the canvas edges real thickness when seen from the side.
     const backDepth = canvas.position.z - 0.002; // stop short of the canvas plane to avoid z-fighting
-    const back = new THREE.Mesh(
-      new THREE.BoxGeometry(width, height, backDepth),
-      new THREE.MeshStandardMaterial({ color: 0xd8d0c0, roughness: 0.9 }),
-    );
+    const back = new THREE.Mesh(new THREE.BoxGeometry(width, height, backDepth), stretcherMat);
     back.position.z = backDepth / 2;
-    back.castShadow = true;
     group.add(back);
 
-    if (frame.material) addFrame(group, width, height, frame);
+    if (frame.material) group.add(createFrame(width, height, frame));
+
+    // Soft contact shadow on the wall, nudged down because the light comes from above.
+    const outer = [width + 2 * frame.width, height + 2 * frame.width];
+    const shadow = shadowDecal(outer[0] * 1.02, outer[1] * 1.02, 0.42);
+    shadow.position.set(0, -0.04, 0.002);
+    group.add(shadow);
+
+    const floorY = loaded.room.bounds.min[1];
+    const label = createWallLabel(artwork);
+    label.position.set(outer[0] / 2 + LABEL_GAP + LABEL_SIZE[0] / 2, floorY + LABEL_HEIGHT - slot.position[1], LABEL_SIZE[2] / 2);
+    group.add(label);
 
     scene.add(group);
     group.updateMatrixWorld(true);
 
     const center = canvas.getWorldPosition(new THREE.Vector3());
-    addSpotlight(scene, center, normal, width, height, loaded.room.bounds.max[1]);
+    if (loaded.room.finish?.artworkSpots !== false) {
+      addSpotlight(scene, center, normal, outer[0] + LABEL_GAP + LABEL_SIZE[0], outer[1], loaded.room.bounds.max[1]);
+    }
 
     loadTexture(artwork.image, renderer).then(
       (tex) => {
@@ -117,7 +130,8 @@ export function placeArtworks(
   return placed;
 }
 
-function addFrame(group: THREE.Group, width: number, height: number, spec: FrameSpec) {
+/** The four frame rails merged into one mesh (one draw call). */
+function createFrame(width: number, height: number, spec: FrameSpec): THREE.Mesh {
   const { width: fw, depth } = spec;
   const pieces: [w: number, h: number, x: number, y: number][] = [
     [width + 2 * fw, fw, 0, height / 2 + fw / 2],
@@ -125,16 +139,16 @@ function addFrame(group: THREE.Group, width: number, height: number, spec: Frame
     [fw, height, -width / 2 - fw / 2, 0],
     [fw, height, width / 2 + fw / 2, 0],
   ];
-  for (const [w, h, x, y] of pieces) {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, depth), spec.material);
-    m.position.set(x, y, depth / 2);
-    m.castShadow = true;
-    m.receiveShadow = true;
-    group.add(m);
-  }
+  const geo = mergeGeometries(
+    pieces.map(([w, h, x, y]) => new THREE.BoxGeometry(w, h, depth).translate(x, y, depth / 2).toNonIndexed()),
+  );
+  return new THREE.Mesh(geo, spec.material);
 }
 
-/** Warm gallery spot from the ceiling, angled ~30° down onto the artwork. */
+/**
+ * Warm gallery spot from the ceiling, angled ~30° down onto the artwork.
+ * No shadow map: the wall shadow is a decal, which keeps dozens of spots affordable.
+ */
 function addSpotlight(
   scene: THREE.Scene,
   center: THREE.Vector3,
@@ -149,16 +163,10 @@ function addSpotlight(
   pos.y = mountY;
 
   const dist = pos.distanceTo(center);
-  const radius = 0.5 * Math.hypot(width, height) * 1.25;
+  const radius = 0.5 * Math.hypot(width, height) * 1.15;
   const spot = new THREE.SpotLight(0xffe4c4, 1.6 * dist * dist, 0, Math.atan(radius / dist), 0.65, 2);
   spot.position.copy(pos);
   spot.target.position.copy(center);
-  spot.castShadow = true;
-  spot.shadow.mapSize.set(1024, 1024);
-  spot.shadow.bias = -0.0004;
-  spot.shadow.normalBias = 0.02;
-  spot.shadow.camera.near = 0.5;
-  spot.shadow.camera.far = dist + 2;
   scene.add(spot, spot.target);
 }
 

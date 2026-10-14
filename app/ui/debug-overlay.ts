@@ -16,6 +16,7 @@ export class DebugOverlay {
     private readonly renderer: THREE.WebGPURenderer,
     private readonly backend: string,
     private readonly loadedRooms: () => string[],
+    private readonly currentRoom: () => string,
   ) {
     this.el = document.createElement('pre');
     this.el.className = 'debug-overlay';
@@ -44,6 +45,7 @@ export class DebugOverlay {
         `textures   ${memory.textures}  (${(memory.texturesSize / MB).toFixed(1)} MB)`,
         `geometries ${memory.geometries}`,
         `rooms      ${this.loadedRooms().join(', ')}`,
+        `in         ${this.currentRoom()}`,
       ].join('\n');
     }
     this.frames = 0;

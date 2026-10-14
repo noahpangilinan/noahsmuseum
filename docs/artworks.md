@@ -15,6 +15,33 @@ M0 shortlist. Public-domain status was checked against the Art Institute of Chic
 | 9 | Stacks of Wheat (End of Summer) | Claude Monet | 1890–91 | [AIC 64818](https://www.artic.edu/artworks/64818) | CC0 | Confirmed PD |
 | 10 | _open slot_ | | | Met / Rijksmuseum / NGA | | Pick together |
 
+## In the museum from Wikimedia Commons
+
+Checked 2026-10-14. Images are 2D reproductions of public-domain paintings. Each file's license is recorded as Commons states it, and the label shows it.
+
+**Hilma af Klint, The Swan (Group IX/SUW), 1914–15, in `swan-room`.** The series has 24 paintings. These 12 are the ones with clean, distinctly numbered scans on Commons:
+
+| No. | Dimensions (cm, h × w) | License on Commons |
+|---|---|---|
+| 1 | 150 × 150 | Public domain |
+| 7, 9, 10, 14, 18 | 150 × 150 (approx.) | Public domain |
+| 12 | 151.5 × 151 | Public domain |
+| 13 | 148.5 × 151 | Public domain |
+| 17 | 150.5 × 151 | Public domain |
+| 22 | 150 × 150 (approx.) | CC0 |
+| 16, 23 | 150 × 150 (approx.) | CC BY-SA 4.0 (low-res, 900 px; replace with better PD scans when found) |
+
+Sizes for Nos. 1, 12, 13 and 17 come from exhibition listings (AGNSW, Guggenheim Bilbao, Kunstsammlung NRW). The rest of the series is about 150 cm square; replace "approx." with catalogue figures from the Hilma af Klint Foundation when we have them.
+
+**In `dark-room`:**
+
+| Artwork | Artist | Date | Dimensions (cm) | Source | License |
+|---|---|---|---|---|---|
+| Saturn Devouring His Son | Francisco de Goya | 1819–1823 | 143.5 × 81.4 | [Commons](https://commons.wikimedia.org/wiki/File:Francisco_de_Goya,_Saturno_devorando_a_su_hijo_(1819-1823).jpg) | Public domain |
+| Judith Beheading Holofernes | Caravaggio | c. 1599 | 145 × 195 | [Commons](https://commons.wikimedia.org/wiki/File:Caravaggio_-_Giuditta_e_Oloferne_(ca._1599).jpg) | Public domain |
+
+Dimensions for these two come from Wikidata (Q1150997, Q2470123). Artemisia Gentileschi painted two versions of the same subject (*Judith Slaying Holofernes*), which would pair well on the empty `dark-room/south-1` slot.
+
 ## Not usable publicly
 
 AIC marks these as **not** public domain, so they can't go in the public build. Keep them private if at all ([plan.md, Risks](plan.md#risks)).

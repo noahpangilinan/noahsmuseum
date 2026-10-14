@@ -1,5 +1,6 @@
 import * as THREE from 'three/webgpu';
 import type { PlacedArtwork } from '../world/artworks';
+import { artworkDate } from '../world/wall-label';
 
 const NEAR_DISTANCE = 2.2; // m — plaque appears when standing this close (further for big pieces)…
 const FACING_DOT = 0.6; // …and roughly looking at the piece
@@ -64,7 +65,7 @@ export class Plaque {
       this.el.classList.remove('visible');
       return;
     }
-    const { title, artist, year, dimensionsCm, source, license } = a.artwork;
+    const { title, artist, dimensionsCm, source, license } = a.artwork;
     const [h, w] = dimensionsCm;
     this.el.innerHTML = '';
     const add = (tag: string, cls: string, text: string) => {
@@ -75,7 +76,7 @@ export class Plaque {
       return n;
     };
     add('div', 'plaque-artist', artist);
-    add('div', 'plaque-title', `${title}, ${year}`);
+    add('div', 'plaque-title', `${title}, ${artworkDate(a.artwork)}`);
     add('div', 'plaque-meta', `${h} × ${w} cm`);
     const link = add('a', 'plaque-source', `Source · ${license}`) as HTMLAnchorElement;
     link.href = source;

@@ -1,9 +1,10 @@
 import * as THREE from 'three/webgpu';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import type { LoadedRoom } from '../world/rooms';
+import type { Walkable } from '../world/layout';
 
 const EYE_HEIGHT = 1.6;
-const BODY_RADIUS = 0.3;
+export const BODY_RADIUS = 0.3;
 const WALK_SPEED = 1.4; // m/s, a gallery stroll
 const RUN_SPEED = 3.0;
 const ACCEL = 8; // higher = snappier easing toward target speed
@@ -18,7 +19,7 @@ const KEYS = {
 
 /**
  * Pointer-lock first-person walking: WASD/arrows, mouse look, eased acceleration,
- * eye height 1.6 m, collision against room bounds.
+ * eye height 1.6 m, collision against the walkable floor area (rooms, doorways, furniture).
  */
 export class FirstPersonControls {
   readonly pointer: PointerLockControls;
@@ -30,6 +31,7 @@ export class FirstPersonControls {
     private readonly camera: THREE.PerspectiveCamera,
     domElement: HTMLElement,
     private readonly rooms: LoadedRoom[],
+    private readonly walkable: Walkable,
   ) {
     this.pointer = new PointerLockControls(camera, domElement);
     this.currentRoom = rooms[0];
@@ -76,22 +78,25 @@ export class FirstPersonControls {
     this.velocity.lerp(input, 1 - Math.exp(-ACCEL * dt));
     if (this.velocity.lengthSq() < 1e-6) this.velocity.set(0, 0);
 
+    const before = this.camera.position.clone();
     this.pointer.moveRight(this.velocity.x * dt);
     this.pointer.moveForward(this.velocity.y * dt);
-    this.collide();
+    this.collide(before);
   }
 
-  private collide() {
+  /** Rejects moves off the walkable area, sliding along walls where one axis is still free. */
+  private collide(before: THREE.Vector3) {
     const p = this.camera.position;
-    // Switch rooms when the visitor has stepped into another room's footprint.
+    if (!this.walkable.contains(p.x, p.z)) {
+      if (this.walkable.contains(p.x, before.z)) p.z = before.z;
+      else if (this.walkable.contains(before.x, p.z)) p.x = before.x;
+      else p.set(before.x, p.y, before.z);
+    }
+
     const inside = this.rooms.find(
       (r) => p.x >= r.box.min.x && p.x <= r.box.max.x && p.z >= r.box.min.z && p.z <= r.box.max.z,
     );
     if (inside) this.currentRoom = inside;
-
-    const { min, max } = this.currentRoom.box;
-    p.x = THREE.MathUtils.clamp(p.x, min.x + BODY_RADIUS, max.x - BODY_RADIUS);
-    p.z = THREE.MathUtils.clamp(p.z, min.z + BODY_RADIUS, max.z - BODY_RADIUS);
-    p.y = min.y + EYE_HEIGHT;
+    p.y = this.currentRoom.box.min.y + EYE_HEIGHT;
   }
 }

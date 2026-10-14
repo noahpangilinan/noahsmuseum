@@ -1,5 +1,4 @@
 import * as THREE from 'three/webgpu';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 export interface Engine {
   renderer: THREE.WebGPURenderer;
@@ -23,18 +22,18 @@ export async function createEngine(container: HTMLElement): Promise<Engine> {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFShadowMap;
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x101010);
 
-  // Neutral image-based lighting so PBR materials have something to reflect
-  // until baked lightmaps and reflection probes arrive in M1 (World).
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.35;
+  // No environment map for now: surfaces are meant to read as matte, and skipping the
+  // PMREM pass saves ~1 s of shader compilation at load. Reflection probes come with
+  // World's baked lighting.
+
+  // Global soft fill. Rooms add their own downlights and artwork spots.
+  // The warm ground colour stands in for light bounced off the floor, so ceilings aren't black.
+  scene.add(new THREE.HemisphereLight(0xfff6ea, 0xa89a88, 0.45));
 
   const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 200);
 

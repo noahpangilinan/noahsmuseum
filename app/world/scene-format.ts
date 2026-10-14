@@ -3,6 +3,8 @@
  * Change this only after agreeing with both World and Platform owners.
  */
 
+import { findDoorway } from './layout';
+
 export type Vec3 = [number, number, number];
 export type Vec2 = [number, number];
 
@@ -21,9 +23,40 @@ export interface Room {
   bounds: { min: Vec3; max: Vec3 };
   /** Where the visitor starts if this is the first room. Defaults to the room centre. */
   spawn?: { position: Vec3; lookAt?: Vec3 };
-  /** Ids of rooms reachable from this one (used for streaming in M3). */
+  /**
+   * Ids of rooms reachable from this one. Connected rooms must share a wall plane:
+   * the overlap of the two walls becomes a doorway (cut automatically in placeholder rooms).
+   */
   connections: string[];
   slots: Slot[];
+  /** Look of the placeholder room. Ignored once the room has a Blender `model`. */
+  finish?: RoomFinish;
+  furniture?: Furniture[];
+}
+
+export type FloorStyle = 'oak' | 'dark-wood' | 'concrete';
+
+export interface RoomFinish {
+  /** CSS colour. */
+  walls?: string;
+  floor?: FloorStyle;
+  /**
+   * General lighting. `downlights` (default): recessed ceiling spots. `skylight`: one large
+   * diffuse ceiling panel, white-cube style. `none`: dark room lit only by artwork spots.
+   */
+  ceiling?: CeilingLight;
+  /** One warm spotlight per artwork. Default true; skylight rooms usually don't need them. */
+  artworkSpots?: boolean;
+}
+
+export type CeilingLight = 'downlights' | 'skylight' | 'none';
+
+export interface Furniture {
+  type: 'bench';
+  /** Floor position in metres. */
+  position: Vec3;
+  /** Rotation about the vertical axis in degrees. 0 = long side along x. */
+  rotationY?: number;
 }
 
 export interface Slot {
@@ -44,7 +77,10 @@ export interface Artwork {
   slot: string;
   title: string;
   artist: string;
+  /** For sorting/filtering. Use `date` for how it should read on the label. */
   year: number;
+  /** Display date when a single year isn't accurate, e.g. "1819–1823" or "c. 1599". */
+  date?: string;
   /** Real physical size of the image area: [height, width] in centimetres. */
   dimensionsCm: Vec2;
   /** Preview texture, relative to content root (.ktx2, .jpg, .png, .webp). */
@@ -57,6 +93,8 @@ export interface Artwork {
 }
 
 const FRAME_STYLES: FrameStyle[] = ['gilded-ornate', 'modern-black', 'gallery-white', 'none'];
+const FLOOR_STYLES: FloorStyle[] = ['oak', 'dark-wood', 'concrete'];
+const CEILING_LIGHTS: CeilingLight[] = ['downlights', 'skylight', 'none'];
 
 export class SceneFormatError extends Error {
   constructor(public readonly problems: string[]) {
@@ -100,10 +138,27 @@ export function validateMuseum(data: unknown): Museum {
       if (!isVec(s.maxSize, 2)) problems.push(`${sw}: "maxSize" must be [width, height]`);
       slotIds.add(`${r.id}/${s.id}`);
     }
+    if (r.finish?.floor && !FLOOR_STYLES.includes(r.finish.floor)) {
+      problems.push(`${where}: "finish.floor" must be one of ${FLOOR_STYLES.join(', ')}`);
+    }
+    if (r.finish?.ceiling && !CEILING_LIGHTS.includes(r.finish.ceiling)) {
+      problems.push(`${where}: "finish.ceiling" must be one of ${CEILING_LIGHTS.join(', ')}`);
+    }
+    for (const [j, f] of (r.furniture ?? []).entries()) {
+      if (f.type !== 'bench') problems.push(`${where} furniture[${j}]: unknown type "${f.type}"`);
+      if (!isVec(f.position, 3)) problems.push(`${where} furniture[${j}]: "position" must be [x, y, z]`);
+    }
   }
   for (const r of m.rooms) {
     for (const c of r.connections ?? []) {
-      if (!roomIds.has(c)) problems.push(`room ${r.id}: connection "${c}" is not a known room`);
+      if (!roomIds.has(c)) {
+        problems.push(`room ${r.id}: connection "${c}" is not a known room`);
+        continue;
+      }
+      const other = m.rooms.find((o) => o.id === c)!;
+      if (isVec(r.bounds?.min, 3) && isVec(other.bounds?.min, 3) && !findDoorway(r, other)) {
+        problems.push(`rooms ${r.id} and ${c} are connected but don't share a wall, so no doorway fits`);
+      }
     }
   }
 

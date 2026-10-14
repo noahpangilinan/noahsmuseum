@@ -2,21 +2,243 @@
   "rooms": [
     {
       "id": "entrance-gallery",
-      "bounds": { "min": [-7, 0, -5], "max": [7, 5, 5] },
-      "spawn": { "position": [0, 0, 3.5], "lookAt": [0, 1.5, -5] },
-      "connections": [],
+      "bounds": {
+        "min": [-7, 0, -5],
+        "max": [7, 5, 5]
+      },
+      "spawn": {
+        "position": [0, 0, 3.5],
+        "lookAt": [0, 1.6, -20]
+      },
+      "connections": [
+        "north-hall",
+        "east-hall"
+      ],
+      "finish": {
+        "walls": "#eeebe4",
+        "floor": "oak"
+      },
+      "furniture": [
+        {
+          "type": "bench",
+          "position": [-3.6, 0, 0],
+          "rotationY": 90
+        }
+      ],
       "slots": [
-        { "id": "north-1", "position": [0, 1.5, -4.98], "normal": [0, 0, 1], "maxSize": [4.0, 3.0] },
-        { "id": "west-1", "position": [-6.98, 1.5, 0], "normal": [1, 0, 0], "maxSize": [3.0, 2.2] },
-        { "id": "east-1", "position": [6.98, 1.5, 0], "normal": [-1, 0, 0], "maxSize": [3.0, 2.2] },
-        { "id": "south-1", "position": [-3.5, 1.5, 4.98], "normal": [0, 0, -1], "maxSize": [2.5, 2.0] }
+        {
+          "id": "west-1",
+          "position": [-6.98, 1.5, 0],
+          "normal": [1, 0, 0],
+          "maxSize": [4, 3]
+        },
+        {
+          "id": "east-1",
+          "position": [6.98, 1.5, -3.25],
+          "normal": [-1, 0, 0],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "east-2",
+          "position": [6.98, 1.5, 3.25],
+          "normal": [-1, 0, 0],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "north-1",
+          "position": [-4.25, 1.5, -4.98],
+          "normal": [0, 0, 1],
+          "maxSize": [2.5, 2.2]
+        },
+        {
+          "id": "north-2",
+          "position": [4.25, 1.5, -4.98],
+          "normal": [0, 0, 1],
+          "maxSize": [2.5, 2.2]
+        }
+      ]
+    },
+    {
+      "id": "north-hall",
+      "bounds": {
+        "min": [-1.5, 0, -13],
+        "max": [1.5, 3.6, -5]
+      },
+      "connections": [
+        "entrance-gallery",
+        "swan-room"
+      ],
+      "finish": {
+        "walls": "#e9e5dd",
+        "floor": "oak"
+      },
+      "slots": []
+    },
+    {
+      "id": "swan-room",
+      "bounds": {
+        "min": [-8, 0, -25],
+        "max": [8, 5.5, -13]
+      },
+      "connections": [
+        "north-hall"
+      ],
+      "finish": {
+        "walls": "#f6f5f2",
+        "floor": "concrete",
+        "ceiling": "skylight",
+        "artworkSpots": false
+      },
+      "furniture": [
+        {
+          "type": "bench",
+          "position": [0, 0, -17.2],
+          "rotationY": 0
+        },
+        {
+          "type": "bench",
+          "position": [0, 0, -20.8],
+          "rotationY": 0
+        }
+      ],
+      "slots": [
+        {
+          "id": "west-1",
+          "position": [-7.98, 1.55, -15.4],
+          "normal": [1, 0, 0],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "west-2",
+          "position": [-7.98, 1.55, -19],
+          "normal": [1, 0, 0],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "west-3",
+          "position": [-7.98, 1.55, -22.6],
+          "normal": [1, 0, 0],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "north-1",
+          "position": [-5.4, 1.55, -24.98],
+          "normal": [0, 0, 1],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "north-2",
+          "position": [-1.8, 1.55, -24.98],
+          "normal": [0, 0, 1],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "north-3",
+          "position": [1.8, 1.55, -24.98],
+          "normal": [0, 0, 1],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "north-4",
+          "position": [5.4, 1.55, -24.98],
+          "normal": [0, 0, 1],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "east-1",
+          "position": [7.98, 1.55, -22.6],
+          "normal": [-1, 0, 0],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "east-2",
+          "position": [7.98, 1.55, -19],
+          "normal": [-1, 0, 0],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "east-3",
+          "position": [7.98, 1.55, -15.4],
+          "normal": [-1, 0, 0],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "south-1",
+          "position": [4.75, 1.55, -13.02],
+          "normal": [0, 0, -1],
+          "maxSize": [2.2, 2.2]
+        },
+        {
+          "id": "south-2",
+          "position": [-4.75, 1.55, -13.02],
+          "normal": [0, 0, -1],
+          "maxSize": [2.2, 2.2]
+        }
+      ]
+    },
+    {
+      "id": "east-hall",
+      "bounds": {
+        "min": [7, 0, -1.5],
+        "max": [17, 3.6, 1.5]
+      },
+      "connections": [
+        "entrance-gallery",
+        "dark-room"
+      ],
+      "finish": {
+        "walls": "#6a5650",
+        "floor": "dark-wood"
+      },
+      "slots": []
+    },
+    {
+      "id": "dark-room",
+      "bounds": {
+        "min": [17, 0, -6],
+        "max": [27, 4.5, 6]
+      },
+      "connections": [
+        "east-hall"
+      ],
+      "finish": {
+        "walls": "#4a2c2a",
+        "floor": "dark-wood",
+        "ceiling": "none"
+      },
+      "furniture": [
+        {
+          "type": "bench",
+          "position": [21, 0, 0],
+          "rotationY": 90
+        }
+      ],
+      "slots": [
+        {
+          "id": "east-1",
+          "position": [26.98, 1.55, 0],
+          "normal": [-1, 0, 0],
+          "maxSize": [2.5, 2.5]
+        },
+        {
+          "id": "north-1",
+          "position": [22, 1.5, -5.98],
+          "normal": [0, 0, 1],
+          "maxSize": [3, 2.2]
+        },
+        {
+          "id": "south-1",
+          "position": [22, 1.5, 5.98],
+          "normal": [0, 0, -1],
+          "maxSize": [3, 2.2]
+        }
       ]
     }
   ],
   "artworks": [
     {
       "id": "paris-street-rainy-day",
-      "slot": "entrance-gallery/north-1",
+      "slot": "entrance-gallery/west-1",
       "title": "Paris Street; Rainy Day",
       "artist": "Gustave Caillebotte",
       "year": 1877,
@@ -28,7 +250,7 @@
     },
     {
       "id": "water-lilies",
-      "slot": "entrance-gallery/west-1",
+      "slot": "entrance-gallery/east-1",
       "title": "Water Lilies",
       "artist": "Claude Monet",
       "year": 1906,
@@ -40,7 +262,7 @@
     },
     {
       "id": "the-bedroom",
-      "slot": "entrance-gallery/east-1",
+      "slot": "entrance-gallery/east-2",
       "title": "The Bedroom",
       "artist": "Vincent van Gogh",
       "year": 1889,
@@ -49,6 +271,188 @@
       "frame": "modern-black",
       "source": "https://www.artic.edu/artworks/28560",
       "license": "CC0"
+    },
+    {
+      "id": "the-swan-no-1",
+      "slot": "swan-room/west-1",
+      "title": "The Swan, No. 1",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1914–1915",
+      "dimensionsCm": [150, 150],
+      "image": "art/the-swan-no-1/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:Hilma_af_Klint_-_Group_IX_SUW,_The_Swan_No._1_(13947).jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-swan-no-7",
+      "slot": "swan-room/west-2",
+      "title": "The Swan, No. 7",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [150, 150],
+      "image": "art/the-swan-no-7/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:Hilma_af_Klint_-_Group_IX_SUW,_The_Swan_No._7_(13945).jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-swan-no-9",
+      "slot": "swan-room/west-3",
+      "title": "The Swan, No. 9",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [150, 150],
+      "image": "art/the-swan-no-9/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:Group_IX_SUW,_The_Swan_No._9_by_Hilma_af_Klint_(13939).jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-swan-no-10",
+      "slot": "swan-room/north-1",
+      "title": "The Swan, No. 10",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [150, 150],
+      "image": "art/the-swan-no-10/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:Hilma_af_Klint_-_Group_IX_SUW,_The_Swan_No._10_(13932).jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-swan-no-12",
+      "slot": "swan-room/north-2",
+      "title": "The Swan, No. 12",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [151.5, 151],
+      "image": "art/the-swan-no-12/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:Hilma_Af_Klint_-_The_Swan,_No._12,_Group_IX_SUW,_1915_(13926).jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-swan-no-13",
+      "slot": "swan-room/north-3",
+      "title": "The Swan, No. 13",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [148.5, 151],
+      "image": "art/the-swan-no-13/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:Hilma_af_Klint,_The_Swan,_No._13_(1915).jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-swan-no-14",
+      "slot": "swan-room/north-4",
+      "title": "The Swan, No. 14",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [150, 150],
+      "image": "art/the-swan-no-14/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:Hilma_Af_Klint_-_1915_-_No_14_Swan.jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-swan-no-16",
+      "slot": "swan-room/east-1",
+      "title": "The Swan, No. 16",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [150, 150],
+      "image": "art/the-swan-no-16/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:6_hilma_af_klint,_the_swan_no_16,_1915.jpg",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "the-swan-no-17",
+      "slot": "swan-room/east-2",
+      "title": "The Swan, No. 17",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [150.5, 151],
+      "image": "art/the-swan-no-17/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:Hilma_af_Klint,_1915,_Svanen,_No._17.jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-swan-no-18",
+      "slot": "swan-room/east-3",
+      "title": "The Swan, No. 18",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [150, 150],
+      "image": "art/the-swan-no-18/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:Hilma_Af_Klint_-_1915_-_The_Swan,_No._18.jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-swan-no-22",
+      "slot": "swan-room/south-1",
+      "title": "The Swan, No. 22",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [150, 150],
+      "image": "art/the-swan-no-22/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:The_Swan,_No._22,_SUW_UW_series_by_Hilma_af_Klint.jpg",
+      "license": "CC0"
+    },
+    {
+      "id": "the-swan-no-23",
+      "slot": "swan-room/south-2",
+      "title": "The Swan, No. 23",
+      "artist": "Hilma af Klint",
+      "year": 1915,
+      "date": "1915",
+      "dimensionsCm": [150, 150],
+      "image": "art/the-swan-no-23/preview.jpg",
+      "frame": "none",
+      "source": "https://commons.wikimedia.org/wiki/File:7_hilma_af_klint,_the_swan_no_23,_1915.jpg",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "saturn-devouring-his-son",
+      "slot": "dark-room/east-1",
+      "title": "Saturn Devouring His Son",
+      "artist": "Francisco de Goya",
+      "year": 1823,
+      "date": "1819–1823",
+      "dimensionsCm": [143.5, 81.4],
+      "image": "art/saturn-devouring-his-son/preview.jpg",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Francisco_de_Goya,_Saturno_devorando_a_su_hijo_(1819-1823).jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "judith-beheading-holofernes",
+      "slot": "dark-room/north-1",
+      "title": "Judith Beheading Holofernes",
+      "artist": "Caravaggio",
+      "year": 1599,
+      "date": "c. 1599",
+      "dimensionsCm": [145, 195],
+      "image": "art/judith-beheading-holofernes/preview.jpg",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Caravaggio_-_Giuditta_e_Oloferne_(ca._1599).jpg",
+      "license": "Public domain"
     }
   ]
 }
