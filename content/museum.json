@@ -664,8 +664,9 @@
       "artist": "North Italy",
       "year": 1575,
       "date": "c. 1575",
-      "dimensionsCm": [270, 90, 280],
+      "dimensionsCm": [371, 240, 90],
       "display": "platform",
+      "model": "models/armor-for-man-and-horse.glb",
       "image": "art/armor-for-man-and-horse/preview.jpg",
       "source": "https://clevelandart.org/art/1964.88",
       "license": "CC0"
@@ -681,6 +682,7 @@
       "date": "c. 1553–73",
       "dimensionsCm": [20, 63.5, 58.5],
       "display": "case",
+      "model": "models/crossbow-of-augustus-i.glb",
       "image": "art/crossbow-of-augustus-i/preview.jpg",
       "source": "https://clevelandart.org/art/1916.1723",
       "license": "CC0"
@@ -696,6 +698,7 @@
       "date": "c. 1580–1600",
       "dimensionsCm": [31.8, 35.6, 19],
       "display": "case",
+      "model": "models/black-and-white-burgonet.glb",
       "image": "art/black-and-white-burgonet/preview.jpg",
       "source": "https://clevelandart.org/art/1916.891",
       "license": "CC0"
@@ -711,6 +714,7 @@
       "date": "c. 1580",
       "dimensionsCm": [42.3, 35, 20],
       "display": "case",
+      "model": "models/hussar-breastplate.glb",
       "image": "art/hussar-breastplate/preview.jpg",
       "source": "https://clevelandart.org/art/1916.1521",
       "license": "CC0"
@@ -726,6 +730,7 @@
       "date": "500–475 BCE (or modern, before 1926)",
       "dimensionsCm": [21.5, 18, 25],
       "display": "case",
+      "model": "models/corinthian-helmet.glb",
       "image": "art/corinthian-helmet/preview.jpg",
       "source": "https://clevelandart.org/art/1926.54",
       "license": "CC0"

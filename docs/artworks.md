@@ -49,13 +49,30 @@ Dimensions come from Wikidata (Q1150997, Q2470123, Q3769169). Artemisia's is the
 Data and images come from the [CMA Open Access API](https://openaccess-api.clevelandart.org/).
 
 - **Tapestries:** *The Story of Dido and Aeneas*, 1915.79.1–8. Designed by Giovanni Francesco Romanelli, woven by Michael Wauters, 1679. Sizes come from the API.
-- **Armor** (`sculptures` in museum.json): 1964.88 *Armor for Man and Horse with Völs-Colonna Arms*, 1916.1723 crossbow of Augustus I, 1916.891 burgonet, 1916.1521 hussar breastplate, 1926.54 Corinthian helmet. All five have CC0 3D scans on Sketchfab (`sketchfab_id` in the API). Downloading needs a Sketchfab login, so photo cards stand in for now.
-  - Approximate sizes: the horse armor is set to 270 × 90 × 280 cm because the API lists no dimensions. The helmet and breastplate depths are estimates.
+- **Armor** (`sculptures` in museum.json): CMA's own CC0 3D scans from Sketchfab, in `content/models/`. The photos in `art/<id>/` remain as fallbacks if a model fails to load.
+
+  | Piece | Accession | Sketchfab | Original tris | Shipped tris | File |
+  |---|---|---|---|---|---|
+  | Armor for Man and Horse with Völs-Colonna Arms | 1964.88 | [faca2ad5…](https://sketchfab.com/3d-models/faca2ad557f64809b598c3a646a8804f) | 120k | 96k | 1.2 MB |
+  | Crossbow and Cranequin of Augustus I | 1916.1723 | [d314c9a6…](https://sketchfab.com/3d-models/d314c9a6abe444ffb22010310b7bae01) | 90k | 79k | 1.5 MB |
+  | Black and White Burgonet | 1916.891 | [0fc3feb7…](https://sketchfab.com/3d-models/0fc3feb792c6464ca744e5e6548894e9) | 334k | 67k | 0.8 MB |
+  | Breastplate from Hussar's Cuirass | 1916.1521 | [3056e857…](https://sketchfab.com/3d-models/3056e857cf244a3fb651f9d07a66c5a9) | 112k | 56k | 0.8 MB |
+  | Corinthian Helmet | 1926.54 | [fe4dcf84…](https://sketchfab.com/3d-models/fe4dcf84485242d3b2d5ae652a295db3) | 64k | 51k | 0.6 MB |
+
+  Processing: `gltf-transform metalrough` (the burgonet used the retired spec/gloss material), then `optimize` with Meshopt, WebP textures (2048 px for the horse, 1024 px otherwise) and simplification. The horse scan was rotated 49.9° so its body runs along x, with its profile toward +z.
+  - Sizes: the horse armor has no CMA dimensions. 371 × 240 × 90 cm is measured from the scan, which is metric: about 2.4 m horse and rider, with the lance tip at 3.7 m. Helmet and breastplate depths are estimates.
 - Other suits in the court, such as the Cuirassier's armor and the Field Armor in Maximilian Style, have no 3D scans, so they're left out.
 
 ## Excluded
 
-- Eldzier Cortor, *L'Abattoir (The Slaughterhouse)*, MoMA. Cortor died in 2015, so the work is under copyright. The public build is public-domain only.
+The public build is public-domain only, so these copyrighted works are left out:
+
+- Eldzier Cortor, *L'Abattoir (The Slaughterhouse)*, MoMA (Cortor d. 2015)
+- Rirkrit Tiravanija, *untitled 2008–2011 (the map of the land of feeling) I–III*, MoMA (living artist)
+- Joseph Beuys, *Eurasia Siberian Symphony 1963*, MoMA (Beuys d. 1986)
+- Works from MoMA's *Artifacts of Liberation: Modernism in West Africa* (mostly by artists with active copyrights)
+- Yosdy Valdivia, *Don't Say I Don't Love You*, MoMA (living artist)
+- Louise Lawler, *Pollock and Tureen*, MoMA (living artist; it's also a photograph of a Pollock)
 
 ## Not usable publicly
 
