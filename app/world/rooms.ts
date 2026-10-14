@@ -14,6 +14,8 @@ export interface LoadedRoom {
   room: Room;
   object: THREE.Object3D;
   box: THREE.Box3;
+  /** Benches you can sit on (click targets). */
+  benches: THREE.Object3D[];
 }
 
 let ktx2: KTX2Loader | undefined;
@@ -33,14 +35,16 @@ export function createGLTFLoader(renderer: THREE.WebGPURenderer): GLTFLoader {
 export async function loadRoom(room: Room, doorways: Doorway[], renderer: THREE.WebGPURenderer): Promise<LoadedRoom> {
   const object = room.model ? await loadModelRoom(room, renderer) : buildPlaceholderRoom(room, doorways);
   object.name = `room:${room.id}`;
+  const benches: THREE.Object3D[] = [];
   for (const f of room.furniture ?? []) {
     const bench = createBench();
     bench.position.set(...f.position);
     bench.rotation.y = THREE.MathUtils.degToRad(f.rotationY ?? 0);
     object.add(bench);
+    benches.push(bench);
   }
   const box = new THREE.Box3(new THREE.Vector3(...room.bounds.min), new THREE.Vector3(...room.bounds.max));
-  return { room, object, box };
+  return { room, object, box, benches };
 }
 
 async function loadModelRoom(room: Room, renderer: THREE.WebGPURenderer): Promise<THREE.Object3D> {

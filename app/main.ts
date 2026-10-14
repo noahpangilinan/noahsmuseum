@@ -6,10 +6,12 @@ import { findDoorways, Walkable } from './world/layout';
 import { loadRoom, type LoadedRoom } from './world/rooms';
 import { placeArtworks } from './world/artworks';
 import { placeSculptures } from './world/sculptures';
+import { RoomStreamer } from './world/streaming';
 import { BODY_RADIUS, FirstPersonControls } from './controls/first-person';
 import { Plaque } from './ui/plaque';
 import { DebugOverlay } from './ui/debug-overlay';
 import { StartScreen } from './ui/start-screen';
+import { Hint } from './ui/hint';
 
 async function main() {
   const start = new StartScreen();
@@ -38,7 +40,14 @@ async function main() {
     controls.spawn(rooms.values().next().value!);
     debugTeleport(camera);
     const plaque = new Plaque(camera, exhibits);
-    const debug = new DebugOverlay(renderer, backend, () => [...rooms.keys()], () => controls.room.room.id);
+    const hint = new Hint();
+    // Textures and models load only for rooms near the visitor.
+    const streamer = new RoomStreamer(museum, exhibits);
+    streamer.update(controls.room.room.id);
+    const debug = new DebugOverlay(renderer, backend, () => streamer.loadedRooms(), () => {
+      const p = camera.position;
+      return `${controls.room.room.id} @ ${p.x.toFixed(1)}, ${p.y.toFixed(2)}, ${p.z.toFixed(1)}`;
+    });
 
     start.setStatus('Preparing shaders…');
     // Compile shaders before the first visible frame to avoid a hitch on entry.
@@ -53,7 +62,14 @@ async function main() {
       document.body.classList.remove('locked');
     });
     renderer.domElement.addEventListener('click', () => {
-      if (controls.isLocked) plaque.pick();
+      if (!controls.isLocked) return;
+      if (controls.isSeated) {
+        controls.stand();
+        return;
+      }
+      const bench = controls.benchInView();
+      if (bench) controls.sit(bench);
+      else plaque.pick();
     });
     start.ready(() => controls.lock());
 
@@ -62,7 +78,10 @@ async function main() {
       timer.update(time);
       const dt = Math.min(timer.getDelta(), 0.1); // avoid big jumps after tab switches
       controls.update(dt);
+      streamer.update(controls.room.room.id);
       plaque.update();
+      if (controls.isLocked) hint.set(controls.isSeated ? 'Click to stand' : controls.benchInView() ? 'Click to sit' : null);
+      else hint.set(null);
       renderer.render(scene, camera);
       debug.update(dt);
     });

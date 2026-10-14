@@ -44,7 +44,7 @@ export class DebugOverlay {
         `triangles  ${render.triangles.toLocaleString()}`,
         `textures   ${memory.textures}  (${(memory.texturesSize / MB).toFixed(1)} MB)`,
         `geometries ${memory.geometries}`,
-        `rooms      ${this.loadedRooms().join(', ')}`,
+        `loaded     ${this.loadedRooms().join(', ')}`,
         `in         ${this.currentRoom()}`,
       ].join('\n');
     }

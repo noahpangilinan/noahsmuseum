@@ -18,7 +18,9 @@ URL flags: `?debug` opens the performance overlay on load, and `?webgl` forces t
 |---|---|
 | Click | Enter (locks the pointer) |
 | W A S D / arrows | Walk |
-| Shift | Walk faster |
+| Shift | Run |
+| Ctrl (or C) | Crouch while held. Careful: Ctrl+W is the browser's close-tab shortcut, which pages can't block |
+| Click a bench | Sit (lower view, no walking). Click again to stand |
 | Mouse | Look |
 | Click a painting | Show its wall label (labels also appear when you stand in front of a piece) |
 | `` ` `` | Toggle debug overlay (FPS, draw calls, texture memory, loaded rooms) |
@@ -66,7 +68,14 @@ npx @gltf-transform/cli optimize in.glb content/models/<id>.glb --compress mesho
 
 Set `"model": "models/<id>.glb"` on the sculpture. The app scales it to the catalogue height and stands it on the display, so the model should face +z. Aim for ≤ 150k triangles and 2K textures per piece. Sculptures add no lights, so they cost draw calls and memory but almost no shading time.
 
-Each light adds shading cost to every pixel and slows shader compilation at load, so watch the count. A skylight room with no artwork spots costs one light in total.
+Each light adds shading cost to every pixel and slows shader compilation at load, so watch the count. Removing the three corridor downlights cut compile time from ~6 s to ~2 s. How lights are spent:
+
+- A painting alone on its wall gets its own spot. Several paintings on one wall share **one** spot whose projected cookie texture paints a soft pool on each piece (`app/world/lighting.ts`).
+- A skylight room with `artworkSpots: false` costs one light in total. Corridors use `ceiling: "none"` and borrow light from the rooms.
+
+### Streaming
+
+Paintings, labels and 3D models load for rooms within two doorways of the visitor, and are released (GPU memory freed) beyond that (`app/world/streaming.ts`). Walking from the Armor Court to the north hall drops texture memory from ~265 MB to ~90 MB. Drawing cost is handled separately: three.js already skips anything outside the camera's view.
 
 ## Current floor plan
 

@@ -21,19 +21,42 @@ export function formatDimensions(cm: number[]): string {
   return `${cm.join(' × ')} cm`;
 }
 
+const PAPER = 0xf7f5f0;
+
 /**
- * Printed museum wall label beside an artwork. A thin box textured on every face:
- * the front shows the text, and the edges pick up the paper colour.
+ * Printed museum wall label beside an artwork: a thin paper-coloured box. The printed
+ * text is a texture that streams in and out with the room (see `labelTexture`).
  */
 export function createWallLabel(artwork: ExhibitInfo): THREE.Mesh {
   const [w, h, t] = LABEL_SIZE;
-  const tex = new THREE.CanvasTexture(drawLabel(artwork, Math.round(w * PX_PER_M), Math.round(h * PX_PER_M)));
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
-  const mat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.85 });
+  const mat = new THREE.MeshStandardMaterial({ map: placeholderTexture(), color: PAPER, roughness: 0.85 });
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, t), mat);
   mesh.name = `label:${artwork.id}`;
   return mesh;
+}
+
+/** Prints the label text. Box UVs put it on the front face; the edges pick up the paper colour. */
+export function labelTexture(artwork: ExhibitInfo): THREE.Texture {
+  const [w, h] = LABEL_SIZE;
+  const tex = new THREE.CanvasTexture(drawLabel(artwork, Math.round(w * PX_PER_M), Math.round(h * PX_PER_M)));
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  return tex;
+}
+
+let placeholder: THREE.Texture | undefined;
+
+/**
+ * A 1×1 white sRGB texture used wherever a real texture isn't loaded. Swapping one sRGB
+ * map for another keeps the same shader, so streaming never triggers a recompile.
+ */
+export function placeholderTexture(): THREE.Texture {
+  if (!placeholder) {
+    placeholder = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1);
+    placeholder.colorSpace = THREE.SRGBColorSpace;
+    placeholder.needsUpdate = true;
+  }
+  return placeholder;
 }
 
 function drawLabel(a: ExhibitInfo, width: number, height: number): HTMLCanvasElement {

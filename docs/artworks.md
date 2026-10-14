@@ -40,9 +40,13 @@ Sizes for Nos. 1, 12, 13 and 17 come from exhibition listings (AGNSW, Guggenheim
 | Saturn Devouring His Son | Francisco de Goya | 1819–1823 | 143.5 × 81.4 | [Commons](https://commons.wikimedia.org/wiki/File:Francisco_de_Goya,_Saturno_devorando_a_su_hijo_(1819-1823).jpg) | Public domain |
 | Judith Beheading Holofernes | Caravaggio | c. 1599 | 145 × 195 | [Commons](https://commons.wikimedia.org/wiki/File:Caravaggio_-_Giuditta_e_Oloferne_(ca._1599).jpg) | Public domain |
 
+| La Leocadia | Francisco de Goya | 1819–1823 | 145.7 × 129.4 | [Commons](https://commons.wikimedia.org/wiki/File:Francisco_de_Goya_y_Lucientes_-_Manola_(La_Leocadia)_-_WGA10107.jpg) | Public domain |
+| Two Old Men | Francisco de Goya | 1819–1823 | 142.5 × 65.6 | [Commons](https://commons.wikimedia.org/wiki/File:2_alte_M%C3%A4nner,_um_1821-23.jpg) | Public domain |
+| Judith and Holofernes | Francisco de Goya | 1819–1823 | 146 × 84 | [Commons](https://commons.wikimedia.org/wiki/File:Judith_y_Holofernes_(Goya).jpg) | Public domain |
+| The Dog | Francisco de Goya | 1819–1823 | 131 × 79 | [Commons](https://commons.wikimedia.org/wiki/File:Goya_Dog.jpg) | Public domain |
 | Judith Slaying Holofernes | Artemisia Gentileschi | c. 1620 | 199 × 162.5 | [Commons](https://commons.wikimedia.org/wiki/File:Artemisia_Gentileschi_-_Giuditta_decapita_Oloferne_-_Google_Art_Project.jpg) | Public domain |
 
-Dimensions come from Wikidata (Q1150997, Q2470123, Q3769169). Artemisia's is the Uffizi version (c. 1620). The earlier Naples version is 158.8 × 125.4 cm.
+The Goya wall holds five of the Black Paintings (Wikidata Q1988253; all at the Prado). The wide ones (*Witches' Sabbath*, *Pilgrimage to San Isidro*, *Fight with Cudgels*, *Atropos*, *Asmodea*) are 2.6–4.4 m across and would need their own room. Dimensions come from Wikidata (Q1150997, Q2470123, Q3769169, and the Black Paintings series). Artemisia's is the Uffizi version (c. 1620). The earlier Naples version is 158.8 × 125.4 cm.
 
 ## Armor Court (Cleveland Museum of Art, all CC0)
 

@@ -4,10 +4,12 @@ import { contentUrl } from './scene-format';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { getKTX2Loader, type LoadedRoom } from './rooms';
 import { shadowDecal } from './surfaces';
-import { createWallLabel, LABEL_GAP, LABEL_HEIGHT, LABEL_SIZE } from './wall-label';
+import { createWallLabel, labelTexture, LABEL_GAP, LABEL_HEIGHT, LABEL_SIZE } from './wall-label';
+import { StreamedMap, type Streamable } from './streaming';
+import { lightArtworks, type SpotRequest } from './lighting';
 
-/** Anything with a label: a hung artwork or a free-standing piece. */
-export interface PlacedExhibit {
+/** Anything with a label: a hung artwork or a free-standing piece. Streams with its room. */
+export interface PlacedExhibit extends Streamable {
   info: ExhibitInfo;
   /** Raycast target for click-to-read plaques. */
   target: THREE.Mesh;
@@ -57,6 +59,7 @@ export function placeArtworks(
   renderer: THREE.WebGPURenderer,
 ): PlacedExhibit[] {
   const placed: PlacedExhibit[] = [];
+  const spots: SpotRequest[] = [];
   const anisotropy = renderer.getMaxAnisotropy();
 
   for (const artwork of museum.artworks) {
@@ -114,6 +117,7 @@ export function placeArtworks(
 
     const floorY = loaded.room.bounds.min[1];
     const label = createWallLabel(artwork);
+    const labelMat = label.material as THREE.MeshStandardMaterial;
     label.position.set(outer[0] / 2 + LABEL_GAP + LABEL_SIZE[0] / 2, floorY + LABEL_HEIGHT - slot.position[1], LABEL_SIZE[2] / 2);
     group.add(label);
 
@@ -122,22 +126,37 @@ export function placeArtworks(
 
     const center = canvas.getWorldPosition(new THREE.Vector3());
     if (loaded.room.finish?.artworkSpots !== false) {
-      addSpotlight(scene, center, normal, outer[0] + LABEL_GAP + LABEL_SIZE[0], outer[1], loaded.room.bounds.max[1]);
+      spots.push({ room: roomId, center, normal, width: outer[0], height: outer[1], labelReach: LABEL_GAP + LABEL_SIZE[0], roomBounds: loaded.box });
     }
 
-    loadTexture(artwork.image, renderer).then(
-      (tex) => {
+    const image = new StreamedMap(
+      canvasMat,
+      async () => {
+        const tex = await loadTexture(artwork.image, renderer);
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.anisotropy = anisotropy;
-        canvasMat.map = tex;
-        canvasMat.color.set(0xffffff);
-        canvasMat.needsUpdate = true;
+        return tex;
       },
-      (err) => console.error(`[museum] failed to load image for ${artwork.id}`, err),
+      { loaded: 0xffffff, unloaded: 0x444444 },
     );
+    const text = new StreamedMap(labelMat, async () => labelTexture(artwork), { loaded: 0xffffff, unloaded: 0xf7f5f0 });
 
-    placed.push({ info: artwork, target: canvas, center });
+    placed.push({
+      info: artwork,
+      target: canvas,
+      center,
+      room: roomId,
+      load: () => {
+        image.load();
+        text.load();
+      },
+      unload: () => {
+        image.unload();
+        text.unload();
+      },
+    });
   }
+  lightArtworks(scene, spots);
   return placed;
 }
 
@@ -154,31 +173,6 @@ function createFrame(width: number, height: number, spec: FrameSpec): THREE.Mesh
     pieces.map(([w, h, x, y]) => new THREE.BoxGeometry(w, h, depth).translate(x, y, depth / 2).toNonIndexed()),
   );
   return new THREE.Mesh(geo, spec.material);
-}
-
-/**
- * Warm gallery spot from the ceiling, angled ~30° down onto the artwork.
- * No shadow map: the wall shadow is a decal, which keeps dozens of spots affordable.
- */
-function addSpotlight(
-  scene: THREE.Scene,
-  center: THREE.Vector3,
-  normal: THREE.Vector3,
-  width: number,
-  height: number,
-  ceilingY: number,
-) {
-  const mountY = ceilingY - 0.2;
-  const out = Math.max(1.2, (mountY - center.y) * 0.6);
-  const pos = center.clone().addScaledVector(normal, out);
-  pos.y = mountY;
-
-  const dist = pos.distanceTo(center);
-  const radius = 0.5 * Math.hypot(width, height) * 1.15;
-  const spot = new THREE.SpotLight(0xffe4c4, 1.6 * dist * dist, 0, Math.atan(radius / dist), 0.65, 2);
-  spot.position.copy(pos);
-  spot.target.position.copy(center);
-  scene.add(spot, spot.target);
 }
 
 /**

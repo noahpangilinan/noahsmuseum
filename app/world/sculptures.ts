@@ -5,7 +5,8 @@ import { displaySize } from './layout';
 import { createGLTFLoader, type LoadedRoom } from './rooms';
 import { loadTexture, type PlacedExhibit } from './artworks';
 import { shadowDecal } from './surfaces';
-import { createWallLabel, LABEL_SIZE } from './wall-label';
+import { createWallLabel, labelTexture, LABEL_SIZE } from './wall-label';
+import { disposeObject, StreamedMap } from './streaming';
 
 const plinthMat = new THREE.MeshStandardMaterial({ color: 0xebe8e1, roughness: 0.8 });
 const platformMat = new THREE.MeshStandardMaterial({ color: 0x35312d, roughness: 0.7 });
@@ -21,8 +22,8 @@ const glassMat = new THREE.MeshStandardMaterial({
 
 /**
  * Free-standing pieces on plinths, in glass cases, or on platforms.
- * No lights of their own: they're lit by the room. The real model loads in
- * the background; until then (or if there is none yet) a photo card stands in.
+ * No lights of their own: they're lit by the room. Models stream in and out with the
+ * room; a photo card stands in when there's no model or it fails to load.
  */
 export function placeSculptures(
   museum: Museum,
@@ -72,6 +73,10 @@ export function placeSculptures(
     target.userData.exhibitId = sc.id;
 
     const label = createWallLabel(sc);
+    const text = new StreamedMap(label.material as THREE.MeshStandardMaterial, async () => labelTexture(sc), {
+      loaded: 0xffffff,
+      unloaded: 0xf7f5f0,
+    });
     label.position.set(0, sc.display === 'platform' ? size.height / 2 : size.height - LABEL_SIZE[1], size.depth / 2 + LABEL_SIZE[2] / 2);
     group.add(label);
 
@@ -79,22 +84,54 @@ export function placeSculptures(
     stand.position.y = size.height;
     group.add(stand);
 
-    if (sc.image) {
-      const card = photoCard(sc, photoBox, renderer);
-      stand.add(card);
-    }
-    if (sc.model) {
-      loadModel(sc, h, renderer).then((model) => {
-        if (!model) return; // keep the photo card
-        stand.clear();
-        stand.add(model);
-      });
-    }
+    // Exactly one of these is shown: the model, or the photo card as a fallback.
+    let model: THREE.Object3D | null = null;
+    let card: { mesh: THREE.Mesh; map: StreamedMap } | null = null;
+    let wanted = false;
+    let loadingModel = false;
+    const showCard = () => {
+      if (!sc.image) return;
+      card ??= photoCard(sc, photoBox, renderer);
+      stand.add(card.mesh);
+      card.map.load();
+    };
 
     scene.add(group);
     group.updateMatrixWorld(true);
     const center = group.localToWorld(new THREE.Vector3(0, size.height + h / 2, 0));
-    placed.push({ info: sc, target, center });
+    placed.push({
+      info: sc,
+      target,
+      center,
+      room: sc.room,
+      load: () => {
+        wanted = true;
+        text.load();
+        if (!sc.model) return showCard();
+        if (model || loadingModel) return;
+        loadingModel = true;
+        loadModel(sc, h, renderer).then((m) => {
+          loadingModel = false;
+          if (!m) return showCard();
+          if (!wanted) return disposeObject(m); // walked away mid-download
+          model = m;
+          stand.add(m);
+        });
+      },
+      unload: () => {
+        wanted = false;
+        text.unload();
+        if (model) {
+          stand.remove(model);
+          disposeObject(model);
+          model = null;
+        }
+        if (card) {
+          stand.remove(card.mesh);
+          card.map.unload();
+        }
+      },
+    });
   }
   return placed;
 }
@@ -120,7 +157,11 @@ async function loadModel(sc: Sculpture, height: number, renderer: THREE.WebGPURe
 }
 
 /** The object's photo printed on a card, leaning back slightly, sized to fit its display. */
-function photoCard(sc: Sculpture, [maxW, maxH]: [number, number], renderer: THREE.WebGPURenderer): THREE.Mesh {
+function photoCard(
+  sc: Sculpture,
+  [maxW, maxH]: [number, number],
+  renderer: THREE.WebGPURenderer,
+): { mesh: THREE.Mesh; map: StreamedMap } {
   const mat = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.6, side: THREE.DoubleSide });
   const card = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
   card.rotation.x = -0.1;
@@ -131,17 +172,19 @@ function photoCard(sc: Sculpture, [maxW, maxH]: [number, number], renderer: THRE
     card.position.set(0, height / 2 + 0.01, 0);
   };
   fit(1);
-  loadTexture(sc.image!, renderer).then(
-    (tex) => {
+  const map = new StreamedMap(
+    mat,
+    async () => {
+      const tex = await loadTexture(sc.image!, renderer);
       tex.colorSpace = THREE.SRGBColorSpace;
       tex.anisotropy = renderer.getMaxAnisotropy();
+      return tex;
+    },
+    { loaded: 0xffffff, unloaded: 0x888888 },
+    (tex) => {
       const img = tex.image as { width: number; height: number };
       fit(img.width / img.height);
-      mat.map = tex;
-      mat.color.set(0xffffff);
-      mat.needsUpdate = true;
     },
-    (err) => console.error(`[museum] failed to load image for ${sc.id}`, err),
   );
-  return card;
+  return { mesh: card, map };
 }

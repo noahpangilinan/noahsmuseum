@@ -141,3 +141,22 @@ body.locked::after {
   font: 12px/1.4 ui-monospace, Consolas, monospace;
   pointer-events: none;
 }
+
+/* Prompt under the crosshair */
+.hint {
+  position: fixed;
+  left: 50%;
+  top: calc(50% + 18px);
+  transform: translateX(-50%);
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: rgb(0 0 0 / 0.45);
+  color: #fff;
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+.hint.visible {
+  opacity: 1;
+}
