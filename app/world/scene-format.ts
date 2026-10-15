@@ -41,6 +41,8 @@ export type FloorStyle = 'oak' | 'dark-wood' | 'concrete' | 'stone';
 export interface RoomFinish {
   /** CSS colour. */
   walls?: string;
+  /** Faint plaster texture on the walls. Default true; off gives a perfectly even painted wall. */
+  plaster?: boolean;
   floor?: FloorStyle;
   /**
    * General lighting. `downlights` (default): recessed ceiling spots. `skylight`: one large

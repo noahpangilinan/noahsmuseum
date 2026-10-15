@@ -109,11 +109,12 @@ function buildPlaceholderRoom(room: Room, doorways: Doorway[]): THREE.Object3D {
   // vertexColors carries the baked ambient occlusion (see bakeAO below).
   // A little emission stands in for light bounced between the walls, keeping them brighter than
   // the ceiling, as in a real gallery.
+  const plaster = finish.plaster !== false ? plasterTexture() : null;
   const wallMat = new THREE.MeshStandardMaterial({
     color: wallColor,
-    map: plasterTexture(),
+    map: plaster,
     emissive: wallColor.clone().multiplyScalar(0.07),
-    emissiveMap: plasterTexture(),
+    emissiveMap: plaster,
     roughness: 0.95,
     vertexColors: true,
   });

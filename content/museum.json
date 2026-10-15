@@ -16,7 +16,7 @@
         "armor-hall"
       ],
       "finish": {
-        "walls": "#eeebe4",
+        "walls": "#9a9792",
         "floor": "oak"
       },
       "furniture": [
@@ -129,6 +129,7 @@
       ],
       "finish": {
         "walls": "#f6f5f2",
+        "plaster": false,
         "floor": "concrete",
         "ceiling": "skylight",
         "artworkSpots": false
