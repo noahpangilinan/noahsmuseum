@@ -51,7 +51,7 @@ docs/         plan, Blender conventions, artwork shortlist
 
 - `dimensionsCm` is **[height, width]**. Artworks always render at real physical size, centred on their slot.
 - `slots[].maxSize` is **[width, height]** in metres.
-- A room without `model` gets a procedural placeholder box built from its `bounds`. All current rooms are placeholders until the first Blender room lands.
+- A room without `model` gets a procedural placeholder box built from its `bounds`. All current rooms are placeholders until the first Blender room lands. Placeholder rooms bake soft ambient occlusion into their walls, floor and ceiling (per vertex, so it costs nothing at runtime), and walls get a faint plaster texture.
 - **Doorways are automatic.** List two rooms in each other's `connections` and make their `bounds` touch along a wall (corridors are just narrow rooms). The shared stretch of wall becomes an opening, up to 3.6 m high, and you can walk through it.
 - `finish` (optional, placeholder rooms only): `walls` colour, `floor` (`oak`, `dark-wood`, `concrete`, `stone`), `ceiling` lighting (`downlights`, `skylight`, `none`), and `artworkSpots` (default `true`).
 - `furniture` (optional): benches at `position`, rotated by `rotationY` degrees. You can't walk through them.

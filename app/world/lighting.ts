@@ -76,6 +76,10 @@ function addWallSpot(scene: THREE.Scene, group: SpotRequest[]) {
   spot.target.position.copy(wallCenter);
   spot.updateMatrixWorld();
   spot.target.updateMatrixWorld();
+  // The cookie only masks light inside the projection frustum. With the default 0.5 m near
+  // plane, the ceiling just above the fixture fell outside it and lit up at full strength.
+  spot.shadow.camera.near = 0.02;
+  spot.shadow.camera.far = 80;
   spot.shadow.updateMatrices(spot); // the cookie is projected through the shadow camera
   spot.map = cookieTexture(spot, group, along, farthest);
   scene.add(spot, spot.target);

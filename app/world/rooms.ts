@@ -7,7 +7,7 @@ import { RectAreaLightTexturesLib } from 'three/addons/lights/RectAreaLightTextu
 import type { Room } from './scene-format';
 import { contentUrl } from './scene-format';
 import type { Doorway } from './layout';
-import { floorMaterial } from './surfaces';
+import { aoPlane, bakeAO, diffuserTexture, floorMaterial, occlusion, plasterTexture } from './surfaces';
 import { createBench } from './furniture';
 
 export interface LoadedRoom {
@@ -106,21 +106,49 @@ function buildPlaceholderRoom(room: Room, doorways: Doorway[]): THREE.Object3D {
   const finish = room.finish ?? {};
 
   const wallColor = new THREE.Color(finish.walls ?? '#eeebe4');
-  const wallMat = new THREE.MeshStandardMaterial({ color: wallColor, roughness: 0.95 });
-  const ceilingMat = new THREE.MeshStandardMaterial({ color: wallColor.clone().offsetHSL(0, 0, 0.03), roughness: 0.97 });
+  // vertexColors carries the baked ambient occlusion (see bakeAO below).
+  // A little emission stands in for light bounced between the walls, keeping them brighter than
+  // the ceiling, as in a real gallery.
+  const wallMat = new THREE.MeshStandardMaterial({
+    color: wallColor,
+    map: plasterTexture(),
+    emissive: wallColor.clone().multiplyScalar(0.07),
+    emissiveMap: plasterTexture(),
+    roughness: 0.95,
+    vertexColors: true,
+  });
+  // Ceilings get no direct light; a little emission stands in for light bounced up off the floor and walls.
+  const ceilingColor = wallColor.clone().offsetHSL(0, 0, 0.03);
+  const ceilingMat = new THREE.MeshStandardMaterial({
+    color: ceilingColor,
+    emissive: ceilingColor.clone().multiplyScalar(0.12),
+    roughness: 0.97,
+    vertexColors: true,
+  });
   const trimMat = new THREE.MeshStandardMaterial({ color: wallColor.clone().offsetHSL(0, 0, -0.05), roughness: 0.7 });
 
   const parts = { wall: [] as THREE.BufferGeometry[], ceiling: [] as THREE.BufferGeometry[], trim: [] as THREE.BufferGeometry[] };
   const m4 = new THREE.Matrix4();
 
+  // Baked ambient occlusion: soft darkening wherever two surfaces meet, the cue that most
+  // separates a real room from a CG box. Computed per vertex from distance to each edge.
+  const nearWalls = (p: THREE.Vector3, radius: number, strength: number) =>
+    occlusion(p.x - x0, radius, strength) *
+    occlusion(x1 - p.x, radius, strength) *
+    occlusion(p.z - z0, radius, strength) *
+    occlusion(z1 - p.z, radius, strength);
+
   // Floor: UVs in metres so every room shares the same tiling texture scale.
-  const floorGeo = new THREE.PlaneGeometry(w, d).rotateX(-Math.PI / 2).translate(cx, y0, cz);
+  const floorGeo = aoPlane(w, d).rotateX(-Math.PI / 2).translate(cx, y0, cz);
   scaleUVs(floorGeo, w, d);
+  bakeAO(floorGeo, (p) => nearWalls(p, 0.35, 0.4));
   const floor = new THREE.Mesh(floorGeo, floorMaterial(finish.floor ?? 'oak'));
   floor.receiveShadow = true;
   group.add(floor);
 
-  parts.ceiling.push(new THREE.PlaneGeometry(w, d).rotateX(Math.PI / 2).translate(cx, y1, cz));
+  const ceilingGeo = aoPlane(w, d).rotateX(Math.PI / 2).translate(cx, y1, cz);
+  bakeAO(ceilingGeo, (p) => nearWalls(p, 0.6, 0.45));
+  parts.ceiling.push(ceilingGeo);
 
   const walls: WallSpec[] = [
     { axis: 'z', plane: z0, normal: new THREE.Vector3(0, 0, 1), lo: x0, hi: x1 },
@@ -142,10 +170,30 @@ function buildPlaceholderRoom(room: Room, doorways: Doorway[]): THREE.Object3D {
       pos.addScaledVector(wall.normal, out);
       return m4.compose(pos, new THREE.Quaternion().setFromAxisAngle(THREE.Object3D.DEFAULT_UP, rotY), new THREE.Vector3(1, 1, 1));
     };
+    // Walls darken into the floor, the ceiling and the room's corners. UVs in metres for the plaster.
+    const lateral = (p: THREE.Vector3) => (wall.axis === 'z' ? p.x : p.z);
+    const wallPiece = (geo: THREE.BufferGeometry) => {
+      bakeAO(geo, (p) => {
+        const l = lateral(p);
+        return (
+          occlusion(p.y - y0, 0.22, 0.45) *
+          occlusion(y1 - p.y, 0.55, 0.35) *
+          occlusion(l - wall.lo, 0.45, 0.35) *
+          occlusion(wall.hi - l, 0.45, 0.35)
+        );
+      });
+      const pos = geo.getAttribute('position') as THREE.BufferAttribute;
+      const uv = geo.getAttribute('uv') as THREE.BufferAttribute;
+      for (let i = 0; i < pos.count; i++) {
+        const p = new THREE.Vector3().fromBufferAttribute(pos, i);
+        uv.setXY(i, lateral(p), p.y);
+      }
+      parts.wall.push(geo);
+    };
     const solid = (from: number, to: number) => {
       if (to - from < 1e-3) return;
       const mid = (from + to) / 2;
-      parts.wall.push(new THREE.PlaneGeometry(to - from, h).applyMatrix4(place(mid, y0 + h / 2)));
+      wallPiece(aoPlane(to - from, h).applyMatrix4(place(mid, y0 + h / 2)));
       parts.trim.push(new THREE.BoxGeometry(to - from, BASE_H, BASE_D).applyMatrix4(place(mid, y0 + BASE_H / 2, BASE_D / 2)));
     };
 
@@ -156,7 +204,7 @@ function buildPlaceholderRoom(room: Room, doorways: Doorway[]): THREE.Object3D {
       const mid = (o.from + o.to) / 2;
       const hasLintel = y1 - o.top > 1e-3;
       if (hasLintel) {
-        parts.wall.push(new THREE.PlaneGeometry(width, y1 - o.top).applyMatrix4(place(mid, (o.top + y1) / 2)));
+        wallPiece(aoPlane(width, y1 - o.top).applyMatrix4(place(mid, (o.top + y1) / 2)));
       }
       // Door casing on this side, only where there's wall to fix it to.
       const casingH = o.top - o.bottom;
@@ -238,7 +286,7 @@ function createSkylight(x: number, ceilingY: number, z: number, width: number, d
 
   const panel = new THREE.Mesh(
     new THREE.PlaneGeometry(width, depth).rotateX(Math.PI / 2),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(0xfff8ee).multiplyScalar(1.6) }),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(0xfff8ee).multiplyScalar(1.25), map: diffuserTexture(width, depth) }),
   );
   panel.position.set(x, ceilingY - 0.02, z);
   return [light, panel];
