@@ -11,6 +11,16 @@ import { disposeObject, StreamedMap } from './streaming';
 const plinthMat = new THREE.MeshStandardMaterial({ color: 0xebe8e1, roughness: 0.8 });
 const platformMat = new THREE.MeshStandardMaterial({ color: 0x35312d, roughness: 0.7 });
 const capMat = new THREE.MeshStandardMaterial({ color: 0xcfcbc3, metalness: 0.3, roughness: 0.4 });
+const brassMat = new THREE.MeshStandardMaterial({ color: 0xb08d4a, metalness: 0.4, roughness: 0.35 });
+const lensMat = new THREE.MeshStandardMaterial({
+  color: 0xdfe9ef,
+  transparent: true,
+  opacity: 0.22,
+  roughness: 0.05,
+  depthWrite: false,
+});
+/** Pieces smaller than this (largest dimension, metres) get a higher case and a magnifier. */
+const SMALL = 0.15;
 // Plain transparency rather than physical transmission: a fraction of the cost per pixel.
 const glassMat = new THREE.MeshStandardMaterial({
   color: 0xffffff,
@@ -55,11 +65,11 @@ export function placeSculptures(
     floorShadow.position.y = 0.002;
     group.add(floorShadow);
 
+    const small = Math.max(h, w, d) < SMALL;
     let target = base;
     // Space the stand-in photo may fill: [max width, max height].
     let photoBox: [number, number] = [Math.max(w, d), h];
     if (sc.display === 'case') {
-      const small = Math.max(h, w, d) < 0.15;
       const gh = Math.max(small ? 0.28 : 0.45, h + 0.2);
       const glass = new THREE.Mesh(new THREE.BoxGeometry(size.width - 0.02, gh, size.depth - 0.02), glassMat);
       glass.position.y = size.height + gh / 2;
@@ -72,6 +82,7 @@ export function placeSculptures(
       photoBox = [Math.max(w, d), gh - 0.08];
     }
     target.userData.exhibitId = sc.id;
+    if (small) group.add(magnifierProp(size.height, size.depth));
 
     const label = createWallLabel(sc);
     const text = new StreamedMap(label.material as THREE.MeshStandardMaterial, async () => labelTexture(sc), {
@@ -105,6 +116,7 @@ export function placeSculptures(
       target,
       center,
       group,
+      magnify: small ? { size: Math.max(h, w, d) } : undefined,
       room: sc.room,
       load: () => {
         wanted = true;
@@ -136,6 +148,24 @@ export function placeSculptures(
     });
   }
   return placed;
+}
+
+/** A mounted magnifying glass on the front of a small-object case: the cue that you can look closer. */
+function magnifierProp(plinthHeight: number, plinthDepth: number): THREE.Group {
+  const r = 0.065;
+  const prop = new THREE.Group();
+  prop.position.set(0, plinthHeight + 0.13, plinthDepth / 2 + 0.05);
+  prop.rotation.x = -0.55; // tilted up towards a standing visitor
+
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.006, 8, 40), brassMat);
+  const lens = new THREE.Mesh(new THREE.CircleGeometry(r, 32), lensMat);
+  lens.renderOrder = 3;
+  // Arm down to the plinth's front edge.
+  const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 0.16, 6), brassMat);
+  arm.position.set(0, -r - 0.06, -0.03);
+  arm.rotation.x = 0.55;
+  prop.add(ring, lens, arm);
+  return prop;
 }
 
 /** Loads the glTF and scales it so its height matches the catalogue height, standing on the origin. */

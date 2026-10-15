@@ -84,6 +84,7 @@ body.locked::after {
 /* Wall label */
 .plaque {
   position: fixed;
+  z-index: 2; /* stays readable while magnified */
   right: 24px;
   bottom: 24px;
   max-width: min(340px, calc(100vw - 32px));
@@ -145,6 +146,7 @@ body.locked::after {
 /* Prompt under the crosshair */
 .hint {
   position: fixed;
+  z-index: 2; /* above the loupe */
   left: 50%;
   top: calc(50% + 18px);
   transform: translateX(-50%);
@@ -158,5 +160,37 @@ body.locked::after {
   pointer-events: none;
 }
 .hint.visible {
+  opacity: 1;
+}
+.hint.low {
+  top: auto;
+  bottom: 6vh;
+}
+
+/* Magnifier: everything outside a round lens is darkened, with a brass rim */
+.loupe {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(circle at 50% 50%, transparent 0 34vmin, rgb(0 0 0 / 0.88) 35vmin);
+}
+.loupe::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 70vmin;
+  height: 70vmin;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 0.8vmin solid #a88544;
+  box-shadow:
+    inset 0 0 4vmin rgb(0 0 0 / 0.5),
+    0 0 1.5vmin rgb(0 0 0 / 0.6);
+}
+.loupe.visible {
   opacity: 1;
 }

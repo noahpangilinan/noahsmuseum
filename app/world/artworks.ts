@@ -17,6 +17,8 @@ export interface PlacedExhibit extends Streamable {
   center: THREE.Vector3;
   /** Everything drawn for this exhibit (hidden with its room). */
   group: THREE.Object3D;
+  /** Small pieces can be viewed through a magnifier; `size` is the object's largest dimension in metres. */
+  magnify?: { size: number };
 }
 
 interface FrameSpec {

@@ -13,8 +13,11 @@ const RUN_SPEED = 6.0;
 const CROUCH_SPEED = 1.4;
 const ACCEL = 8; // higher = snappier easing toward target speed
 const POSE_EASE = 8; // how quickly eye height and sit/stand moves settle
-/** How far away a bench can be clicked to sit on it. */
+/** How far away a bench (or a magnifier case) can be clicked. */
 const SIT_REACH = 3;
+/** How much of the screen height a magnified object fills. */
+const MAGNIFIED_FILL = 0.45;
+const AIM_SECONDS = 0.45;
 
 const KEYS = {
   forward: ['KeyW', 'ArrowUp'],
@@ -41,6 +44,9 @@ export class FirstPersonControls {
   private seat: { standAt: THREE.Vector3 } | null = null;
   /** Floor position the camera is gliding to (sitting down or standing up); input is paused meanwhile. */
   private glideTo: THREE.Vector3 | null = null;
+  /** Set while looking through a magnifier: zoomed field of view and the eased turn towards the object. */
+  private magnifier: { fov: number; from: THREE.Quaternion; to: THREE.Quaternion; t: number } | null = null;
+  private readonly baseFov: number;
 
   constructor(
     private readonly camera: THREE.PerspectiveCamera,
@@ -50,6 +56,7 @@ export class FirstPersonControls {
   ) {
     this.pointer = new PointerLockControls(camera, domElement);
     this.currentRoom = rooms[0];
+    this.baseFov = camera.fov;
     this.raycaster.far = SIT_REACH;
 
     window.addEventListener('keydown', (e) => this.pressed.add(e.code));
@@ -68,6 +75,33 @@ export class FirstPersonControls {
 
   get isSeated() {
     return this.seat !== null;
+  }
+
+  get isMagnified() {
+    return this.magnifier !== null;
+  }
+
+  /** The first of `objects` under the crosshair and within reach, if any. */
+  pickInReach(objects: THREE.Object3D[]): THREE.Object3D | null {
+    this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera);
+    return this.raycaster.intersectObjects(objects, false)[0]?.object ?? null;
+  }
+
+  /**
+   * Look through a magnifier: turn smoothly towards the object and narrow the field of view
+   * until it fills about half the screen. Walking pauses; mouse look keeps working, slowed down
+   * in proportion to the zoom.
+   */
+  magnify(center: THREE.Vector3, size: number) {
+    const dist = this.camera.position.distanceTo(center);
+    const fov = THREE.MathUtils.clamp(THREE.MathUtils.radToDeg(2 * Math.atan(size / (2 * MAGNIFIED_FILL * dist))), 2, 30);
+    const look = new THREE.Matrix4().lookAt(this.camera.position, center, THREE.Object3D.DEFAULT_UP);
+    this.magnifier = { fov, from: this.camera.quaternion.clone(), to: new THREE.Quaternion().setFromRotationMatrix(look), t: 0 };
+    this.velocity.set(0, 0);
+  }
+
+  unmagnify() {
+    this.magnifier = null;
   }
 
   lock() {
@@ -121,13 +155,28 @@ export class FirstPersonControls {
   update(dt: number) {
     const held = (k: keyof typeof KEYS) => KEYS[k].some((c) => this.pressed.has(c));
     const ease = 1 - Math.exp(-POSE_EASE * dt);
-    const crouching = held('crouch') && !this.seat;
+    const crouching = held('crouch') && !this.seat && !this.magnifier;
+
+    // Zoom in or out, and keep mouse look proportional to the field of view.
+    const targetFov = this.magnifier ? this.magnifier.fov : this.baseFov;
+    if (Math.abs(this.camera.fov - targetFov) > 0.01) {
+      this.camera.fov += (targetFov - this.camera.fov) * ease;
+      this.camera.updateProjectionMatrix();
+    }
+    this.pointer.pointerSpeed = this.camera.fov / this.baseFov;
+    if (this.magnifier && this.magnifier.t < 1) {
+      this.magnifier.t = Math.min(1, this.magnifier.t + dt / AIM_SECONDS);
+      const k = THREE.MathUtils.smootherstep(this.magnifier.t, 0, 1);
+      this.camera.quaternion.slerpQuaternions(this.magnifier.from, this.magnifier.to, k);
+    }
 
     const targetEye = this.seat ? SEATED_EYE_HEIGHT : crouching ? CROUCH_EYE_HEIGHT : EYE_HEIGHT;
     this.eyeHeight += (targetEye - this.eyeHeight) * ease;
 
     const p = this.camera.position;
-    if (this.glideTo) {
+    if (this.magnifier) {
+      // Standing still at the case while magnified.
+    } else if (this.glideTo) {
       // Sitting down or standing up: glide there, no walking until it's done.
       p.x += (this.glideTo.x - p.x) * ease;
       p.z += (this.glideTo.z - p.z) * ease;

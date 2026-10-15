@@ -9,7 +9,9 @@ export class Hint {
     document.body.appendChild(this.el);
   }
 
-  set(text: string | null) {
+  /** `low` moves the prompt to the bottom of the screen, out of the way of what you're looking at. */
+  set(text: string | null, low = false) {
+    this.el.classList.toggle('low', low);
     if (text === this.text) return;
     this.text = text;
     this.el.textContent = text ?? '';

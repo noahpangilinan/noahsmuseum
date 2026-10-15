@@ -12,6 +12,7 @@ import { Plaque } from './ui/plaque';
 import { DebugOverlay } from './ui/debug-overlay';
 import { StartScreen } from './ui/start-screen';
 import { Hint } from './ui/hint';
+import { Loupe } from './ui/loupe';
 
 async function main() {
   const start = new StartScreen();
@@ -41,6 +42,12 @@ async function main() {
     debugTeleport(camera);
     const plaque = new Plaque(camera, exhibits);
     const hint = new Hint();
+    const loupe = new Loupe();
+    const magnifiable = exhibits.filter((e) => e.magnify);
+    const magnifierInView = () => {
+      const hit = controls.pickInReach(magnifiable.map((e) => e.target));
+      return hit ? magnifiable.find((e) => e.target === hit)! : null;
+    };
     // Rooms you can't see aren't drawn, and their textures and models are released.
     // Lights stay on: hiding one would change every shader's light set and force a recompile.
     const roomObjects = new Map([...rooms].map(([id, r]) => [id, r.object.children.filter((o) => !(o as THREE.Light).isLight)]));
@@ -61,18 +68,29 @@ async function main() {
       document.body.classList.add('locked');
     });
     controls.pointer.addEventListener('unlock', () => {
+      controls.unmagnify();
+      loupe.setVisible(false);
       start.setVisible(true);
       document.body.classList.remove('locked');
     });
     renderer.domElement.addEventListener('click', () => {
       if (!controls.isLocked) return;
+      if (controls.isMagnified) {
+        controls.unmagnify();
+        loupe.setVisible(false);
+        return;
+      }
       if (controls.isSeated) {
         controls.stand();
         return;
       }
       const bench = controls.benchInView();
+      const lens = magnifierInView();
       if (bench) controls.sit(bench);
-      else plaque.pick();
+      else if (lens) {
+        controls.magnify(lens.center, lens.magnify!.size);
+        loupe.setVisible(true);
+      } else plaque.pick();
     });
     start.ready(() => controls.lock());
 
@@ -83,7 +101,11 @@ async function main() {
       controls.update(dt);
       streamer.update(controls.room.room.id);
       plaque.update();
-      if (controls.isLocked) hint.set(controls.isSeated ? 'Click to stand' : controls.benchInView() ? 'Click to sit' : null);
+      if (!controls.isLocked) hint.set(null);
+      else if (controls.isMagnified) hint.set('Click to step back', true);
+      else if (controls.isSeated) hint.set('Click to stand');
+      else if (controls.benchInView()) hint.set('Click to sit');
+      else if (magnifierInView()) hint.set('Click to magnify');
       else hint.set(null);
       renderer.render(scene, camera);
       debug.update(dt);
