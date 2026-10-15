@@ -79,7 +79,7 @@ The Goya wall holds five of the Black Paintings (Wikidata Q1988253; all at the P
 Data and images come from the [CMA Open Access API](https://openaccess-api.clevelandart.org/).
 
 - **Tapestries:** *The Story of Dido and Aeneas*, 1915.79.1–8. Designed by Giovanni Francesco Romanelli, woven by Michael Wauters, 1679. Sizes come from the API.
-- **Objects** (`sculptures` in museum.json): CMA's own 3D scans from Sketchfab. The burgonet, hussar breastplate and Corinthian helmet were swapped out for the jar, bull and pendant. All are CC0 except the **Insect Bell Pendant scan, which CMA published under CC BY 4.0**; its label credits the Cleveland Museum of Art, in `content/models/`. The photos in `art/<id>/` remain as fallbacks if a model fails to load.
+- **Objects** (`sculptures` in museum.json): CMA's own 3D scans from Sketchfab, in `content/models/`. The photos in `art/<id>/` remain as fallbacks if a model fails to load. The burgonet, hussar breastplate and Corinthian helmet were swapped out for the jar, bull and pendant. All scans are CC0 except the **Insect Bell Pendant's, which CMA published under CC BY 4.0**; its label credits the Cleveland Museum of Art.
 
   | Piece | Accession | Sketchfab | Original tris | Shipped tris | File |
   |---|---|---|---|---|---|
