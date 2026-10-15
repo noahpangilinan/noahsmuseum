@@ -104,6 +104,24 @@ export class FirstPersonControls {
     this.magnifier = null;
   }
 
+  /** Jump straight to a floor position (keeps the view direction); cancels sitting and magnifying. */
+  teleport(x: number, z: number) {
+    this.seat = null;
+    this.glideTo = null;
+    this.magnifier = null;
+    this.velocity.set(0, 0);
+    this.camera.position.x = x;
+    this.camera.position.z = z;
+    const inside = this.rooms.find((r) => x >= r.box.min.x && x <= r.box.max.x && z >= r.box.min.z && z <= r.box.max.z);
+    if (inside) this.currentRoom = inside;
+  }
+
+  /** Pauses walking and looking (e.g. while a photo is open); the pointer stays locked. */
+  set frozen(value: boolean) {
+    this.pointer.enabled = !value;
+    if (value) this.velocity.set(0, 0);
+  }
+
   lock() {
     this.pointer.lock();
   }
@@ -174,8 +192,8 @@ export class FirstPersonControls {
     this.eyeHeight += (targetEye - this.eyeHeight) * ease;
 
     const p = this.camera.position;
-    if (this.magnifier) {
-      // Standing still at the case while magnified.
+    if (this.magnifier || !this.pointer.enabled) {
+      // Standing still: magnified, or a photo is open.
     } else if (this.glideTo) {
       // Sitting down or standing up: glide there, no walking until it's done.
       p.x += (this.glideTo.x - p.x) * ease;

@@ -1,7 +1,7 @@
 import './style.css';
 import * as THREE from 'three/webgpu';
 import { createEngine } from './engine/renderer';
-import { loadMuseum } from './world/scene-format';
+import { loadMuseum, type Artwork } from './world/scene-format';
 import { computeVisibility, findDoorways, Walkable } from './world/layout';
 import { loadRoom, type LoadedRoom } from './world/rooms';
 import { placeArtworks } from './world/artworks';
@@ -14,6 +14,7 @@ import { StartScreen } from './ui/start-screen';
 import { Hint } from './ui/hint';
 import { Loupe } from './ui/loupe';
 import { MuseumMap } from './ui/map';
+import { PhotoViewer } from './ui/photo-viewer';
 
 async function main() {
   const start = new StartScreen();
@@ -44,7 +45,37 @@ async function main() {
     const plaque = new Plaque(camera, exhibits);
     const hint = new Hint();
     const loupe = new Loupe();
-    const map = new MuseumMap(museum, doorways);
+    // Map clicks snap to the nearest spot you could actually stand (not inside a wall or a bench).
+    const standable = (x: number, z: number) => {
+      if (walkable.contains(x, z)) return { x, z };
+      for (let r = 0.15; r <= 1.5; r += 0.15) {
+        for (let a = 0; a < 16; a++) {
+          const sx = x + r * Math.cos((a / 16) * Math.PI * 2);
+          const sz = z + r * Math.sin((a / 16) * Math.PI * 2);
+          if (walkable.contains(sx, sz)) return { x: sx, z: sz };
+        }
+      }
+      return null;
+    };
+    const map = new MuseumMap(museum, doorways, standable);
+    const photo = new PhotoViewer();
+
+    // A painting you're close to and looking at can be opened full-screen.
+    const viewRay = new THREE.Raycaster();
+    viewRay.far = 8;
+    const paintings = exhibits.filter((e) => 'slot' in e.info);
+    const paintingInView = () => {
+      viewRay.setFromCamera(new THREE.Vector2(0, 0), camera);
+      const hit = viewRay.intersectObjects(paintings.map((e) => e.target), false)[0];
+      const e = hit && paintings.find((p) => p.target === hit.object);
+      if (!e) return null;
+      const reach = Math.max(2.2, (0.9 * Math.max(...e.info.dimensionsCm)) / 100);
+      return hit.distance <= reach ? e : null;
+    };
+    const photoPath = (e: (typeof exhibits)[number]) => {
+      const info = e.info as Artwork; // only paintings reach here
+      return info.imageFull ?? (info.image.endsWith('.ktx2') ? null : info.image);
+    };
     const magnifiable = exhibits.filter((e) => e.magnify);
     const magnifierInView = () => {
       const hit = controls.pickInReach(magnifiable.map((e) => e.target));
@@ -65,6 +96,23 @@ async function main() {
     // Compile shaders before the first visible frame to avoid a hitch on entry.
     await renderer.compileAsync(scene, camera);
 
+    // Opening the map frees the mouse so you can click it; closing it (or teleporting) captures
+    // it again. While it's open, losing pointer lock is expected, so no start screen.
+    map.onOpenChange = (open, resume) => {
+      if (open) {
+        controls.pointer.unlock();
+        hint.set(null);
+      } else if (resume) {
+        controls.lock();
+      } else {
+        start.setVisible(true);
+      }
+    };
+    map.onPick = (x, z) => {
+      controls.teleport(x, z);
+      map.setOpen(false);
+    };
+
     controls.pointer.addEventListener('lock', () => {
       start.setVisible(false);
       document.body.classList.add('locked');
@@ -72,11 +120,18 @@ async function main() {
     controls.pointer.addEventListener('unlock', () => {
       controls.unmagnify();
       loupe.setVisible(false);
-      start.setVisible(true);
+      photo.close();
+      controls.frozen = false;
+      if (!map.isOpen) start.setVisible(true);
       document.body.classList.remove('locked');
     });
     renderer.domElement.addEventListener('click', () => {
       if (!controls.isLocked) return;
+      if (photo.isOpen) {
+        photo.close();
+        controls.frozen = false;
+        return;
+      }
       if (controls.isMagnified) {
         controls.unmagnify();
         loupe.setVisible(false);
@@ -92,7 +147,14 @@ async function main() {
       else if (lens) {
         controls.magnify(lens.center, lens.magnify!.size);
         loupe.setVisible(true);
-      } else plaque.pick();
+      } else {
+        const close = paintingInView();
+        const path = close && photoPath(close);
+        if (close && path) {
+          photo.show(close.info, path);
+          controls.frozen = true;
+        } else plaque.pick();
+      }
     });
     start.ready(() => controls.lock());
 
@@ -129,7 +191,9 @@ async function main() {
       else if (controls.isMagnified) hint.set('Click to step back', true);
       else if (controls.isSeated) hint.set('Click to stand');
       else if (controls.benchInView()) hint.set('Click to sit');
+      else if (photo.isOpen) hint.set(null);
       else if (magnifierInView()) hint.set('Click to magnify');
+      else if (paintingInView()) hint.set('Click to view');
       else hint.set(null);
       renderer.render(scene, camera);
       debug.update(dt);

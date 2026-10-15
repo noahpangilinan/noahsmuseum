@@ -210,6 +210,9 @@ body.locked::after {
 .museum-map.visible {
   opacity: 1;
 }
+.museum-map.visible .museum-map-card {
+  pointer-events: auto; /* clickable for teleporting */
+}
 .museum-map-card {
   background: rgb(246 243 236 / 0.94);
   border-radius: 4px;
@@ -225,4 +228,57 @@ body.locked::after {
   text-align: center;
   font-size: 0.75rem;
   color: #6d665c;
+}
+
+/* Painting photo viewer */
+.photo-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  background: rgb(10 9 8 / 0.92);
+  color: var(--paper);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.photo-viewer.visible {
+  opacity: 1;
+}
+.photo-viewer figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-height: calc(100vh - 60px);
+}
+.photo-viewer img {
+  max-width: min(92vw, 1600px);
+  max-height: calc(100vh - 150px);
+  object-fit: contain;
+  box-shadow: 0 10px 50px rgb(0 0 0 / 0.6);
+}
+.photo-viewer figcaption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+.photo-viewer-artist {
+  font-weight: 600;
+}
+.photo-viewer-title {
+  font-style: italic;
+}
+.photo-viewer-meta,
+.photo-viewer-key {
+  font-size: 0.8rem;
+  opacity: 0.7;
 }

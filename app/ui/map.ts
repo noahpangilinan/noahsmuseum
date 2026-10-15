@@ -7,7 +7,7 @@ const PAD = 28; // canvas px around the plan
 /**
  * Floor plan overlay, toggled with M. Drawn from the scene file: rooms, walls with their
  * doorway gaps, a dot per painting, a square per free-standing piece, and an arrow for the
- * visitor. North (−z) is up.
+ * visitor. North (−z) is up. Click a spot to teleport there.
  */
 export class MuseumMap {
   private readonly el: HTMLElement;
@@ -17,10 +17,22 @@ export class MuseumMap {
   private readonly bounds = { x0: Infinity, z0: Infinity, x1: -Infinity, z1: -Infinity };
   private readonly dir = new THREE.Vector3();
   private open = false;
+  /** Canvas px → world, from the last draw. */
+  private toWorld: ((cx: number, cy: number) => { x: number; z: number }) | null = null;
+  private hover: { x: number; z: number } | null = null;
+  /**
+   * Called when the map opens or closes. The app frees the mouse while it's open, and captures
+   * it again on close unless `resume` is false (closed with Esc).
+   */
+  onOpenChange?: (open: boolean, resume: boolean) => void;
+  /** Called with a floor position when the visitor clicks the map. */
+  onPick?: (x: number, z: number) => void;
 
   constructor(
     private readonly museum: Museum,
     doorways: Doorway[],
+    /** Snaps a floor position to somewhere the visitor can stand, or null if nowhere near. */
+    private readonly standable: (x: number, z: number) => { x: number; z: number } | null,
   ) {
     this.walls = wallSegments(museum, doorways);
     for (const r of museum.rooms) {
@@ -32,13 +44,28 @@ export class MuseumMap {
 
     this.el = document.createElement('div');
     this.el.className = 'museum-map';
-    this.el.innerHTML = `<div class="museum-map-card"><canvas></canvas><div class="museum-map-key">M to close</div></div>`;
+    this.el.innerHTML = `<div class="museum-map-card"><canvas></canvas><div class="museum-map-key">Click a spot to go there · M to close</div></div>`;
     this.canvas = this.el.querySelector('canvas')!;
     this.ctx = this.canvas.getContext('2d')!;
     document.body.appendChild(this.el);
 
     window.addEventListener('keydown', (e) => {
       if (e.code === 'KeyM' && !e.repeat) this.setOpen(!this.open);
+      else if (e.code === 'Escape' && this.open) this.setOpen(false, false);
+    });
+    const worldAt = (e: MouseEvent) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const p = this.toWorld?.(e.clientX - rect.left, e.clientY - rect.top);
+      return p ? this.standable(p.x, p.z) : null;
+    };
+    this.canvas.addEventListener('mousemove', (e) => {
+      this.hover = worldAt(e);
+      this.canvas.style.cursor = this.hover ? 'pointer' : 'not-allowed';
+    });
+    this.canvas.addEventListener('mouseleave', () => (this.hover = null));
+    this.canvas.addEventListener('click', (e) => {
+      const p = worldAt(e);
+      if (p) this.onPick?.(p.x, p.z);
     });
   }
 
@@ -46,9 +73,12 @@ export class MuseumMap {
     return this.open;
   }
 
-  setOpen(open: boolean) {
+  setOpen(open: boolean, resume = true) {
+    if (open === this.open) return;
     this.open = open;
+    this.hover = null;
     this.el.classList.toggle('visible', open);
+    this.onOpenChange?.(open, resume);
   }
 
   /** Redraws while open (cheap: a few dozen shapes). */
@@ -72,6 +102,7 @@ export class MuseumMap {
     const offX = (cssW - planW * scale) / 2;
     const px = (x: number) => offX + (x - bounds.x0) * scale;
     const pz = (z: number) => PAD + (z - bounds.z0) * scale;
+    this.toWorld = (cx, cy) => ({ x: bounds.x0 + (cx - offX) / scale, z: bounds.z0 + (cy - PAD) / scale });
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, cssW, cssH);
@@ -131,6 +162,17 @@ export class MuseumMap {
         ? [words.slice(0, Math.ceil(words.length / 2)).join(' '), words.slice(Math.ceil(words.length / 2)).join(' ')]
         : [r.name];
       lines.forEach((line, i) => ctx.fillText(line, px(cx), pz(cz) + (i - (lines.length - 1) / 2) * 14));
+    }
+
+    // Where a click would take you.
+    if (this.hover) {
+      ctx.strokeStyle = '#c0392b';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.arc(px(this.hover.x), pz(this.hover.z), 7, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
     }
 
     // You are here: an arrow pointing where the camera looks.

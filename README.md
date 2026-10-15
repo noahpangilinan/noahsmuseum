@@ -20,11 +20,11 @@ URL flags: `?debug` opens the performance overlay on load, and `?webgl` forces t
 | W A S D / arrows | Walk |
 | Shift | Run |
 | C | Crouch while held |
-| M | Toggle the floor plan (you can keep walking) |
+| M | Floor plan. It frees the mouse: click any spot to teleport there. M or Esc closes it |
 | Click a bench | Sit (lower view, no walking). Click again to stand |
 | Click a small-object case | Look through its magnifier (zooms in on the object). Click again to step back |
 | Mouse | Look |
-| Click a painting | Show its wall label (labels also appear when you stand in front of a piece) |
+| Click a painting | Show its wall label (labels also appear when you stand in front of a piece). Up close, opens the full photo; click again to close |
 | `` ` `` | Toggle debug overlay (FPS, draw calls, texture memory, loaded rooms) |
 | Esc | Release the pointer |
 
