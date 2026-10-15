@@ -23,6 +23,11 @@ export interface Room {
   model?: string;
   /** Baked lightmap applied to UV1 of the room model. */
   lightmap?: string;
+  /**
+   * Multiplier that turns the lightmap's stored values back into light. blender/build_rooms.py
+   * rescales each lightmap to use the full 8-bit range and records how much in <id>.bake.json.
+   */
+  lightmapIntensity?: number;
   /** Axis-aligned walkable volume in metres. `min[1]` is the floor height. */
   bounds: { min: Vec3; max: Vec3 };
   /** Where the visitor starts if this is the first room. Defaults to the room centre. */

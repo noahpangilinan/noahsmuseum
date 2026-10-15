@@ -50,19 +50,32 @@ export async function loadRoom(room: Room, doorways: Doorway[], renderer: THREE.
 async function loadModelRoom(room: Room, renderer: THREE.WebGPURenderer): Promise<THREE.Object3D> {
   const gltf = await createGLTFLoader(renderer).loadAsync(contentUrl(room.model!));
 
+  // Rooms built by blender/build_rooms.py name their materials after the app's surface slots;
+  // swap in the app's own surfaces so baked rooms look like the rest of the museum.
+  const slots = surfaceMaterials(room, false);
+  gltf.scene.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    const name = (mesh.material as THREE.Material).name as keyof typeof slots;
+    if (name in slots) mesh.material = slots[name];
+  });
+
   if (room.lightmap) {
     const lightMap = room.lightmap.endsWith('.ktx2')
       ? await getKTX2Loader(renderer).loadAsync(contentUrl(room.lightmap))
       : await new THREE.TextureLoader().loadAsync(contentUrl(room.lightmap));
     lightMap.channel = 1; // UV1, per docs/blender-conventions.md
     lightMap.flipY = false;
+    // Lightmaps are stored with the sRGB curve (more precision in the darks); decode on sampling.
+    lightMap.colorSpace = THREE.SRGBColorSpace;
     gltf.scene.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh || !mesh.geometry.getAttribute('uv1')) return;
       for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
         const std = mat as THREE.MeshStandardMaterial;
+        if (!std.isMeshStandardMaterial) continue; // the skylight panel glows on its own
         std.lightMap = lightMap;
-        std.lightMapIntensity = 1;
+        std.lightMapIntensity = room.lightmapIntensity ?? Math.PI;
         std.needsUpdate = true;
       }
     });
@@ -105,28 +118,8 @@ function buildPlaceholderRoom(room: Room, doorways: Doorway[]): THREE.Object3D {
   const cz = (z0 + z1) / 2;
   const finish = room.finish ?? {};
 
-  const wallColor = new THREE.Color(finish.walls ?? '#eeebe4');
-  // vertexColors carries the baked ambient occlusion (see bakeAO below).
-  // A little emission stands in for light bounced between the walls, keeping them brighter than
-  // the ceiling, as in a real gallery.
-  const plaster = finish.plaster !== false ? plasterTexture() : null;
-  const wallMat = new THREE.MeshStandardMaterial({
-    color: wallColor,
-    map: plaster,
-    emissive: wallColor.clone().multiplyScalar(0.07),
-    emissiveMap: plaster,
-    roughness: 0.95,
-    vertexColors: true,
-  });
-  // Ceilings get no direct light; a little emission stands in for light bounced up off the floor and walls.
-  const ceilingColor = wallColor.clone().offsetHSL(0, 0, 0.03);
-  const ceilingMat = new THREE.MeshStandardMaterial({
-    color: ceilingColor,
-    emissive: ceilingColor.clone().multiplyScalar(0.12),
-    roughness: 0.97,
-    vertexColors: true,
-  });
-  const trimMat = new THREE.MeshStandardMaterial({ color: wallColor.clone().offsetHSL(0, 0, -0.05), roughness: 0.7 });
+  const surfaces = surfaceMaterials(room, true);
+  const { wall: wallMat, ceiling: ceilingMat, trim: trimMat } = surfaces;
 
   const parts = { wall: [] as THREE.BufferGeometry[], ceiling: [] as THREE.BufferGeometry[], trim: [] as THREE.BufferGeometry[] };
   const m4 = new THREE.Matrix4();
@@ -143,7 +136,7 @@ function buildPlaceholderRoom(room: Room, doorways: Doorway[]): THREE.Object3D {
   const floorGeo = aoPlane(w, d).rotateX(-Math.PI / 2).translate(cx, y0, cz);
   scaleUVs(floorGeo, w, d);
   bakeAO(floorGeo, (p) => nearWalls(p, 0.35, 0.4));
-  const floor = new THREE.Mesh(floorGeo, floorMaterial(finish.floor ?? 'oak'));
+  const floor = new THREE.Mesh(floorGeo, surfaces.floor);
   floor.receiveShadow = true;
   group.add(floor);
 
@@ -268,6 +261,47 @@ function buildPlaceholderRoom(room: Room, doorways: Doorway[]): THREE.Object3D {
   }
 
   return group;
+}
+
+/**
+ * A room's surfaces. `placeholder` rooms fake what a lightmap would give: per-vertex ambient
+ * occlusion (vertexColors) and a little emission for bounce light. Baked rooms get the plain
+ * surfaces and their lightmap supplies both.
+ */
+function surfaceMaterials(room: Room, placeholder: boolean) {
+  const finish = room.finish ?? {};
+  const wallColor = new THREE.Color(finish.walls ?? '#eeebe4');
+  const plaster = finish.plaster !== false ? plasterTexture() : null;
+  const wall = new THREE.MeshStandardMaterial({
+    color: wallColor,
+    map: plaster,
+    emissive: placeholder ? wallColor.clone().multiplyScalar(0.07) : 0x000000,
+    emissiveMap: placeholder ? plaster : null,
+    roughness: 0.95,
+    vertexColors: placeholder,
+  });
+  const ceilingColor = wallColor.clone().offsetHSL(0, 0, 0.03);
+  const ceiling = new THREE.MeshStandardMaterial({
+    color: ceilingColor,
+    emissive: placeholder ? ceilingColor.clone().multiplyScalar(0.12) : 0x000000,
+    roughness: 0.97,
+    vertexColors: placeholder,
+  });
+  const trim = new THREE.MeshStandardMaterial({ color: wallColor.clone().offsetHSL(0, 0, -0.05), roughness: 0.7 });
+  // Floors are shared per style; baked rooms get a copy without the vertex-colour AO.
+  const shared = floorMaterial(finish.floor ?? 'oak');
+  let floor = shared;
+  if (!placeholder) {
+    floor = shared.clone();
+    floor.vertexColors = false;
+  }
+  const [x0, , z0] = room.bounds.min;
+  const [x1, , z1] = room.bounds.max;
+  const skylight = new THREE.MeshBasicMaterial({
+    color: new THREE.Color(0xfff8ee).multiplyScalar(1.25),
+    map: diffuserTexture((x1 - x0) * 0.6, (z1 - z0) * 0.6),
+  });
+  return { floor, wall, ceiling, trim, skylight };
 }
 
 let ltcReady = false;

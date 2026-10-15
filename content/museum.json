@@ -100,7 +100,10 @@
           "normal": [0, 0, -1],
           "maxSize": [1.2, 1.4]
         }
-      ]
+      ],
+      "model": "rooms/entrance-gallery.glb",
+      "lightmap": "rooms/entrance-gallery_lm.png",
+      "lightmapIntensity": 2.917
     },
     {
       "id": "north-hall",
