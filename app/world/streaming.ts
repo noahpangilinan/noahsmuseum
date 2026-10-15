@@ -87,56 +87,83 @@ export class RoomStreamer {
 }
 
 /**
- * One material's `map`, streamed: the real texture while loaded, the shared placeholder
- * otherwise. Handles load/unload racing with an in-flight fetch.
+ * One material's `map` with quality tiers, e.g. [distant preview, full resolution]. Ask for a
+ * tier with `want(level)` (-1 = nothing): tiers up to that level are fetched, tiers above it are
+ * released, and the material shows the best tier it has (the shared placeholder until then).
+ * Handles requests changing while a fetch is in flight.
  */
-export class StreamedMap {
-  private texture: THREE.Texture | null = null;
-  private pending = false;
-  private wanted = false;
+export class TieredMap {
+  private readonly textures: (THREE.Texture | null)[];
+  private readonly pending: boolean[];
+  private wanted = -1;
 
   constructor(
     private readonly material: THREE.MeshStandardMaterial,
-    private readonly fetch: () => Promise<THREE.Texture>,
+    private readonly tiers: (() => Promise<THREE.Texture>)[],
     private readonly colors: { loaded: THREE.ColorRepresentation; unloaded: THREE.ColorRepresentation },
-    private readonly onLoad?: (texture: THREE.Texture) => void,
+    private readonly onShow?: (texture: THREE.Texture) => void,
   ) {
+    this.textures = tiers.map(() => null);
+    this.pending = tiers.map(() => false);
     material.map = placeholderTexture();
     material.color.set(colors.unloaded);
   }
 
+  /** Highest tier that should be resident; -1 releases everything. */
+  want(level: number) {
+    this.wanted = Math.min(level, this.tiers.length - 1);
+    this.show();
+    this.tiers.forEach((fetch, i) => {
+      if (i > this.wanted) {
+        this.textures[i]?.dispose();
+        this.textures[i] = null;
+      } else if (!this.textures[i] && !this.pending[i]) {
+        this.pending[i] = true;
+        fetch().then(
+          (tex) => {
+            this.pending[i] = false;
+            if (i > this.wanted) return tex.dispose(); // no longer wanted by the time it arrived
+            this.textures[i] = tex;
+            this.show();
+          },
+          (err) => {
+            this.pending[i] = false;
+            console.error('[museum] texture failed to load', err);
+          },
+        );
+      }
+    });
+  }
+
+  private show() {
+    let best: THREE.Texture | null = null;
+    for (let i = Math.min(this.wanted, this.textures.length - 1); i >= 0 && !best; i--) best = this.textures[i];
+    const next = best ?? placeholderTexture();
+    if (this.material.map === next) return;
+    this.material.map = next;
+    this.material.color.set(best ? this.colors.loaded : this.colors.unloaded);
+    this.material.needsUpdate = true;
+    if (best) this.onShow?.(best);
+  }
+}
+
+/** A single-tier `TieredMap`: the texture is either loaded or not. */
+export class StreamedMap extends TieredMap {
+  constructor(
+    material: THREE.MeshStandardMaterial,
+    fetch: () => Promise<THREE.Texture>,
+    colors: { loaded: THREE.ColorRepresentation; unloaded: THREE.ColorRepresentation },
+    onShow?: (texture: THREE.Texture) => void,
+  ) {
+    super(material, [fetch], colors, onShow);
+  }
+
   load() {
-    this.wanted = true;
-    if (this.texture || this.pending) return;
-    this.pending = true;
-    this.fetch().then(
-      (tex) => {
-        this.pending = false;
-        if (!this.wanted) {
-          tex.dispose(); // left the area while it was downloading
-          return;
-        }
-        this.texture = tex;
-        this.material.map = tex;
-        this.material.color.set(this.colors.loaded);
-        this.material.needsUpdate = true;
-        this.onLoad?.(tex);
-      },
-      (err) => {
-        this.pending = false;
-        console.error('[museum] texture failed to load', err);
-      },
-    );
+    this.want(0);
   }
 
   unload() {
-    this.wanted = false;
-    if (!this.texture) return;
-    this.material.map = placeholderTexture();
-    this.material.color.set(this.colors.unloaded);
-    this.material.needsUpdate = true;
-    this.texture.dispose();
-    this.texture = null;
+    this.want(-1);
   }
 }
 

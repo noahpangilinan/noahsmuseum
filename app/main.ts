@@ -94,12 +94,33 @@ async function main() {
     });
     start.ready(() => controls.lock());
 
+    // Full-resolution images and label text load only for pieces you're close to. Checked a
+    // few times a second, with a 1.5 m buffer so nothing flickers between tiers at the boundary.
+    const near = new Set<(typeof exhibits)[number]>();
+    let nearClock = 0;
+    const updateNear = (dt: number) => {
+      nearClock += dt;
+      if (nearClock < 0.2) return;
+      nearClock = 0;
+      for (const e of exhibits) {
+        const d = e.center.distanceTo(camera.position);
+        if (d < e.nearDistance && !near.has(e)) {
+          near.add(e);
+          e.setNear(true);
+        } else if (d > e.nearDistance + 1.5 && near.has(e)) {
+          near.delete(e);
+          e.setNear(false);
+        }
+      }
+    };
+
     const timer = new THREE.Timer();
     renderer.setAnimationLoop((time) => {
       timer.update(time);
       const dt = Math.min(timer.getDelta(), 0.1); // avoid big jumps after tab switches
       controls.update(dt);
       streamer.update(controls.room.room.id);
+      updateNear(dt);
       plaque.update();
       if (!controls.isLocked) hint.set(null);
       else if (controls.isMagnified) hint.set('Click to step back', true);

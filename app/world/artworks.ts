@@ -5,7 +5,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { getKTX2Loader, type LoadedRoom } from './rooms';
 import { shadowDecal } from './surfaces';
 import { createWallLabel, labelTexture, LABEL_GAP, LABEL_HEIGHT, LABEL_SIZE } from './wall-label';
-import { StreamedMap, type Streamable } from './streaming';
+import { StreamedMap, TieredMap, type Streamable } from './streaming';
 import { lightArtworks, type SpotRequest } from './lighting';
 
 /** Anything with a label: a hung artwork or a free-standing piece. Streams with its room. */
@@ -19,6 +19,9 @@ export interface PlacedExhibit extends Streamable {
   group: THREE.Object3D;
   /** Small pieces can be viewed through a magnifier; `size` is the object's largest dimension in metres. */
   magnify?: { size: number };
+  /** Within this distance (metres) the visitor counts as "near": full resolution and label text load. */
+  nearDistance: number;
+  setNear(near: boolean): void;
 }
 
 interface FrameSpec {
@@ -134,17 +137,37 @@ export function placeArtworks(
       spots.push({ room: roomId, center, normal, width: outer[0], height: outer[1], labelReach: hasLabel ? LABEL_GAP + LABEL_SIZE[0] : 0, roomBounds: loaded.box });
     }
 
-    const image = new StreamedMap(
+    // Two tiers: the compressed preview whenever the room is loaded, the full image up close.
+    const fetchImage = (path: string) => async () => {
+      const tex = await loadTexture(path, renderer);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = anisotropy;
+      return tex;
+    };
+    // If the preview can't be used, fall back to the full image rather than a blank canvas.
+    const fetchPreview = async () => {
+      try {
+        return await fetchImage(artwork.image)();
+      } catch (err) {
+        if (!artwork.imageFull) throw err;
+        console.warn(`[museum] preview for ${artwork.id} unusable, using the full image`, err);
+        return fetchImage(artwork.imageFull)();
+      }
+    };
+    const image = new TieredMap(
       canvasMat,
-      async () => {
-        const tex = await loadTexture(artwork.image, renderer);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.anisotropy = anisotropy;
-        return tex;
-      },
+      artwork.imageFull ? [fetchPreview, fetchImage(artwork.imageFull)] : [fetchPreview],
       { loaded: 0xffffff, unloaded: 0x444444 },
     );
+    // Label text is only legible up close, so it streams with the "near" tier too.
     const text = new StreamedMap(labelMat, async () => labelTexture(artwork), { loaded: 0xffffff, unloaded: 0xf7f5f0 });
+    let inRoom = false;
+    let near = false;
+    const apply = () => {
+      image.want(inRoom ? (near ? 1 : 0) : -1);
+      if (inRoom && near && hasLabel) text.load();
+      else text.unload();
+    };
 
     placed.push({
       info: artwork,
@@ -152,13 +175,19 @@ export function placeArtworks(
       center,
       group,
       room: roomId,
+      nearDistance: Math.max(3.5, 1.3 * Math.max(width, height)),
+      setNear: (n) => {
+        if (n === near) return;
+        near = n;
+        apply();
+      },
       load: () => {
-        image.load();
-        if (hasLabel) text.load();
+        inRoom = true;
+        apply();
       },
       unload: () => {
-        image.unload();
-        text.unload();
+        inRoom = false;
+        apply();
       },
     });
   }
@@ -200,8 +229,18 @@ function clothGeometry(width: number, height: number): THREE.BufferGeometry {
   return geo;
 }
 
-export function loadTexture(path: string, renderer: THREE.WebGPURenderer): Promise<THREE.Texture> {
+export async function loadTexture(path: string, renderer: THREE.WebGPURenderer): Promise<THREE.Texture> {
   const url = contentUrl(path);
-  if (path.endsWith('.ktx2')) return getKTX2Loader(renderer).loadAsync(url);
+  if (path.endsWith('.ktx2')) {
+    const tex = await getKTX2Loader(renderer).loadAsync(url);
+    // A block-compressed texture that isn't a multiple of 4 pixels is invalid in WebGPU, and an
+    // invalid texture takes the whole frame down with it. Refuse it rather than render black.
+    const { width, height } = tex.image as { width: number; height: number };
+    if (width % 4 || height % 4) {
+      tex.dispose();
+      throw new Error(`${path} is ${width}x${height}; compressed textures must be multiples of 4 (rebuild with npm run textures)`);
+    }
+    return tex;
+  }
   return new THREE.TextureLoader().loadAsync(url);
 }

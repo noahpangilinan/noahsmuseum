@@ -114,5 +114,5 @@ AIC marks these as **not** public domain, so they can't go in the public build. 
 ## Adding one by hand (until the M2 CLI exists)
 
 1. Get metadata: `https://api.artic.edu/api/v1/artworks/<id>?fields=title,artist_title,date_end,dimensions,image_id,is_public_domain`. Check that `is_public_domain` is `true`.
-2. Download the preview: `https://www.artic.edu/iiif/2/<image_id>/full/1686,/0/default.jpg` → `content/art/<artwork-id>/preview.jpg`.
-3. Add an entry to `content/museum.json`. `dimensionsCm` is **[height, width]**, the same order AIC's `dimensions` string uses.
+2. Download the image: `https://www.artic.edu/iiif/2/<image_id>/full/2048,/0/default.jpg` → `content/art/<artwork-id>/full.jpg`.
+3. Add an entry to `content/museum.json` with `"image": "art/<artwork-id>/preview.ktx2"` and `"imageFull": "art/<artwork-id>/full.jpg"`, then run `npm run textures` to build the preview. `dimensionsCm` is **[height, width]**, the same order AIC's `dimensions` string uses.

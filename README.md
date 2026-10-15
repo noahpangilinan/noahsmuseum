@@ -56,6 +56,7 @@ docs/         plan, Blender conventions, artwork shortlist
 - `finish` (optional, placeholder rooms only): `walls` colour, `floor` (`oak`, `dark-wood`, `concrete`, `stone`), `ceiling` lighting (`downlights`, `skylight`, `none`), and `artworkSpots` (default `true`).
 - `furniture` (optional): benches at `position`, rotated by `rotationY` degrees. You can't walk through them.
 - `spawn` (optional) sets where the visitor starts.
+- Paintings have two image tiers: `image` (a 1024 px KTX2 preview, shown from a distance) and `imageFull` (the full JPEG, loaded only when you walk up close). Run `npm run textures` after adding art. See [docs/textures.md](docs/textures.md).
 - Artworks can carry an optional display `date` (e.g. `"c. 1599"`) alongside the numeric `year`. `frame: "tapestry"` hangs a textile from a rod with soft folds.
 - `sculptures` (optional, top level): free-standing 3D pieces placed by `room` + floor `position` + `rotationY`, with `dimensionsCm` as **[height, width, depth]** and `display` set to `case` (glass vitrine), `plinth` or `platform`. Give a `model` (glTF) and/or an `image`. The image appears as a photo card in the display until the model exists.
 

@@ -95,8 +95,10 @@ export interface Artwork extends ExhibitInfo {
   slot: string;
   /** Real physical size of the image area: [height, width] in centimetres. */
   dimensionsCm: Vec2;
-  /** Preview texture, relative to content root (.ktx2, .jpg, .png, .webp). */
+  /** Preview texture shown from a distance, relative to content root (.ktx2 preferred; .jpg/.png/.webp work). */
   image: string;
+  /** Full-resolution image loaded only when the visitor is close (see docs/textures.md). */
+  imageFull?: string;
   /** Deep Zoom tile pyramid directory (M3). */
   deepZoom?: string;
   frame: FrameStyle;
@@ -214,6 +216,7 @@ export function validateMuseum(data: unknown): Museum {
       problems.push(`${where}: "dimensionsCm" must be [height, width] in cm`);
     }
     if (a.label !== undefined && typeof a.label !== 'boolean') problems.push(`${where}: "label" must be true or false`);
+    if (a.imageFull !== undefined && !isStr(a.imageFull)) problems.push(`${where}: "imageFull" must be a path`);
     if (!FRAME_STYLES.includes(a.frame)) {
       problems.push(`${where}: "frame" must be one of ${FRAME_STYLES.join(', ')}`);
     }

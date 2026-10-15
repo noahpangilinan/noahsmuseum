@@ -100,6 +100,7 @@ export function placeSculptures(
     let model: THREE.Object3D | null = null;
     let card: { mesh: THREE.Mesh; map: StreamedMap } | null = null;
     let wanted = false;
+    let near = false;
     let loadingModel = false;
     const showCard = () => {
       if (!sc.image) return;
@@ -118,9 +119,16 @@ export function placeSculptures(
       group,
       magnify: small ? { size: Math.max(h, w, d) } : undefined,
       room: sc.room,
+      nearDistance: Math.max(3.5, 1.3 * Math.max(h, w, d)),
+      // Only the label text depends on distance; models are cheap to keep while the room is loaded.
+      setNear: (n) => {
+        near = n;
+        if (wanted && near) text.load();
+        else text.unload();
+      },
       load: () => {
         wanted = true;
-        text.load();
+        if (near) text.load();
         if (!sc.model) return showCard();
         if (model || loadingModel) return;
         loadingModel = true;

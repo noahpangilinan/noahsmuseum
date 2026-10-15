@@ -425,10 +425,11 @@
       "year": 1637,
       "date": "1637",
       "dimensionsCm": [182, 232],
-      "image": "art/apollo-flaying-marsyas/preview.jpg",
+      "image": "art/apollo-flaying-marsyas/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:Jos%C3%A9_de_Ribera_004.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/apollo-flaying-marsyas/full.jpg"
     },
     {
       "id": "isle-of-the-dead",
@@ -438,10 +439,11 @@
       "year": 1880,
       "date": "1880",
       "dimensionsCm": [73.7, 121.9],
-      "image": "art/isle-of-the-dead/preview.jpg",
+      "image": "art/isle-of-the-dead/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:Arnold_B%C3%B6cklin_-_Die_Toteninsel_II_(Metropolitan_Museum_of_Art).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/isle-of-the-dead/full.jpg"
     },
     {
       "id": "the-apparition",
@@ -451,10 +453,11 @@
       "year": 1876,
       "date": "1876",
       "dimensionsCm": [106, 72],
-      "image": "art/the-apparition/preview.jpg",
+      "image": "art/the-apparition/preview.ktx2",
       "frame": "gallery-white",
       "source": "https://commons.wikimedia.org/wiki/File:Gustave_Moreau_-_The_Apparition_-_Google_Art_Project.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-apparition/full.jpg"
     },
     {
       "id": "red-tree",
@@ -464,10 +467,11 @@
       "year": 1910,
       "date": "1908–1910",
       "dimensionsCm": [70, 99],
-      "image": "art/red-tree/preview.jpg",
+      "image": "art/red-tree/preview.ktx2",
       "frame": "modern-black",
       "source": "https://commons.wikimedia.org/wiki/File:Piet_Mondrian,_1908-10,_Evening;_Red_Tree_(Avond;_De_rode_boom),_oil_on_canvas,_70_x_99_cm,_Gemeentemuseum_Den_Haag.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/red-tree/full.jpg"
     },
     {
       "id": "gray-tree",
@@ -477,10 +481,11 @@
       "year": 1911,
       "date": "1911",
       "dimensionsCm": [79.7, 109.1],
-      "image": "art/gray-tree/preview.jpg",
+      "image": "art/gray-tree/preview.ktx2",
       "frame": "modern-black",
       "source": "https://commons.wikimedia.org/wiki/File:Gray_Tree_1911.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/gray-tree/full.jpg"
     },
     {
       "id": "blossoming-apple-tree",
@@ -490,10 +495,11 @@
       "year": 1912,
       "date": "1912",
       "dimensionsCm": [78.5, 107.5],
-      "image": "art/blossoming-apple-tree/preview.jpg",
+      "image": "art/blossoming-apple-tree/preview.ktx2",
       "frame": "modern-black",
       "source": "https://commons.wikimedia.org/wiki/File:Blossoming_apple_tree,_by_Piet_Mondriaan.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/blossoming-apple-tree/full.jpg"
     },
     {
       "id": "the-cyclops",
@@ -503,10 +509,11 @@
       "year": 1914,
       "date": "c. 1914",
       "dimensionsCm": [65.8, 52.7],
-      "image": "art/the-cyclops/preview.jpg",
+      "image": "art/the-cyclops/preview.ktx2",
       "frame": "gallery-white",
       "source": "https://commons.wikimedia.org/wiki/File:Odilon_Redon_-_The_Cyclops,_c._1914.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-cyclops/full.jpg"
     },
     {
       "id": "fairy-tale-of-the-kings",
@@ -516,10 +523,11 @@
       "year": 1909,
       "date": "1909",
       "dimensionsCm": [70.2, 75.3],
-      "image": "art/fairy-tale-of-the-kings/preview.jpg",
+      "image": "art/fairy-tale-of-the-kings/preview.ktx2",
       "frame": "modern-black",
       "source": "https://commons.wikimedia.org/wiki/File:Mikalojus_Konstantinas_Ciurlionis_-_FAIRY_TALE_(FAIRY_TALE_OF_KINGS)_-_1909.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/fairy-tale-of-the-kings/full.jpg"
     },
     {
       "id": "the-triumph-of-death",
@@ -529,10 +537,11 @@
       "year": 1562,
       "date": "c. 1562",
       "dimensionsCm": [117, 162],
-      "image": "art/the-triumph-of-death/preview.jpg",
+      "image": "art/the-triumph-of-death/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:The_Triumph_of_Death_by_Pieter_Bruegel_the_Elder.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-triumph-of-death/full.jpg"
     },
     {
       "id": "the-nightmare",
@@ -542,10 +551,11 @@
       "year": 1781,
       "date": "1781",
       "dimensionsCm": [101, 127],
-      "image": "art/the-nightmare/preview.jpg",
+      "image": "art/the-nightmare/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:John_Henry_Fuseli_-_The_Nightmare.JPG",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-nightmare/full.jpg"
     },
     {
       "id": "david-with-the-head-of-goliath",
@@ -555,10 +565,11 @@
       "year": 1610,
       "date": "c. 1610",
       "dimensionsCm": [125, 101],
-      "image": "art/david-with-the-head-of-goliath/preview.jpg",
+      "image": "art/david-with-the-head-of-goliath/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:David_with_the_Head_of_Goliath-Caravaggio_(1610).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/david-with-the-head-of-goliath/full.jpg"
     },
     {
       "id": "slaughtered-ox",
@@ -568,10 +579,11 @@
       "year": 1655,
       "date": "1655",
       "dimensionsCm": [94, 69],
-      "image": "art/slaughtered-ox/preview.jpg",
+      "image": "art/slaughtered-ox/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:Le_B%C5%93uf_%C3%A9corch%C3%A9_-_Rembrandt_-_Mus%C3%A9e_du_Louvre_Peintures_MI_169.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/slaughtered-ox/full.jpg"
     },
     {
       "id": "the-swan-no-1",
@@ -581,10 +593,11 @@
       "year": 1915,
       "date": "1914–1915",
       "dimensionsCm": [150, 150],
-      "image": "art/the-swan-no-1/preview.jpg",
+      "image": "art/the-swan-no-1/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:Hilma_af_Klint_-_Group_IX_SUW,_The_Swan_No._1_(13947).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-swan-no-1/full.jpg"
     },
     {
       "id": "the-swan-no-7",
@@ -594,10 +607,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [150, 150],
-      "image": "art/the-swan-no-7/preview.jpg",
+      "image": "art/the-swan-no-7/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:Hilma_af_Klint_-_Group_IX_SUW,_The_Swan_No._7_(13945).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-swan-no-7/full.jpg"
     },
     {
       "id": "the-swan-no-9",
@@ -607,10 +621,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [150, 150],
-      "image": "art/the-swan-no-9/preview.jpg",
+      "image": "art/the-swan-no-9/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:Group_IX_SUW,_The_Swan_No._9_by_Hilma_af_Klint_(13939).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-swan-no-9/full.jpg"
     },
     {
       "id": "the-swan-no-10",
@@ -620,10 +635,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [150, 150],
-      "image": "art/the-swan-no-10/preview.jpg",
+      "image": "art/the-swan-no-10/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:Hilma_af_Klint_-_Group_IX_SUW,_The_Swan_No._10_(13932).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-swan-no-10/full.jpg"
     },
     {
       "id": "the-swan-no-12",
@@ -633,10 +649,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [151.5, 151],
-      "image": "art/the-swan-no-12/preview.jpg",
+      "image": "art/the-swan-no-12/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:Hilma_Af_Klint_-_The_Swan,_No._12,_Group_IX_SUW,_1915_(13926).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-swan-no-12/full.jpg"
     },
     {
       "id": "the-swan-no-13",
@@ -646,10 +663,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [148.5, 151],
-      "image": "art/the-swan-no-13/preview.jpg",
+      "image": "art/the-swan-no-13/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:Hilma_af_Klint,_The_Swan,_No._13_(1915).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-swan-no-13/full.jpg"
     },
     {
       "id": "the-swan-no-14",
@@ -659,10 +677,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [150, 150],
-      "image": "art/the-swan-no-14/preview.jpg",
+      "image": "art/the-swan-no-14/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:Hilma_Af_Klint_-_1915_-_No_14_Swan.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-swan-no-14/full.jpg"
     },
     {
       "id": "the-swan-no-16",
@@ -672,10 +691,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [150, 150],
-      "image": "art/the-swan-no-16/preview.jpg",
+      "image": "art/the-swan-no-16/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:6_hilma_af_klint,_the_swan_no_16,_1915.jpg",
-      "license": "CC BY-SA 4.0"
+      "license": "CC BY-SA 4.0",
+      "imageFull": "art/the-swan-no-16/full.jpg"
     },
     {
       "id": "the-swan-no-17",
@@ -685,10 +705,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [150.5, 151],
-      "image": "art/the-swan-no-17/preview.jpg",
+      "image": "art/the-swan-no-17/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:Hilma_af_Klint,_1915,_Svanen,_No._17.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-swan-no-17/full.jpg"
     },
     {
       "id": "the-swan-no-18",
@@ -698,10 +719,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [150, 150],
-      "image": "art/the-swan-no-18/preview.jpg",
+      "image": "art/the-swan-no-18/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:Hilma_Af_Klint_-_1915_-_The_Swan,_No._18.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-swan-no-18/full.jpg"
     },
     {
       "id": "the-swan-no-22",
@@ -711,10 +733,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [150, 150],
-      "image": "art/the-swan-no-22/preview.jpg",
+      "image": "art/the-swan-no-22/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:The_Swan,_No._22,_SUW_UW_series_by_Hilma_af_Klint.jpg",
-      "license": "CC0"
+      "license": "CC0",
+      "imageFull": "art/the-swan-no-22/full.jpg"
     },
     {
       "id": "the-swan-no-23",
@@ -724,10 +747,11 @@
       "year": 1915,
       "date": "1915",
       "dimensionsCm": [150, 150],
-      "image": "art/the-swan-no-23/preview.jpg",
+      "image": "art/the-swan-no-23/preview.ktx2",
       "frame": "none",
       "source": "https://commons.wikimedia.org/wiki/File:7_hilma_af_klint,_the_swan_no_23,_1915.jpg",
-      "license": "CC BY-SA 4.0"
+      "license": "CC BY-SA 4.0",
+      "imageFull": "art/the-swan-no-23/full.jpg"
     },
     {
       "id": "saturn-devouring-his-son",
@@ -737,10 +761,11 @@
       "year": 1823,
       "date": "1819–1823",
       "dimensionsCm": [143.5, 81.4],
-      "image": "art/saturn-devouring-his-son/preview.jpg",
+      "image": "art/saturn-devouring-his-son/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:Francisco_de_Goya,_Saturno_devorando_a_su_hijo_(1819-1823).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/saturn-devouring-his-son/full.jpg"
     },
     {
       "id": "la-leocadia",
@@ -750,10 +775,11 @@
       "year": 1823,
       "date": "1819–1823",
       "dimensionsCm": [145.7, 129.4],
-      "image": "art/la-leocadia/preview.jpg",
+      "image": "art/la-leocadia/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:Francisco_de_Goya_y_Lucientes_-_Manola_(La_Leocadia)_-_WGA10107.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/la-leocadia/full.jpg"
     },
     {
       "id": "two-old-men",
@@ -763,10 +789,11 @@
       "year": 1823,
       "date": "1819–1823",
       "dimensionsCm": [142.5, 65.6],
-      "image": "art/two-old-men/preview.jpg",
+      "image": "art/two-old-men/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:2_alte_M%C3%A4nner,_um_1821-23.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/two-old-men/full.jpg"
     },
     {
       "id": "judith-and-holofernes-goya",
@@ -776,10 +803,11 @@
       "year": 1823,
       "date": "1819–1823",
       "dimensionsCm": [146, 84],
-      "image": "art/judith-and-holofernes-goya/preview.jpg",
+      "image": "art/judith-and-holofernes-goya/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:Judith_y_Holofernes_(Goya).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/judith-and-holofernes-goya/full.jpg"
     },
     {
       "id": "the-dog",
@@ -789,10 +817,11 @@
       "year": 1823,
       "date": "1819–1823",
       "dimensionsCm": [131, 79],
-      "image": "art/the-dog/preview.jpg",
+      "image": "art/the-dog/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:Goya_Dog.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/the-dog/full.jpg"
     },
     {
       "id": "judith-slaying-holofernes",
@@ -802,10 +831,11 @@
       "year": 1620,
       "date": "c. 1620",
       "dimensionsCm": [199, 162.5],
-      "image": "art/judith-slaying-holofernes/preview.jpg",
+      "image": "art/judith-slaying-holofernes/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:Artemisia_Gentileschi_-_Giuditta_decapita_Oloferne_-_Google_Art_Project.jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/judith-slaying-holofernes/full.jpg"
     },
     {
       "id": "dido-and-aeneas-1",
@@ -814,10 +844,11 @@
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
       "dimensionsCm": [411.3, 294.5],
-      "image": "art/dido-and-aeneas-1/preview.jpg",
+      "image": "art/dido-and-aeneas-1/preview.ktx2",
       "frame": "tapestry",
       "source": "https://clevelandart.org/art/1915.79.1",
-      "license": "CC0"
+      "license": "CC0",
+      "imageFull": "art/dido-and-aeneas-1/full.jpg"
     },
     {
       "id": "dido-and-aeneas-2",
@@ -826,10 +857,11 @@
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
       "dimensionsCm": [418.8, 634.6],
-      "image": "art/dido-and-aeneas-2/preview.jpg",
+      "image": "art/dido-and-aeneas-2/preview.ktx2",
       "frame": "tapestry",
       "source": "https://clevelandart.org/art/1915.79.2",
-      "license": "CC0"
+      "license": "CC0",
+      "imageFull": "art/dido-and-aeneas-2/full.jpg"
     },
     {
       "id": "dido-and-aeneas-3",
@@ -838,10 +870,11 @@
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
       "dimensionsCm": [411, 464.5],
-      "image": "art/dido-and-aeneas-3/preview.jpg",
+      "image": "art/dido-and-aeneas-3/preview.ktx2",
       "frame": "tapestry",
       "source": "https://clevelandart.org/art/1915.79.3",
-      "license": "CC0"
+      "license": "CC0",
+      "imageFull": "art/dido-and-aeneas-3/full.jpg"
     },
     {
       "id": "dido-and-aeneas-4",
@@ -850,10 +883,11 @@
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
       "dimensionsCm": [416.4, 563.6],
-      "image": "art/dido-and-aeneas-4/preview.jpg",
+      "image": "art/dido-and-aeneas-4/preview.ktx2",
       "frame": "tapestry",
       "source": "https://clevelandart.org/art/1915.79.4",
-      "license": "CC0"
+      "license": "CC0",
+      "imageFull": "art/dido-and-aeneas-4/full.jpg"
     },
     {
       "id": "dido-and-aeneas-5",
@@ -862,10 +896,11 @@
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
       "dimensionsCm": [416.4, 418.8],
-      "image": "art/dido-and-aeneas-5/preview.jpg",
+      "image": "art/dido-and-aeneas-5/preview.ktx2",
       "frame": "tapestry",
       "source": "https://clevelandart.org/art/1915.79.5",
-      "license": "CC0"
+      "license": "CC0",
+      "imageFull": "art/dido-and-aeneas-5/full.jpg"
     },
     {
       "id": "dido-and-aeneas-6",
@@ -874,10 +909,11 @@
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
       "dimensionsCm": [411, 337],
-      "image": "art/dido-and-aeneas-6/preview.jpg",
+      "image": "art/dido-and-aeneas-6/preview.ktx2",
       "frame": "tapestry",
       "source": "https://clevelandart.org/art/1915.79.6",
-      "license": "CC0"
+      "license": "CC0",
+      "imageFull": "art/dido-and-aeneas-6/full.jpg"
     },
     {
       "id": "dido-and-aeneas-7",
@@ -886,10 +922,11 @@
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
       "dimensionsCm": [403, 394],
-      "image": "art/dido-and-aeneas-7/preview.jpg",
+      "image": "art/dido-and-aeneas-7/preview.ktx2",
       "frame": "tapestry",
       "source": "https://clevelandart.org/art/1915.79.7",
-      "license": "CC0"
+      "license": "CC0",
+      "imageFull": "art/dido-and-aeneas-7/full.jpg"
     },
     {
       "id": "dido-and-aeneas-8",
@@ -898,10 +935,11 @@
       "artist": "Designed by Giovanni Francesco Romanelli, woven by Michael Wauters",
       "year": 1679,
       "dimensionsCm": [414, 466.5],
-      "image": "art/dido-and-aeneas-8/preview.jpg",
+      "image": "art/dido-and-aeneas-8/preview.ktx2",
       "frame": "tapestry",
       "source": "https://clevelandart.org/art/1915.79.8",
-      "license": "CC0"
+      "license": "CC0",
+      "imageFull": "art/dido-and-aeneas-8/full.jpg"
     },
     {
       "id": "judith-beheading-holofernes",
@@ -911,10 +949,11 @@
       "year": 1599,
       "date": "c. 1599",
       "dimensionsCm": [145, 195],
-      "image": "art/judith-beheading-holofernes/preview.jpg",
+      "image": "art/judith-beheading-holofernes/preview.ktx2",
       "frame": "gilded-ornate",
       "source": "https://commons.wikimedia.org/wiki/File:Caravaggio_-_Giuditta_e_Oloferne_(ca._1599).jpg",
-      "license": "Public domain"
+      "license": "Public domain",
+      "imageFull": "art/judith-beheading-holofernes/full.jpg"
     }
   ],
   "sculptures": [
