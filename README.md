@@ -20,6 +20,7 @@ URL flags: `?debug` opens the performance overlay on load, and `?webgl` forces t
 | W A S D / arrows | Walk |
 | Shift | Run |
 | C | Crouch while held |
+| M | Toggle the floor plan (you can keep walking) |
 | Click a bench | Sit (lower view, no walking). Click again to stand |
 | Click a small-object case | Look through its magnifier (zooms in on the object). Click again to step back |
 | Mouse | Look |

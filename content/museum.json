@@ -2,6 +2,7 @@
   "rooms": [
     {
       "id": "entrance-gallery",
+      "name": "Entrance Gallery",
       "bounds": {
         "min": [-7, 0, -5],
         "max": [7, 5, 5]
@@ -120,6 +121,7 @@
     },
     {
       "id": "swan-room",
+      "name": "The Swan",
       "bounds": {
         "min": [-8, 0, -25],
         "max": [8, 5.5, -13]
@@ -240,6 +242,7 @@
     },
     {
       "id": "dark-room",
+      "name": "Black Paintings",
       "bounds": {
         "min": [17, 0, -6],
         "max": [27, 4.5, 6]
@@ -357,6 +360,7 @@
     },
     {
       "id": "armor-court",
+      "name": "Armor Court",
       "bounds": {
         "min": [0, 0, 17],
         "max": [22, 8, 33]

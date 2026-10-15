@@ -17,6 +17,8 @@ export interface Museum {
 
 export interface Room {
   id: string;
+  /** Display name, e.g. on the map. Rooms without one (corridors) go unlabelled. */
+  name?: string;
   /** glTF room model, relative to content root. Omitted → procedural placeholder room built from `bounds`. */
   model?: string;
   /** Baked lightmap applied to UV1 of the room model. */

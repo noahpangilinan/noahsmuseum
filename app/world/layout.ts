@@ -135,7 +135,7 @@ function footprint(position: number[], width: number, depth: number, rotationY: 
   return { x0: x - hx, x1: x + hx, z0: z - hz, z1: z + hz };
 }
 
-type Segment = [ax: number, az: number, bx: number, bz: number];
+export type Segment = [ax: number, az: number, bx: number, bz: number];
 
 /**
  * Which rooms can be seen from anywhere inside each room (each room includes itself).
@@ -166,7 +166,7 @@ export function computeVisibility(museum: Museum, doorways: Doorway[]): Map<stri
 }
 
 /** Every solid stretch of wall in plan view: each room's four walls with doorway gaps cut out. */
-function wallSegments(museum: Museum, doorways: Doorway[]): Segment[] {
+export function wallSegments(museum: Museum, doorways: Doorway[]): Segment[] {
   const out: Segment[] = [];
   for (const r of museum.rooms) {
     const [x0, , z0] = r.bounds.min;

@@ -16,7 +16,7 @@ export class StartScreen {
         <p class="start-status">Loading…</p>
         <p class="start-hint" hidden>
           Click to enter<br />
-          <span>WASD to walk · mouse to look · Shift to run · C to crouch · click a bench to sit · click a painting for its label · Esc to release</span>
+          <span>WASD to walk · mouse to look · Shift to run · C to crouch · M for map · click a bench to sit · click a painting for its label · Esc to release</span>
         </p>
       </div>`;
     document.body.appendChild(this.el);

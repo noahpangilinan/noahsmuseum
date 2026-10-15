@@ -194,3 +194,35 @@ body.locked::after {
 .loupe.visible {
   opacity: 1;
 }
+
+/* Floor plan (M) */
+.museum-map {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.museum-map.visible {
+  opacity: 1;
+}
+.museum-map-card {
+  background: rgb(246 243 236 / 0.94);
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.45);
+  padding: 4px 4px 10px;
+  max-width: 100%;
+}
+.museum-map-card canvas {
+  display: block;
+  max-width: 100%;
+}
+.museum-map-key {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #6d665c;
+}

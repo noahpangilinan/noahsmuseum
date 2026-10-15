@@ -13,6 +13,7 @@ import { DebugOverlay } from './ui/debug-overlay';
 import { StartScreen } from './ui/start-screen';
 import { Hint } from './ui/hint';
 import { Loupe } from './ui/loupe';
+import { MuseumMap } from './ui/map';
 
 async function main() {
   const start = new StartScreen();
@@ -43,6 +44,7 @@ async function main() {
     const plaque = new Plaque(camera, exhibits);
     const hint = new Hint();
     const loupe = new Loupe();
+    const map = new MuseumMap(museum, doorways);
     const magnifiable = exhibits.filter((e) => e.magnify);
     const magnifierInView = () => {
       const hit = controls.pickInReach(magnifiable.map((e) => e.target));
@@ -122,6 +124,7 @@ async function main() {
       streamer.update(controls.room.room.id);
       updateNear(dt);
       plaque.update();
+      map.update(camera, controls.room.room.id);
       if (!controls.isLocked) hint.set(null);
       else if (controls.isMagnified) hint.set('Click to step back', true);
       else if (controls.isSeated) hint.set('Click to stand');
