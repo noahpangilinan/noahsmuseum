@@ -2,14 +2,16 @@
 
 ## Entrance gallery: the overture
 
-Picked to match the rest of the collection. Each wall previews the wing behind its door. All public domain; images from Wikimedia Commons, sizes from Wikidata (and the Čiurlionis museum).
+Picked to match the rest of the collection. Each wall previews the wing behind its door. Ten works, with Mondrian counted as one series. All public domain; images from Wikimedia Commons, sizes from Wikidata (and the Čiurlionis museum).
 
 | Wall | Artwork | Artist | Date | Size (cm, h × w) | Collection |
 |---|---|---|---|---|---|
 | West | Apollo Flaying Marsyas | Jusepe de Ribera | 1637 | 182 × 232 | Museo di Capodimonte, Naples |
 | West | Isle of the Dead | Arnold Böcklin | 1880 | 73.7 × 121.9 | The Met |
 | West | The Apparition | Gustave Moreau | 1876 | 106 × 72 | Musée d'Orsay (the Salon watercolour) |
-| North | Evolution (triptych) | Piet Mondrian | 1911 | 178 × 85 / 183 × 87.5 / 178 × 85 | Kunstmuseum Den Haag |
+| North | Evening; Red Tree | Piet Mondrian | 1908–1910 | 70 × 99 | Kunstmuseum Den Haag |
+| North | Gray Tree | Piet Mondrian | 1911 | 79.7 × 109.1 | Kunstmuseum Den Haag |
+| North | Blossoming Apple Tree | Piet Mondrian | 1912 | 78.5 × 107.5 | Kunstmuseum Den Haag |
 | North | The Cyclops | Odilon Redon | c. 1914 | 65.8 × 52.7 | Kröller-Müller Museum |
 | North | Fairy Tale of the Kings | M. K. Čiurlionis | 1909 | 70.2 × 75.3 | Čiurlionis National Art Museum, Kaunas |
 | East | The Triumph of Death | Pieter Bruegel the Elder | c. 1562 | 117 × 162 | Prado |
@@ -18,7 +20,7 @@ Picked to match the rest of the collection. Each wall previews the wing behind i
 | South | Slaughtered Ox | Rembrandt van Rijn | 1655 | 94 × 69 | Louvre |
 
 Notes:
-- The Mondrian panels are cropped from one gallery photograph of the triptych, since no clean scan is on Commons. The side panels' sizes (178 × 85) are the commonly cited figures; Wikidata has only the centre panel. Only the last panel carries a wall label (`"label": false` on the others).
+- Mondrian's tree series hangs left to right in order, so the wall shows his path from the red tree to near-abstraction. The three scans are the museum's own, at 2362 px. (It replaced the *Evolution* triptych, which had no clean scan.)
 - The Ribera image is the Naples version (the Brussels version is 202 × 255).
 
 ## Earlier shortlist

@@ -47,21 +47,21 @@
         },
         {
           "id": "north-1",
-          "position": [-5.4425, 1.6, -4.98],
+          "position": [-6.2, 1.55, -4.98],
           "normal": [0, 0, 1],
-          "maxSize": [1, 2]
+          "maxSize": [1.2, 1]
         },
         {
           "id": "north-2",
-          "position": [-4.4, 1.6, -4.98],
+          "position": [-4.5, 1.55, -4.98],
           "normal": [0, 0, 1],
-          "maxSize": [1, 2]
+          "maxSize": [1.2, 1]
         },
         {
           "id": "north-3",
-          "position": [-3.3575, 1.6, -4.98],
+          "position": [-2.8, 1.55, -4.98],
           "normal": [0, 0, 1],
-          "maxSize": [1, 2]
+          "maxSize": [1.2, 1]
         },
         {
           "id": "north-4",
@@ -457,44 +457,42 @@
       "license": "Public domain"
     },
     {
-      "id": "evolution-1",
+      "id": "red-tree",
       "slot": "entrance-gallery/north-1",
-      "title": "Evolution (left panel)",
+      "title": "Evening; Red Tree",
       "artist": "Piet Mondrian",
-      "year": 1911,
-      "date": "1911",
-      "dimensionsCm": [178, 85],
-      "image": "art/evolution-1/preview.jpg",
+      "year": 1910,
+      "date": "1908–1910",
+      "dimensionsCm": [70, 99],
+      "image": "art/red-tree/preview.jpg",
       "frame": "modern-black",
-      "source": "https://commons.wikimedia.org/wiki/File:Mondriaan_-_Evolutie_-_Kunstmuseum_Den_Haag.jpg",
-      "license": "Public domain",
-      "label": false
+      "source": "https://commons.wikimedia.org/wiki/File:Piet_Mondrian,_1908-10,_Evening;_Red_Tree_(Avond;_De_rode_boom),_oil_on_canvas,_70_x_99_cm,_Gemeentemuseum_Den_Haag.jpg",
+      "license": "Public domain"
     },
     {
-      "id": "evolution-2",
+      "id": "gray-tree",
       "slot": "entrance-gallery/north-2",
-      "title": "Evolution (centre panel)",
+      "title": "Gray Tree",
       "artist": "Piet Mondrian",
       "year": 1911,
       "date": "1911",
-      "dimensionsCm": [183, 87.5],
-      "image": "art/evolution-2/preview.jpg",
+      "dimensionsCm": [79.7, 109.1],
+      "image": "art/gray-tree/preview.jpg",
       "frame": "modern-black",
-      "source": "https://commons.wikimedia.org/wiki/File:Mondriaan_-_Evolutie_-_Kunstmuseum_Den_Haag.jpg",
-      "license": "Public domain",
-      "label": false
+      "source": "https://commons.wikimedia.org/wiki/File:Gray_Tree_1911.jpg",
+      "license": "Public domain"
     },
     {
-      "id": "evolution-3",
+      "id": "blossoming-apple-tree",
       "slot": "entrance-gallery/north-3",
-      "title": "Evolution (triptych)",
+      "title": "Blossoming Apple Tree",
       "artist": "Piet Mondrian",
-      "year": 1911,
-      "date": "1911",
-      "dimensionsCm": [178, 85],
-      "image": "art/evolution-3/preview.jpg",
+      "year": 1912,
+      "date": "1912",
+      "dimensionsCm": [78.5, 107.5],
+      "image": "art/blossoming-apple-tree/preview.jpg",
       "frame": "modern-black",
-      "source": "https://commons.wikimedia.org/wiki/File:Mondriaan_-_Evolutie_-_Kunstmuseum_Den_Haag.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Blossoming_apple_tree,_by_Piet_Mondriaan.jpg",
       "license": "Public domain"
     },
     {
