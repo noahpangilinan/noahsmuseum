@@ -80,7 +80,7 @@ Each light adds shading cost to every pixel and slows shader compilation at load
 At load, `computeVisibility` (`app/world/layout.ts`) tests plan-view sight lines between points in every pair of rooms against the real walls and doorway openings. It takes about 75 ms. Each room then knows exactly which rooms can be seen from anywhere inside it (`app/world/streaming.ts`):
 
 - **Drawn:** only the rooms visible from where you are. Frustum culling already skips what's off-screen; this also skips rooms hidden behind walls.
-- **Loaded:** the drawn rooms, plus what the next room over can see (within two doorways), so art is ready before you step through. Everything else releases its textures and models. In the Armor Court only the court and its two halls are drawn or loaded (about 287 MB of textures, versus about 520 MB at the hub).
+- **Loaded:** the drawn rooms, plus what the next room over can see (within two doorways), so art is ready before you step through. Everything else releases its textures and models. In the Armor Court only the court and the last two legs of its Z-shaped hall are drawn or loaded; every other room is unloaded.
 - Lights are never hidden. Toggling one would change every shader and cause a recompile hitch.
 
 ## Current floor plan
@@ -95,13 +95,16 @@ At load, `computeVisibility` (`app/world/layout.ts`) tests plan-view sight lines
            │  overture: 10 works, 4 walls    east-hall      │            │  Caravaggio, Artemisia Gentileschi
            └─────────────┐    ┌──────────┘                └────────────┘
                          │    │ armor-hall
-                         │    └───────────────┬───────────────────────────────┐
-                         │   armor-hall-east                 armor-court      │  Dido and Aeneas tapestries (8),
-                         └────────────────────┤                               │  CMA 3D scans (5)   
-                                              └───────────────────────────────┘
+                         │    └──────────────┐
+                         └─armor-hall-east┐  │
+                                          │  │ armor-hall-south
+         ┌────────────────────────────────┘  └─────────┐
+         │                 armor-court                 │  Dido and Aeneas tapestries (8),
+         │                                             │  CMA 3D scans (5)
+         └─────────────────────────────────────────────┘
 ```
 
-The armor wing bends on purpose: from the court you can't see the rest of the museum, so it isn't drawn or kept in memory there.
+The armor wing is a Z on purpose. With two bends, no sight line runs from the court to the rest of the museum, so inside the court only the court and its last two corridor legs are drawn or loaded. Everything else is unloaded.
 
 Debug flag: `?at=x,z&look=x,z` starts the camera anywhere (e.g. `?at=12,0&look=27,0` looks down the east hall at Saturn).
 
