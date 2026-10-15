@@ -102,7 +102,7 @@
         }
       ],
       "model": "rooms/entrance-gallery.glb",
-      "lightmap": "rooms/entrance-gallery_lm.png",
+      "lightmap": "rooms/entrance-gallery_lm.jpg",
       "lightmapIntensity": 2.917
     },
     {
@@ -121,7 +121,10 @@
         "floor": "oak",
         "ceiling": "none"
       },
-      "slots": []
+      "slots": [],
+      "model": "rooms/north-hall.glb",
+      "lightmap": "rooms/north-hall_lm.jpg",
+      "lightmapIntensity": 1.584
     },
     {
       "id": "swan-room",
@@ -225,7 +228,10 @@
           "normal": [0, 0, -1],
           "maxSize": [2.2, 2.2]
         }
-      ]
+      ],
+      "model": "rooms/swan-room.glb",
+      "lightmap": "rooms/swan-room_lm.jpg",
+      "lightmapIntensity": 1.252
     },
     {
       "id": "east-hall",
@@ -242,7 +248,10 @@
         "floor": "dark-wood",
         "ceiling": "none"
       },
-      "slots": []
+      "slots": [],
+      "model": "rooms/east-hall.glb",
+      "lightmap": "rooms/east-hall_lm.jpg",
+      "lightmapIntensity": 1.247
     },
     {
       "id": "dark-room",
@@ -326,7 +335,10 @@
         "floor": "oak",
         "ceiling": "none"
       },
-      "slots": []
+      "slots": [],
+      "model": "rooms/rousseau-hall.glb",
+      "lightmap": "rooms/rousseau-hall_lm.jpg",
+      "lightmapIntensity": 0.621
     },
     {
       "id": "rousseau-room",
@@ -419,7 +431,10 @@
           "normal": [-1, 0, 0],
           "maxSize": [1, 1.2]
         }
-      ]
+      ],
+      "model": "rooms/rousseau-room.glb",
+      "lightmap": "rooms/rousseau-room_lm.jpg",
+      "lightmapIntensity": 0.522
     },
     {
       "id": "armor-hall",
@@ -436,7 +451,10 @@
         "floor": "stone",
         "ceiling": "none"
       },
-      "slots": []
+      "slots": [],
+      "model": "rooms/armor-hall.glb",
+      "lightmap": "rooms/armor-hall_lm.jpg",
+      "lightmapIntensity": 1.453
     },
     {
       "id": "armor-hall-east",
@@ -470,7 +488,10 @@
         "floor": "stone",
         "ceiling": "none"
       },
-      "slots": []
+      "slots": [],
+      "model": "rooms/armor-hall-south.glb",
+      "lightmap": "rooms/armor-hall-south_lm.jpg",
+      "lightmapIntensity": 0.794
     },
     {
       "id": "armor-court",
@@ -549,7 +570,10 @@
           "normal": [1, 0, 0],
           "maxSize": [7, 4.6]
         }
-      ]
+      ],
+      "model": "rooms/armor-court.glb",
+      "lightmap": "rooms/armor-court_lm.jpg",
+      "lightmapIntensity": 0.409
     }
   ],
   "artworks": [

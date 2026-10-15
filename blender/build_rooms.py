@@ -8,7 +8,11 @@ them for the app. Run headless:
 For each room it writes:
   content/rooms/<id>.glb         geometry; materials are named slots the app fills in
                                  ("floor", "wall", "ceiling", "trim", "skylight")
-  content/rooms/<id>_lm.png      baked lighting (diffuse, no albedo) on UV map 2, 8-bit, sRGB-encoded
+  content/rooms/<id>_lm.jpg      baked lighting (diffuse, no albedo) on UV map 2, 8-bit, sRGB-encoded
+
+Each room is baked with its own lights plus its connected rooms' lights, so corridors pick up the
+light spilling through their doorways. Rooms with no light in or next to them are skipped (they
+keep the app's placeholder look, e.g. the dark room lit only by its painting spotlights).
   content/rooms/<id>.bake.json   bake settings and the lightmap's brightness scale
   blender/<id>.blend             the scene, so lights can be art-directed and re-baked by hand
 
@@ -43,7 +47,7 @@ FLOOR_COLORS = {"oak": "#9a7a58", "dark-wood": "#5a4030", "concrete": "#b7b3ab",
 
 def parse_args():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
-    args = {"room": "entrance-gallery", "size": 1024, "samples": 128}
+    args = {"room": "entrance-gallery", "size": 1024, "samples": 128}  # room: an id, "all", or "a,b,c"
     for i in range(0, len(argv) - 1, 2):
         key = argv[i].lstrip("-")
         args[key] = argv[i + 1] if key == "room" else int(argv[i + 1])
@@ -239,6 +243,7 @@ def make_material(name, room):
 
 
 def add_light(kind, name, location, rotation=(0, 0, 0), **props):
+    name = f"{add_light.prefix}{name}"
     data = bpy.data.lights.new(name, kind)
     for k, v in props.items():
         setattr(data, k, v)
@@ -249,8 +254,13 @@ def add_light(kind, name, location, rotation=(0, 0, 0), **props):
     return obj
 
 
+add_light.prefix = ""
+
+
 def add_lights(room):
-    """Bakes the room's general lighting (finish.ceiling). Paintings are lit live by the app."""
+    """Adds a room's general lighting (finish.ceiling); returns how many lights. Paintings are lit live by the app."""
+    add_light.prefix = f"{room['id']}:"
+    before = len(bpy.data.lights)
     (x0, y0, z0), (x1, y1, z1) = room["bounds"]["min"], room["bounds"]["max"]
     w, d = x1 - x0, z1 - z0
     ceiling = room.get("finish", {}).get("ceiling", "downlights")
@@ -258,7 +268,7 @@ def add_lights(room):
     if ceiling == "skylight":
         # Pointing straight down is the area light's default orientation.
         add_light("AREA", "skylight", to_blender((x0 + x1) / 2, y1 - 0.05, (z0 + z1) / 2),
-                  shape="RECTANGLE", size=w * 0.6, size_y=d * 0.6, energy=60 * w * d, color=(1.0, 0.97, 0.93))
+                  shape="RECTANGLE", size=w * 0.6, size_y=d * 0.6, energy=5 * w * d, color=(1.0, 0.97, 0.93))
     elif ceiling == "downlights":
         # A grid of soft, wide ceiling fixtures (~3.5 m apart) for even gallery light, rather than
         # a few narrow spots that leave hot pools on the floor and dark walls.
@@ -269,6 +279,7 @@ def add_lights(room):
                 z = z0 + (j + 0.5) * d / rows
                 add_light("AREA", f"ceiling_light_{i}_{j}", to_blender(x, y1 - 0.05, z),
                           shape="DISK", size=0.9, energy=120, color=warm)
+    return len(bpy.data.lights) - before
 
 
 # ---------------------------------------------------------------- lightmap UVs, bake, export
@@ -286,12 +297,12 @@ def lightmap_uvs(obj):
     bpy.ops.object.mode_set(mode="OBJECT")
 
 
-def bake(obj, size, samples):
+def bake(obj, size, samples, direct=True):
     scene = bpy.context.scene
     scene.render.engine = "CYCLES"
     scene.cycles.device = "CPU"
     scene.cycles.samples = samples
-    scene.render.bake.use_pass_direct = True
+    scene.render.bake.use_pass_direct = direct
     scene.render.bake.use_pass_indirect = True
     scene.render.bake.use_pass_color = False  # light only: the app multiplies by its own materials
     scene.render.bake.margin = 8
@@ -354,9 +365,11 @@ def save_lightmap(image, size, path):
     out.colorspace_settings.name = "Non-Color"
     rgba = np.concatenate([rgb, np.ones((size, size, 1), dtype=np.float32)], axis=2)
     out.pixels.foreach_set(rgba.ravel())
-    out.filepath_raw = str(path)
-    out.file_format = "PNG"
-    out.save()
+    # JPEG: lighting is smooth gradients, which it compresses far better than PNG.
+    scene = bpy.context.scene
+    scene.render.image_settings.file_format = "JPEG"
+    scene.render.image_settings.quality = 92
+    out.save_render(str(path), scene=scene)
     return scale
 
 
@@ -377,16 +390,23 @@ def export_glb(obj, path):
 
 # ---------------------------------------------------------------- main
 
-def process(room, doorways, size, samples):
+def process(room, rooms_by_id, doorways, size, samples):
     t0 = time.time()
     bpy.ops.wm.read_factory_settings(use_empty=True)
+    neighbours = {rid for d in doorways if room["id"] in d["rooms"] for rid in d["rooms"]} - {room["id"]}
+    lights = sum(add_lights(r) for r in [room] + [rooms_by_id[n] for n in sorted(neighbours)])
+    if lights == 0:
+        print("SKIPPED", room["id"], "(no lights in or next to it)")
+        return
     obj = build_room(room, doorways)
-    add_lights(room)
     lightmap_uvs(obj)
-    image = bake(obj, size, samples)
+    # Skylit rooms keep a live skylight in the app (it lights paintings and sculptures too), so
+    # their lightmap holds only the bounced light; baking the direct light as well would double it.
+    skylit = room.get("finish", {}).get("ceiling") == "skylight"
+    image = bake(obj, size, samples, direct=not skylit)
     rooms_dir = CONTENT / "rooms"
     rooms_dir.mkdir(exist_ok=True)
-    scale = save_lightmap(image, size, rooms_dir / f"{room['id']}_lm.png")
+    scale = save_lightmap(image, size, rooms_dir / f"{room['id']}_lm.jpg")
     export_glb(obj, rooms_dir / f"{room['id']}.glb")
     bpy.ops.wm.save_as_mainfile(filepath=str(ROOT / "blender" / f"{room['id']}.blend"))
     info = {"room": room["id"], "size": size, "samples": samples, "scale": scale, "seconds": round(time.time() - t0)}
@@ -398,11 +418,13 @@ def main():
     args = parse_args()
     museum = json.loads((CONTENT / "museum.json").read_text(encoding="utf-8"))
     doorways = find_doorways(museum)
-    rooms = museum["rooms"] if args["room"] == "all" else [r for r in museum["rooms"] if r["id"] == args["room"]]
+    wanted = None if args["room"] == "all" else set(args["room"].split(","))
+    rooms = [r for r in museum["rooms"] if wanted is None or r["id"] in wanted]
     if not rooms:
         raise SystemExit(f"no room {args['room']!r}")
+    rooms_by_id = {r["id"]: r for r in museum["rooms"]}
     for room in rooms:
-        process(room, doorways, args["size"], args["samples"])
+        process(room, rooms_by_id, doorways, args["size"], args["samples"])
 
 
 main()

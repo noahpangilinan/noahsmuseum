@@ -43,6 +43,14 @@ export async function loadRoom(room: Room, doorways: Doorway[], renderer: THREE.
     object.add(bench);
     benches.push(bench);
   }
+  // Baked skylit rooms keep their live skylight: the lightmap holds only bounced light, and the
+  // live light gives direct light to the room and to everything not in the lightmap (paintings,
+  // sculptures, benches). The glowing panel is part of the model.
+  if (room.model && room.finish?.ceiling === 'skylight') {
+    const [x0, , z0] = room.bounds.min;
+    const [x1, y1, z1] = room.bounds.max;
+    object.add(createSkylight((x0 + x1) / 2, y1, (z0 + z1) / 2, (x1 - x0) * 0.6, (z1 - z0) * 0.6)[0]);
+  }
   const box = new THREE.Box3(new THREE.Vector3(...room.bounds.min), new THREE.Vector3(...room.bounds.max));
   return { room, object, box, benches };
 }

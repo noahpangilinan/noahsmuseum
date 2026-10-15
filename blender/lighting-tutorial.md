@@ -1,5 +1,17 @@
 # Baking lighting for a room: quick tutorial
 
+> **Automated version:** `blender/build_rooms.py` does all of this headless, building every room from `museum.json`:
+>
+> ```sh
+> "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python blender/build_rooms.py -- --room all --size 1024 --samples 192
+> ```
+>
+> Then regenerate `museum.json`, which picks up each room's `<id>.bake.json`. Each room's `.blend` is saved next to the script. Open it to move or retune the lights and bake again by hand, using the steps below. Notes on the automated version:
+> - Lightmaps are 1024 px sRGB JPEGs.
+> - Materials are named slots ("floor", "wall", …) that the app fills with its own surfaces, so only the light is baked.
+> - Skylit rooms bake bounced light only, and keep a live skylight in the app for the direct light.
+> - Rooms with no light in or next to them stay unbaked: the dark room and the middle leg of the armor Z.
+
 This guide turns one placeholder room into a Blender-modelled room with **baked lighting** (a lightmap), then plugs it into the museum. Do one room first, all the way through. The entrance gallery is a good start.
 
 How it works in the app: when a room in `content/museum.json` has a `model`, the app loads that glTF *instead of* the placeholder box. If it also has a `lightmap`, that image is applied to every mesh that has a second UV map, as baked indirect light. Collision, doorways and what gets drawn still come from the room's `bounds` in `museum.json`, so the model has to match them.
