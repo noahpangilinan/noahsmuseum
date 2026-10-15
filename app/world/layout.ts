@@ -74,6 +74,8 @@ export const BENCH_SIZE = { length: 1.6, depth: 0.5, height: 0.46 };
 export function displaySize(sc: Sculpture): { width: number; depth: number; height: number } {
   const [h, w, d] = sc.dimensionsCm.map((cm) => cm / 100);
   if (sc.display === 'platform') return { width: w + 0.8, depth: d + 0.8, height: 0.35 };
+  // Small objects (jewellery, figurines) sit higher, in a smaller case, closer to the eye.
+  if (Math.max(h, w, d) < 0.15) return { width: 0.4, depth: 0.4, height: 1.2 };
   // Tall pieces stand on a low base; small ones are raised to eye level.
   const height = h > 1.2 ? 0.3 : sc.display === 'case' ? 0.95 : 0.9;
   return { width: Math.max(0.6, w + 0.3), depth: Math.max(0.6, d + 0.3), height };

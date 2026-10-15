@@ -59,7 +59,8 @@ export function placeSculptures(
     // Space the stand-in photo may fill: [max width, max height].
     let photoBox: [number, number] = [Math.max(w, d), h];
     if (sc.display === 'case') {
-      const gh = Math.max(0.45, h + 0.2);
+      const small = Math.max(h, w, d) < 0.15;
+      const gh = Math.max(small ? 0.28 : 0.45, h + 0.2);
       const glass = new THREE.Mesh(new THREE.BoxGeometry(size.width - 0.02, gh, size.depth - 0.02), glassMat);
       glass.position.y = size.height + gh / 2;
       glass.renderOrder = 2;

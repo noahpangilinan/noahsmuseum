@@ -79,15 +79,15 @@ The Goya wall holds five of the Black Paintings (Wikidata Q1988253; all at the P
 Data and images come from the [CMA Open Access API](https://openaccess-api.clevelandart.org/).
 
 - **Tapestries:** *The Story of Dido and Aeneas*, 1915.79.1–8. Designed by Giovanni Francesco Romanelli, woven by Michael Wauters, 1679. Sizes come from the API.
-- **Armor** (`sculptures` in museum.json): CMA's own CC0 3D scans from Sketchfab, in `content/models/`. The photos in `art/<id>/` remain as fallbacks if a model fails to load.
+- **Objects** (`sculptures` in museum.json): CMA's own 3D scans from Sketchfab. The burgonet, hussar breastplate and Corinthian helmet were swapped out for the jar, bull and pendant. All are CC0 except the **Insect Bell Pendant scan, which CMA published under CC BY 4.0**; its label credits the Cleveland Museum of Art, in `content/models/`. The photos in `art/<id>/` remain as fallbacks if a model fails to load.
 
   | Piece | Accession | Sketchfab | Original tris | Shipped tris | File |
   |---|---|---|---|---|---|
   | Armor for Man and Horse with Völs-Colonna Arms | 1964.88 | [faca2ad5…](https://sketchfab.com/3d-models/faca2ad557f64809b598c3a646a8804f) | 120k | 96k | 1.2 MB |
   | Crossbow and Cranequin of Augustus I | 1916.1723 | [d314c9a6…](https://sketchfab.com/3d-models/d314c9a6abe444ffb22010310b7bae01) | 90k | 79k | 1.5 MB |
-  | Black and White Burgonet | 1916.891 | [0fc3feb7…](https://sketchfab.com/3d-models/0fc3feb792c6464ca744e5e6548894e9) | 334k | 67k | 0.8 MB |
-  | Breastplate from Hussar's Cuirass | 1916.1521 | [3056e857…](https://sketchfab.com/3d-models/3056e857cf244a3fb651f9d07a66c5a9) | 112k | 56k | 0.8 MB |
-  | Corinthian Helmet | 1926.54 | [fe4dcf84…](https://sketchfab.com/3d-models/fe4dcf84485242d3b2d5ae652a295db3) | 64k | 51k | 0.6 MB |
+  | Jar with Lion-Head Handles (Yuan dynasty, 1300s) | 1962.154 | [9a0710f4…](https://sketchfab.com/3d-models/9a0710f44a464e36b3e2da485320f1dd) | 67k | 55k | 0.9 MB |
+  | Recumbent Bull (Tang dynasty, 700s) | 1985.74 | [774c1c5f…](https://sketchfab.com/3d-models/774c1c5f1cd4484f98b68ee96d886950) | 60k | 48k | 0.6 MB |
+  | Insect Bell Pendant (Coclé, 400–1100) | 2015.12 | [ab195eaf…](https://sketchfab.com/3d-models/ab195eaf070b43f2b647c96a70a169f0) | 251k | 63k | 0.9 MB |
 
   Processing: `gltf-transform metalrough` (the burgonet used the retired spec/gloss material), then `optimize` with Meshopt, WebP textures (2048 px for the horse, 1024 px otherwise) and simplification. The horse scan was rotated 49.9° so its body runs along x, with its profile toward +z.
   - Sizes: the horse armor has no CMA dimensions. 371 × 240 × 90 cm is measured from the scan, which is metric: about 2.4 m horse and rider, with the lance tip at 3.7 m. Helmet and breastplate depths are estimates.

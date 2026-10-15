@@ -95,7 +95,7 @@ At load, `computeVisibility` (`app/world/layout.ts`) tests plan-view sight lines
                          │    │ armor-hall
                          │    └───────────────┬───────────────────────────────┐
                          │   armor-hall-east                 armor-court      │  Dido and Aeneas tapestries (8),
-                         └────────────────────┤                               │  CMA armor scans (5)
+                         └────────────────────┤                               │  CMA 3D scans (5)   
                                               └───────────────────────────────┘
 ```
 
