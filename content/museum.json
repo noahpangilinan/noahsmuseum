@@ -47,31 +47,31 @@
         },
         {
           "id": "north-1",
-          "position": [-6.2, 1.55, -4.98],
+          "position": [2.4, 1.55, -4.98],
           "normal": [0, 0, 1],
           "maxSize": [1.2, 1]
         },
         {
           "id": "north-2",
-          "position": [-4.5, 1.55, -4.98],
+          "position": [4.1, 1.55, -4.98],
           "normal": [0, 0, 1],
           "maxSize": [1.2, 1]
         },
         {
           "id": "north-3",
-          "position": [-2.8, 1.55, -4.98],
+          "position": [5.8, 1.55, -4.98],
           "normal": [0, 0, 1],
           "maxSize": [1.2, 1]
         },
         {
           "id": "north-4",
-          "position": [2.8, 1.5, -4.98],
+          "position": [-5, 1.5, -4.98],
           "normal": [0, 0, 1],
           "maxSize": [1.2, 1.2]
         },
         {
           "id": "north-5",
-          "position": [5, 1.5, -4.98],
+          "position": [-2.8, 1.5, -4.98],
           "normal": [0, 0, 1],
           "maxSize": [1.2, 1.2]
         },
