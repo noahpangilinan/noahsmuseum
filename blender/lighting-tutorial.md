@@ -56,10 +56,10 @@ Current rooms, already converted (metres):
 
 ## 5. Light it
 
-Lights live only in Blender and get baked in. The app adds its own real-time spotlights on the paintings, so focus on the room.
+Lights live only in Blender and get baked in. **Don't light the paintings:** the app adds a real-time spotlight pool on each painting (and its wall). Baking pools too would double them. Light the *room*.
 
 - **Skylit rooms:** an **Area light** (Shape: Rectangle) just under the skylight opening, pointing down, warm white (~5500 K), and a low-strength **World** colour for sky bounce.
-- **Track or downlit rooms:** **Spot** lights with large Radius (soft edges) and Blend ~0.6, pointed at the walls where paintings hang (slot positions are in `museum.json`).
+- **Track or downlit rooms:** a few **Spot** or **Area** lights with large Radius (soft edges) and Blend ~0.6, washing the floor and the upper walls. Leave the hanging height to the app's painting spots.
 - **Keep it a little dim.** Lightmaps are saved as 8-bit images (step 7), so anything brighter than white clips. You can lift the overall level in the app afterwards.
 - Check with **Viewport Shading → Rendered** before baking.
 

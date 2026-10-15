@@ -40,7 +40,7 @@ These rules let room exports drop into the app with no manual fixes. If a rule g
 - Bake with Cycles: Diffuse with Direct + Indirect and **Color off** (the app multiplies by the material colour itself). Denoise before saving.
 - Resolution: **2048² per room for high, 1024² for low** (export both once quality tiers land).
 - Save as an 8-bit **PNG, Non-Color**, to `content/rooms/<roomId>_lm.png`. The app also accepts `.ktx2`; an HDR/KTX2 path can come later if 8-bit clipping becomes a problem.
-- Don't bake artwork spotlights into the walls. They're real-time lights in the app so frames cast moving-correct shadows.
+- Don't bake artwork spotlights into the walls. The app lights every painting (and the wall around it) in real time, so baked pools would double up.
 
 ## Materials
 
