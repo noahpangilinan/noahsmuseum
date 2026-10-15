@@ -24,7 +24,7 @@ URL flags: `?debug` opens the performance overlay on load, and `?webgl` forces t
 | Click a bench | Sit (lower view, no walking). Click again to stand |
 | Click a small-object case | Look through its magnifier (zooms in on the object). Click again to step back |
 | Mouse | Look |
-| Click a painting | Show its wall label (labels also appear when you stand in front of a piece). Up close, opens the full photo; click again to close |
+| Click a painting | Show its wall label (labels also appear when you stand in front of a piece). Within 1 m, opens the full photo; click again to close |
 | `` ` `` | Toggle debug overlay (FPS, draw calls, texture memory, loaded rooms) |
 | Esc | Release the pointer |
 

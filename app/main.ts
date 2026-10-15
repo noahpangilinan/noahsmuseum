@@ -60,17 +60,15 @@ async function main() {
     const map = new MuseumMap(museum, doorways, standable);
     const photo = new PhotoViewer();
 
-    // A painting you're close to and looking at can be opened full-screen.
+    // A painting you're within 1 m of and looking at can be opened full-screen.
     const viewRay = new THREE.Raycaster();
-    viewRay.far = 8;
+    viewRay.far = 1;
     const paintings = exhibits.filter((e) => 'slot' in e.info);
     const paintingInView = () => {
       viewRay.setFromCamera(new THREE.Vector2(0, 0), camera);
       const hit = viewRay.intersectObjects(paintings.map((e) => e.target), false)[0];
       const e = hit && paintings.find((p) => p.target === hit.object);
-      if (!e) return null;
-      const reach = Math.max(2.2, (0.9 * Math.max(...e.info.dimensionsCm)) / 100);
-      return hit.distance <= reach ? e : null;
+      return e ?? null;
     };
     const photoPath = (e: (typeof exhibits)[number]) => {
       const info = e.info as Artwork; // only paintings reach here
