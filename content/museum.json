@@ -29,33 +29,75 @@
       "slots": [
         {
           "id": "west-1",
-          "position": [-6.98, 1.5, 0],
+          "position": [-6.98, 1.55, 0],
           "normal": [1, 0, 0],
-          "maxSize": [4, 3]
+          "maxSize": [3, 2.4]
         },
         {
-          "id": "east-1",
-          "position": [6.98, 1.5, -3.25],
-          "normal": [-1, 0, 0],
-          "maxSize": [2.2, 2.2]
+          "id": "west-2",
+          "position": [-6.98, 1.5, 3.4],
+          "normal": [1, 0, 0],
+          "maxSize": [1.6, 1.4]
         },
         {
-          "id": "east-2",
-          "position": [6.98, 1.5, 3.25],
-          "normal": [-1, 0, 0],
-          "maxSize": [2.2, 2.2]
+          "id": "west-3",
+          "position": [-6.98, 1.55, -3.6],
+          "normal": [1, 0, 0],
+          "maxSize": [1.2, 1.4]
         },
         {
           "id": "north-1",
-          "position": [-4.25, 1.5, -4.98],
+          "position": [-5.4425, 1.6, -4.98],
           "normal": [0, 0, 1],
-          "maxSize": [2.5, 2.2]
+          "maxSize": [1, 2]
         },
         {
           "id": "north-2",
-          "position": [4.25, 1.5, -4.98],
+          "position": [-4.4, 1.6, -4.98],
           "normal": [0, 0, 1],
-          "maxSize": [2.5, 2.2]
+          "maxSize": [1, 2]
+        },
+        {
+          "id": "north-3",
+          "position": [-3.3575, 1.6, -4.98],
+          "normal": [0, 0, 1],
+          "maxSize": [1, 2]
+        },
+        {
+          "id": "north-4",
+          "position": [2.8, 1.5, -4.98],
+          "normal": [0, 0, 1],
+          "maxSize": [1.2, 1.2]
+        },
+        {
+          "id": "north-5",
+          "position": [5, 1.5, -4.98],
+          "normal": [0, 0, 1],
+          "maxSize": [1.2, 1.2]
+        },
+        {
+          "id": "east-1",
+          "position": [6.98, 1.5, -3.6],
+          "normal": [-1, 0, 0],
+          "maxSize": [2, 1.6]
+        },
+        {
+          "id": "east-2",
+          "position": [6.98, 1.5, 3],
+          "normal": [-1, 0, 0],
+          "maxSize": [2, 1.6]
+        },
+        {
+          "id": "south-1",
+          "position": [4.2, 1.55, 4.98],
+          "normal": [0, 0, -1],
+          "maxSize": [1.4, 1.6]
+        },
+        {
+          "id": "south-2",
+          "position": [-4.2, 1.5, 4.98],
+          "normal": [0, 0, -1],
+          "maxSize": [1.2, 1.4]
         }
       ]
     },
@@ -376,40 +418,162 @@
   ],
   "artworks": [
     {
-      "id": "paris-street-rainy-day",
+      "id": "apollo-flaying-marsyas",
       "slot": "entrance-gallery/west-1",
-      "title": "Paris Street; Rainy Day",
-      "artist": "Gustave Caillebotte",
-      "year": 1877,
-      "dimensionsCm": [212.2, 276.2],
-      "image": "art/paris-street-rainy-day/preview.jpg",
+      "title": "Apollo Flaying Marsyas",
+      "artist": "Jusepe de Ribera",
+      "year": 1637,
+      "date": "1637",
+      "dimensionsCm": [182, 232],
+      "image": "art/apollo-flaying-marsyas/preview.jpg",
       "frame": "gilded-ornate",
-      "source": "https://www.artic.edu/artworks/20684",
-      "license": "CC0"
+      "source": "https://commons.wikimedia.org/wiki/File:Jos%C3%A9_de_Ribera_004.jpg",
+      "license": "Public domain"
     },
     {
-      "id": "water-lilies",
-      "slot": "entrance-gallery/east-1",
-      "title": "Water Lilies",
-      "artist": "Claude Monet",
-      "year": 1906,
-      "dimensionsCm": [89.9, 94.1],
-      "image": "art/water-lilies/preview.jpg",
+      "id": "isle-of-the-dead",
+      "slot": "entrance-gallery/west-2",
+      "title": "Isle of the Dead",
+      "artist": "Arnold Böcklin",
+      "year": 1880,
+      "date": "1880",
+      "dimensionsCm": [73.7, 121.9],
+      "image": "art/isle-of-the-dead/preview.jpg",
       "frame": "gilded-ornate",
-      "source": "https://www.artic.edu/artworks/16568",
-      "license": "CC0"
+      "source": "https://commons.wikimedia.org/wiki/File:Arnold_B%C3%B6cklin_-_Die_Toteninsel_II_(Metropolitan_Museum_of_Art).jpg",
+      "license": "Public domain"
     },
     {
-      "id": "the-bedroom",
-      "slot": "entrance-gallery/east-2",
-      "title": "The Bedroom",
-      "artist": "Vincent van Gogh",
-      "year": 1889,
-      "dimensionsCm": [73.6, 92.3],
-      "image": "art/the-bedroom/preview.jpg",
+      "id": "the-apparition",
+      "slot": "entrance-gallery/west-3",
+      "title": "The Apparition",
+      "artist": "Gustave Moreau",
+      "year": 1876,
+      "date": "1876",
+      "dimensionsCm": [106, 72],
+      "image": "art/the-apparition/preview.jpg",
+      "frame": "gallery-white",
+      "source": "https://commons.wikimedia.org/wiki/File:Gustave_Moreau_-_The_Apparition_-_Google_Art_Project.jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "evolution-1",
+      "slot": "entrance-gallery/north-1",
+      "title": "Evolution (left panel)",
+      "artist": "Piet Mondrian",
+      "year": 1911,
+      "date": "1911",
+      "dimensionsCm": [178, 85],
+      "image": "art/evolution-1/preview.jpg",
       "frame": "modern-black",
-      "source": "https://www.artic.edu/artworks/28560",
-      "license": "CC0"
+      "source": "https://commons.wikimedia.org/wiki/File:Mondriaan_-_Evolutie_-_Kunstmuseum_Den_Haag.jpg",
+      "license": "Public domain",
+      "label": false
+    },
+    {
+      "id": "evolution-2",
+      "slot": "entrance-gallery/north-2",
+      "title": "Evolution (centre panel)",
+      "artist": "Piet Mondrian",
+      "year": 1911,
+      "date": "1911",
+      "dimensionsCm": [183, 87.5],
+      "image": "art/evolution-2/preview.jpg",
+      "frame": "modern-black",
+      "source": "https://commons.wikimedia.org/wiki/File:Mondriaan_-_Evolutie_-_Kunstmuseum_Den_Haag.jpg",
+      "license": "Public domain",
+      "label": false
+    },
+    {
+      "id": "evolution-3",
+      "slot": "entrance-gallery/north-3",
+      "title": "Evolution (triptych)",
+      "artist": "Piet Mondrian",
+      "year": 1911,
+      "date": "1911",
+      "dimensionsCm": [178, 85],
+      "image": "art/evolution-3/preview.jpg",
+      "frame": "modern-black",
+      "source": "https://commons.wikimedia.org/wiki/File:Mondriaan_-_Evolutie_-_Kunstmuseum_Den_Haag.jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-cyclops",
+      "slot": "entrance-gallery/north-4",
+      "title": "The Cyclops",
+      "artist": "Odilon Redon",
+      "year": 1914,
+      "date": "c. 1914",
+      "dimensionsCm": [65.8, 52.7],
+      "image": "art/the-cyclops/preview.jpg",
+      "frame": "gallery-white",
+      "source": "https://commons.wikimedia.org/wiki/File:Odilon_Redon_-_The_Cyclops,_c._1914.jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "fairy-tale-of-the-kings",
+      "slot": "entrance-gallery/north-5",
+      "title": "Fairy Tale of the Kings",
+      "artist": "Mikalojus Konstantinas Čiurlionis",
+      "year": 1909,
+      "date": "1909",
+      "dimensionsCm": [70.2, 75.3],
+      "image": "art/fairy-tale-of-the-kings/preview.jpg",
+      "frame": "modern-black",
+      "source": "https://commons.wikimedia.org/wiki/File:Mikalojus_Konstantinas_Ciurlionis_-_FAIRY_TALE_(FAIRY_TALE_OF_KINGS)_-_1909.jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-triumph-of-death",
+      "slot": "entrance-gallery/east-1",
+      "title": "The Triumph of Death",
+      "artist": "Pieter Bruegel the Elder",
+      "year": 1562,
+      "date": "c. 1562",
+      "dimensionsCm": [117, 162],
+      "image": "art/the-triumph-of-death/preview.jpg",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:The_Triumph_of_Death_by_Pieter_Bruegel_the_Elder.jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "the-nightmare",
+      "slot": "entrance-gallery/east-2",
+      "title": "The Nightmare",
+      "artist": "Henry Fuseli",
+      "year": 1781,
+      "date": "1781",
+      "dimensionsCm": [101, 127],
+      "image": "art/the-nightmare/preview.jpg",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:John_Henry_Fuseli_-_The_Nightmare.JPG",
+      "license": "Public domain"
+    },
+    {
+      "id": "david-with-the-head-of-goliath",
+      "slot": "entrance-gallery/south-1",
+      "title": "David with the Head of Goliath",
+      "artist": "Caravaggio",
+      "year": 1610,
+      "date": "c. 1610",
+      "dimensionsCm": [125, 101],
+      "image": "art/david-with-the-head-of-goliath/preview.jpg",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:David_with_the_Head_of_Goliath-Caravaggio_(1610).jpg",
+      "license": "Public domain"
+    },
+    {
+      "id": "slaughtered-ox",
+      "slot": "entrance-gallery/south-2",
+      "title": "Slaughtered Ox",
+      "artist": "Rembrandt van Rijn",
+      "year": 1655,
+      "date": "1655",
+      "dimensionsCm": [94, 69],
+      "image": "art/slaughtered-ox/preview.jpg",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Le_B%C5%93uf_%C3%A9corch%C3%A9_-_Rembrandt_-_Mus%C3%A9e_du_Louvre_Peintures_MI_169.jpg",
+      "license": "Public domain"
     },
     {
       "id": "the-swan-no-1",

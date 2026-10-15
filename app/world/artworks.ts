@@ -118,17 +118,18 @@ export function placeArtworks(
     group.add(shadow);
 
     const floorY = loaded.room.bounds.min[1];
+    const hasLabel = artwork.label !== false;
     const label = createWallLabel(artwork);
     const labelMat = label.material as THREE.MeshStandardMaterial;
     label.position.set(outer[0] / 2 + LABEL_GAP + LABEL_SIZE[0] / 2, floorY + LABEL_HEIGHT - slot.position[1], LABEL_SIZE[2] / 2);
-    group.add(label);
+    if (hasLabel) group.add(label);
 
     scene.add(group);
     group.updateMatrixWorld(true);
 
     const center = canvas.getWorldPosition(new THREE.Vector3());
     if (loaded.room.finish?.artworkSpots !== false) {
-      spots.push({ room: roomId, center, normal, width: outer[0], height: outer[1], labelReach: LABEL_GAP + LABEL_SIZE[0], roomBounds: loaded.box });
+      spots.push({ room: roomId, center, normal, width: outer[0], height: outer[1], labelReach: hasLabel ? LABEL_GAP + LABEL_SIZE[0] : 0, roomBounds: loaded.box });
     }
 
     const image = new StreamedMap(
@@ -151,7 +152,7 @@ export function placeArtworks(
       room: roomId,
       load: () => {
         image.load();
-        text.load();
+        if (hasLabel) text.load();
       },
       unload: () => {
         image.unload();

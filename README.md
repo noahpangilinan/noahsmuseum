@@ -90,7 +90,7 @@ At load, `computeVisibility` (`app/world/layout.ts`) tests plan-view sight lines
                          │    │ north-hall
            ┌─────────────┘    └──────────┐                ┌────────────┐
            │      entrance-gallery       ├────────────────┤ dark-room  │  Goya wall (5 Black Paintings),
-           │  Caillebotte · Monet · Gogh     east-hall      │            │  Caravaggio, Artemisia Gentileschi
+           │  overture: 10 works, 4 walls    east-hall      │            │  Caravaggio, Artemisia Gentileschi
            └─────────────┐    ┌──────────┘                └────────────┘
                          │    │ armor-hall
                          │    └───────────────┬───────────────────────────────┐

@@ -1,12 +1,36 @@
-# First 10 artworks
+# Artworks
+
+## Entrance gallery: the overture
+
+Picked to match the rest of the collection. Each wall previews the wing behind its door. All public domain; images from Wikimedia Commons, sizes from Wikidata (and the Čiurlionis museum).
+
+| Wall | Artwork | Artist | Date | Size (cm, h × w) | Collection |
+|---|---|---|---|---|---|
+| West | Apollo Flaying Marsyas | Jusepe de Ribera | 1637 | 182 × 232 | Museo di Capodimonte, Naples |
+| West | Isle of the Dead | Arnold Böcklin | 1880 | 73.7 × 121.9 | The Met |
+| West | The Apparition | Gustave Moreau | 1876 | 106 × 72 | Musée d'Orsay (the Salon watercolour) |
+| North | Evolution (triptych) | Piet Mondrian | 1911 | 178 × 85 / 183 × 87.5 / 178 × 85 | Kunstmuseum Den Haag |
+| North | The Cyclops | Odilon Redon | c. 1914 | 65.8 × 52.7 | Kröller-Müller Museum |
+| North | Fairy Tale of the Kings | M. K. Čiurlionis | 1909 | 70.2 × 75.3 | Čiurlionis National Art Museum, Kaunas |
+| East | The Triumph of Death | Pieter Bruegel the Elder | c. 1562 | 117 × 162 | Prado |
+| East | The Nightmare | Henry Fuseli | 1781 | 101 × 127 | Detroit Institute of Arts |
+| South | David with the Head of Goliath | Caravaggio | c. 1610 | 125 × 101 | Galleria Borghese |
+| South | Slaughtered Ox | Rembrandt van Rijn | 1655 | 94 × 69 | Louvre |
+
+Notes:
+- The Mondrian panels are cropped from one gallery photograph of the triptych, since no clean scan is on Commons. The side panels' sizes (178 × 85) are the commonly cited figures; Wikidata has only the centre panel. Only the last panel carries a wall label (`"label": false` on the others).
+- The Ribera image is the Naples version (the Brussels version is 202 × 255).
+
+## Earlier shortlist
+
 
 M0 shortlist. Public-domain status was checked against the Art Institute of Chicago API (`is_public_domain`) on 2026-10-14. AIC images and data for public-domain works are CC0.
 
 | # | Artwork | Artist | Year | Source | License | Status |
 |---|---|---|---|---|---|---|
-| 1 | Paris Street; Rainy Day | Gustave Caillebotte | 1877 | [AIC 20684](https://www.artic.edu/artworks/20684) | CC0 | **In museum.json** |
-| 2 | Water Lilies | Claude Monet | 1906 | [AIC 16568](https://www.artic.edu/artworks/16568) | CC0 | **In museum.json** |
-| 3 | The Bedroom | Vincent van Gogh | 1889 | [AIC 28560](https://www.artic.edu/artworks/28560) | CC0 | **In museum.json** |
+| 1 | Paris Street; Rainy Day | Gustave Caillebotte | 1877 | [AIC 20684](https://www.artic.edu/artworks/20684) | CC0 | Removed from the entrance (images are one API call away) |
+| 2 | Water Lilies | Claude Monet | 1906 | [AIC 16568](https://www.artic.edu/artworks/16568) | CC0 | Removed from the entrance |
+| 3 | The Bedroom | Vincent van Gogh | 1889 | [AIC 28560](https://www.artic.edu/artworks/28560) | CC0 | Removed from the entrance |
 | 4 | A Sunday on La Grande Jatte — 1884 | Georges Seurat | 1884–86 | [AIC 27992](https://www.artic.edu/artworks/27992) | CC0 | Confirmed PD |
 | 5 | The Great Wave off Kanagawa | Katsushika Hokusai | c. 1830–33 | [AIC 24645](https://www.artic.edu/artworks/24645) | CC0 | Confirmed PD (woodblock print, small: good for a "works on paper" wall) |
 | 6 | Self-Portrait | Vincent van Gogh | 1887 | [AIC 80607](https://www.artic.edu/artworks/80607) | CC0 | Confirmed PD |

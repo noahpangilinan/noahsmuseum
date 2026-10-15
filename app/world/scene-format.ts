@@ -100,6 +100,8 @@ export interface Artwork extends ExhibitInfo {
   /** Deep Zoom tile pyramid directory (M3). */
   deepZoom?: string;
   frame: FrameStyle;
+  /** Wall label beside the piece. Default true; turn off for all but one panel of a triptych. */
+  label?: boolean;
 }
 
 /**
@@ -211,6 +213,7 @@ export function validateMuseum(data: unknown): Museum {
     if (!isVec(a.dimensionsCm, 2) || a.dimensionsCm.some((d) => d <= 0)) {
       problems.push(`${where}: "dimensionsCm" must be [height, width] in cm`);
     }
+    if (a.label !== undefined && typeof a.label !== 'boolean') problems.push(`${where}: "label" must be true or false`);
     if (!FRAME_STYLES.includes(a.frame)) {
       problems.push(`${where}: "frame" must be one of ${FRAME_STYLES.join(', ')}`);
     }
