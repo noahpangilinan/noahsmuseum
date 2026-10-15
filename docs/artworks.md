@@ -74,6 +74,26 @@ Sizes for Nos. 1, 12, 13 and 17 come from exhibition listings (AGNSW, Guggenheim
 
 The Goya wall holds five of the Black Paintings (Wikidata Q1988253; all at the Prado). The wide ones (*Witches' Sabbath*, *Pilgrimage to San Isidro*, *Fight with Cudgels*, *Atropos*, *Asmodea*) are 2.6–4.4 m across and would need their own room. Dimensions come from Wikidata (Q1150997, Q2470123, Q3769169, and the Black Paintings series). Artemisia's is the Uffizi version (c. 1620). The earlier Naples version is 158.8 × 125.4 cm.
 
+## Henri Rousseau room
+
+All public domain (Rousseau died in 1910). Sizes from Wikidata (cm, h × w); images from Wikimedia Commons. The two National Gallery of Art scans are published CC0.
+
+| Wall | Artwork | Date | Size | Collection |
+|---|---|---|---|---|
+| West | The Dream | 1910 | 204.5 × 298.5 | MoMA |
+| West | The Snake Charmer | 1907 | 167 × 189 | Musée d'Orsay |
+| West | Tiger in a Tropical Storm (Surprised!) | 1891 | 129.8 × 161.9 | National Gallery, London |
+| North | Tropical Forest with Monkeys | 1910 | 129.5 × 162.5 | National Gallery of Art (CC0) |
+| North | The Equatorial Jungle | 1909 | 140.6 × 129.5 | National Gallery of Art (CC0) |
+| North | Exotic Landscape | 1910 | 130.2 × 162.6 | Norton Simon Museum |
+| South | Fight between a Tiger and a Buffalo | 1908 | 170 × 189.5 | Cleveland Museum of Art |
+| South | The Sleeping Gypsy | 1897 | 129.5 × 200.7 | MoMA |
+| South | War | 1894 | 114 × 195 | Musée d'Orsay |
+| East | Myself: Portrait – Landscape | 1890 | 146 × 113 | National Gallery Prague |
+| East | The Football Players | 1908 | 100.5 × 80.3 | Guggenheim (only a 704 px scan on Commons; soft up close) |
+
+*The Repast of the Lion* (Met) isn't in Wikidata as a painting, so *War* hangs in its place.
+
 ## Armor Court (Cleveland Museum of Art, all CC0)
 
 Data and images come from the [CMA Open Access API](https://openaccess-api.clevelandart.org/).

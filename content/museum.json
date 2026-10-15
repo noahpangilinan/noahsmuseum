@@ -110,7 +110,8 @@
       },
       "connections": [
         "entrance-gallery",
-        "swan-room"
+        "swan-room",
+        "rousseau-hall"
       ],
       "finish": {
         "walls": "#e9e5dd",
@@ -304,6 +305,116 @@
           "position": [22, 1.55, 5.98],
           "normal": [0, 0, -1],
           "maxSize": [3, 2.2]
+        }
+      ]
+    },
+    {
+      "id": "rousseau-hall",
+      "bounds": {
+        "min": [-7.5, 0, -10],
+        "max": [-1.5, 3.6, -7]
+      },
+      "connections": [
+        "north-hall",
+        "rousseau-room"
+      ],
+      "finish": {
+        "walls": "#e9e5dd",
+        "floor": "oak",
+        "ceiling": "none"
+      },
+      "slots": []
+    },
+    {
+      "id": "rousseau-room",
+      "name": "Henri Rousseau",
+      "bounds": {
+        "min": [-21, 0, -12.5],
+        "max": [-7.5, 5, 1.5]
+      },
+      "connections": [
+        "rousseau-hall"
+      ],
+      "finish": {
+        "walls": "#8b9a84",
+        "plaster": false,
+        "floor": "oak",
+        "ceiling": "skylight",
+        "artworkSpots": false
+      },
+      "furniture": [
+        {
+          "type": "bench",
+          "position": [-16, 0, -5.5],
+          "rotationY": 90
+        }
+      ],
+      "slots": [
+        {
+          "id": "west-1",
+          "position": [-20.98, 1.6, -5.5],
+          "normal": [1, 0, 0],
+          "maxSize": [3.4, 2.4]
+        },
+        {
+          "id": "west-2",
+          "position": [-20.98, 1.55, -10.4],
+          "normal": [1, 0, 0],
+          "maxSize": [2.4, 2]
+        },
+        {
+          "id": "west-3",
+          "position": [-20.98, 1.5, -0.6],
+          "normal": [1, 0, 0],
+          "maxSize": [2, 1.6]
+        },
+        {
+          "id": "north-1",
+          "position": [-18.5, 1.5, -12.48],
+          "normal": [0, 0, 1],
+          "maxSize": [2, 1.6]
+        },
+        {
+          "id": "north-2",
+          "position": [-15.2, 1.55, -12.48],
+          "normal": [0, 0, 1],
+          "maxSize": [1.6, 1.6]
+        },
+        {
+          "id": "north-3",
+          "position": [-11.5, 1.5, -12.48],
+          "normal": [0, 0, 1],
+          "maxSize": [2, 1.6]
+        },
+        {
+          "id": "south-1",
+          "position": [-10, 1.55, 1.48],
+          "normal": [0, 0, -1],
+          "maxSize": [2.2, 2]
+        },
+        {
+          "id": "south-2",
+          "position": [-14.2, 1.5, 1.48],
+          "normal": [0, 0, -1],
+          "maxSize": [2.2, 1.6]
+        },
+        {
+          "id": "south-3",
+          "position": [-18.3, 1.5, 1.48],
+          "normal": [0, 0, -1],
+          "maxSize": [2.2, 1.6]
+        },
+        {
+          "id": "east-1",
+          "position": [-7.52, 1.55, -3.5],
+          "normal": [-1, 0, 0],
+          "maxSize": [1.4, 1.6]
+        },
+        {
+          "id": "east-2",
+          "position": [-7.52, 1.5, -0.2],
+          "normal": [-1, 0, 0],
+          "maxSize": [1, 1.2]
         }
       ]
     },
@@ -606,6 +717,160 @@
       "source": "https://commons.wikimedia.org/wiki/File:Le_B%C5%93uf_%C3%A9corch%C3%A9_-_Rembrandt_-_Mus%C3%A9e_du_Louvre_Peintures_MI_169.jpg",
       "license": "Public domain",
       "imageFull": "art/slaughtered-ox/full.jpg"
+    },
+    {
+      "id": "the-dream",
+      "slot": "rousseau-room/west-1",
+      "title": "The Dream",
+      "artist": "Henri Rousseau",
+      "year": 1910,
+      "date": "1910",
+      "dimensionsCm": [204.5, 298.5],
+      "image": "art/the-dream/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Henri_Rousseau_005.jpg",
+      "license": "Public domain",
+      "imageFull": "art/the-dream/full.jpg"
+    },
+    {
+      "id": "the-snake-charmer",
+      "slot": "rousseau-room/west-2",
+      "title": "The Snake Charmer",
+      "artist": "Henri Rousseau",
+      "year": 1907,
+      "date": "1907",
+      "dimensionsCm": [167, 189],
+      "image": "art/the-snake-charmer/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:HENRI_ROUSSEAU_-_La_Encantadora_de_Serpientes_(Museo_de_Orsay%2C_Par%C3%ADs%2C_1907._%C3%93leo_sobre_lienzo%2C_169_x_189.5_cm).jpg",
+      "license": "Public domain",
+      "imageFull": "art/the-snake-charmer/full.jpg"
+    },
+    {
+      "id": "tiger-in-a-tropical-storm",
+      "slot": "rousseau-room/west-3",
+      "title": "Tiger in a Tropical Storm (Surprised!)",
+      "artist": "Henri Rousseau",
+      "year": 1891,
+      "date": "1891",
+      "dimensionsCm": [129.8, 161.9],
+      "image": "art/tiger-in-a-tropical-storm/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Surprised-Rousseau.jpg",
+      "license": "Public domain",
+      "imageFull": "art/tiger-in-a-tropical-storm/full.jpg"
+    },
+    {
+      "id": "tropical-forest-with-monkeys",
+      "slot": "rousseau-room/north-1",
+      "title": "Tropical Forest with Monkeys",
+      "artist": "Henri Rousseau",
+      "year": 1910,
+      "date": "1910",
+      "dimensionsCm": [129.5, 162.5],
+      "image": "art/tropical-forest-with-monkeys/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Henri_Rousseau%2C_Tropical_Forest_with_Monkeys%2C_1910%2C_NGA_61253.jpg",
+      "license": "CC0",
+      "imageFull": "art/tropical-forest-with-monkeys/full.jpg"
+    },
+    {
+      "id": "the-equatorial-jungle",
+      "slot": "rousseau-room/north-2",
+      "title": "The Equatorial Jungle",
+      "artist": "Henri Rousseau",
+      "year": 1909,
+      "date": "1909",
+      "dimensionsCm": [140.6, 129.5],
+      "image": "art/the-equatorial-jungle/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Henri_Rousseau%2C_The_Equatorial_Jungle%2C_1909%2C_NGA_46688.jpg",
+      "license": "CC0",
+      "imageFull": "art/the-equatorial-jungle/full.jpg"
+    },
+    {
+      "id": "exotic-landscape",
+      "slot": "rousseau-room/north-3",
+      "title": "Exotic Landscape",
+      "artist": "Henri Rousseau",
+      "year": 1910,
+      "date": "1910",
+      "dimensionsCm": [130.2, 162.6],
+      "image": "art/exotic-landscape/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Rousseau%2C_Exotic_Landscape_(1910).jpg",
+      "license": "Public domain",
+      "imageFull": "art/exotic-landscape/full.jpg"
+    },
+    {
+      "id": "fight-between-a-tiger-and-a-buffalo",
+      "slot": "rousseau-room/south-1",
+      "title": "Fight between a Tiger and a Buffalo",
+      "artist": "Henri Rousseau",
+      "year": 1908,
+      "date": "1908",
+      "dimensionsCm": [170, 189.5],
+      "image": "art/fight-between-a-tiger-and-a-buffalo/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Henri_Rousseau_-_Fight_between_a_Tiger_and_a_Buffalo_-_1949.186_-_Cleveland_Museum_of_ArtFXD.jpg",
+      "license": "Public domain",
+      "imageFull": "art/fight-between-a-tiger-and-a-buffalo/full.jpg"
+    },
+    {
+      "id": "the-sleeping-gypsy",
+      "slot": "rousseau-room/south-2",
+      "title": "The Sleeping Gypsy",
+      "artist": "Henri Rousseau",
+      "year": 1897,
+      "date": "1897",
+      "dimensionsCm": [129.5, 200.7],
+      "image": "art/the-sleeping-gypsy/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:La_Boh%C3%A9mienne_endormie.jpg",
+      "license": "Public domain",
+      "imageFull": "art/the-sleeping-gypsy/full.jpg"
+    },
+    {
+      "id": "war",
+      "slot": "rousseau-room/south-3",
+      "title": "War",
+      "artist": "Henri Rousseau",
+      "year": 1894,
+      "date": "1894",
+      "dimensionsCm": [114, 195],
+      "image": "art/war/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Henri_Rousseau_-_La_guerre.jpg",
+      "license": "Public domain",
+      "imageFull": "art/war/full.jpg"
+    },
+    {
+      "id": "myself-portrait-landscape",
+      "slot": "rousseau-room/east-1",
+      "title": "Myself: Portrait – Landscape",
+      "artist": "Henri Rousseau",
+      "year": 1890,
+      "date": "1890",
+      "dimensionsCm": [146, 113],
+      "image": "art/myself-portrait-landscape/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Henri_Rousseau_-_Myself-_Portrait_%E2%80%93_Landscape_-_Google_Art_Project.jpg",
+      "license": "Public domain",
+      "imageFull": "art/myself-portrait-landscape/full.jpg"
+    },
+    {
+      "id": "the-football-players",
+      "slot": "rousseau-room/east-2",
+      "title": "The Football Players",
+      "artist": "Henri Rousseau",
+      "year": 1908,
+      "date": "1908",
+      "dimensionsCm": [100.5, 80.3],
+      "image": "art/the-football-players/preview.ktx2",
+      "frame": "gilded-ornate",
+      "source": "https://commons.wikimedia.org/wiki/File:Henri_Rousseau_-_The_Football_Players.jpg",
+      "license": "Public domain",
+      "imageFull": "art/the-football-players/full.jpg"
     },
     {
       "id": "the-swan-no-1",

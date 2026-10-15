@@ -87,23 +87,26 @@ At load, `computeVisibility` (`app/world/layout.ts`) tests plan-view sight lines
 ## Current floor plan
 
 ```
-                 ┌────────────────────┐
-                 │     swan-room      │  Hilma af Klint, The Swan (12 works), skylight
-                 └───────┐    ┌───────┘
-                         │    │ north-hall
-           ┌─────────────┘    └──────────┐                ┌────────────┐
-           │      entrance-gallery       ├────────────────┤ dark-room  │  Goya wall (5 Black Paintings),
-           │  overture: 10 works, 4 walls    east-hall      │            │  Caravaggio, Artemisia Gentileschi
-           └─────────────┐    ┌──────────┘                └────────────┘
-                         │    │ armor-hall
-                         │    └──────────────┐
-                         └─armor-hall-east┐  │
-                                          │  │ armor-hall-south
-         ┌────────────────────────────────┘  └─────────┐
-         │                 armor-court                 │  Dido and Aeneas tapestries (8),
-         │                                             │  CMA 3D scans (5)
-         └─────────────────────────────────────────────┘
+                                         ┌────────────────────┐
+                                         │     swan-room      │  Hilma af Klint, The Swan (12), skylight
+                                         └───────┐    ┌───────┘
+   ┌────────────────────────┐                    │    │ north-hall
+   │     rousseau-room      ├────────────────────┤    │
+   │  Henri Rousseau (11),  │   rousseau-hall    │    │
+   │  skylit conservatory   │      ┌─────────────┘    └──────────┐                ┌────────────┐
+   │                        │      │      entrance-gallery       ├────────────────┤ dark-room  │  Goya wall (5),
+   │                        │      │  overture: 10 works         │   east-hall    │            │  Caravaggio, Artemisia
+   └────────────────────────┘      └─────────────┐    ┌──────────┘                └────────────┘
+                                                 │    │ armor-hall
+                                                 │    └──────────────┐
+                                                 └─armor-hall-east┐  │
+                                                                  │  │ armor-hall-south
+                                 ┌────────────────────────────────┘  └─────────┐
+                                 │                 armor-court                 │  Dido and Aeneas tapestries (8),
+                                 └─────────────────────────────────────────────┘  CMA 3D scans (5)
 ```
+
+The Rousseau room hangs off the hall to the Swan room. From inside it only that hall is visible, so the rest of the museum unloads there too.
 
 The armor wing is a Z on purpose. With two bends, no sight line runs from the court to the rest of the museum, so inside the court only the court and its last two corridor legs are drawn or loaded. Everything else is unloaded.
 
