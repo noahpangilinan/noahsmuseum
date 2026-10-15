@@ -36,9 +36,10 @@ These rules let room exports drop into the app with no manual fixes. If a rule g
 
 ## Lightmaps
 
-- Bake with Cycles: Diffuse (direct + indirect) or Combined without the albedo. Denoise before export.
+- Step by step: [blender/lighting-tutorial.md](../blender/lighting-tutorial.md).
+- Bake with Cycles: Diffuse with Direct + Indirect and **Color off** (the app multiplies by the material colour itself). Denoise before saving.
 - Resolution: **2048² per room for high, 1024² for low** (export both once quality tiers land).
-- Export as linear HDR (`.exr`), then convert to KTX2 (UASTC + Zstd) with `toktx`. The app expects `rooms/<roomId>_lm.ktx2`.
+- Save as an 8-bit **PNG, Non-Color**, to `content/rooms/<roomId>_lm.png`. The app also accepts `.ktx2`; an HDR/KTX2 path can come later if 8-bit clipping becomes a problem.
 - Don't bake artwork spotlights into the walls. They're real-time lights in the app so frames cast moving-correct shadows.
 
 ## Materials
